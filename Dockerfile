@@ -1,11 +1,11 @@
 # init base image (Alpine is small Linux distro)
-FROM python:3.8-alpine
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 # define the present working directory
-WORKDIR /rocrate-maker-fast-api
+# WORKDIR /rocrate-maker-fast-api
 # copy the contents into the working dir
-ADD . /rocrate-maker-fast-api
+COPY ./app /app
 # run pip install to install dependencies of the flasdk app
-RUN pip install -r requirements.txt
+#RUN pip install -r requirements.txt
 # define commnd to start the api webserver
 # CMD [ "python","app.py"]
-ENTRYPOINT [ "./gunicorn.sh" ]
+#ENTRYPOINT [ "./gunicorn.sh" ]
