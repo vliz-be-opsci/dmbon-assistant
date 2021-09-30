@@ -1,0 +1,16 @@
+GET http://localhost:5000/ HTTP/1.1
+
+###
+
+GET http://localhost:5000/profiles/ARMS_Descriptor HTTP/1.1
+###
+
+GET http://localhost:5000/profiles HTTP/1.1
+
+###
+
+PUT http://localhost:5000/profiles/test4?logo=testlogo HTTP/1.1
+
+###
+
+DELETE http://localhost:5000/profiles/test4 HTTP/1.1
