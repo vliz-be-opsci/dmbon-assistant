@@ -2,3 +2,8 @@ fastapi
 uvicorn
 pydantic
 gunicorn
+requests
+asyncio
+aiohttp
+GitPython
+rocrate
