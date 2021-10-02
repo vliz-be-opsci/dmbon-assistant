@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Path, Query, HTTPException, status
+from typing import List, Optional, Set
 from pydantic import BaseModel, Field
-from typing import Optional
 import os, json, requests, asyncio, sys, aiohttp, shutil, git
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
@@ -22,6 +22,14 @@ class ProfileModel(BaseModel):
 class SpaceModel(BaseModel):
     storage_path: str = Field(None, description = "Valid path on local storage where ROcrate data will be stored")
     RO_profile: str = Field(None, description = "Ro-Profile name that will be used for the space")
+
+class FileModel(BaseModel):
+    file_path: str = Field(None, description = "Filepath that needs to be added to the space, can also be a directory")
+    folder   : str = Field("/", description = "Folderpath where the file needs to be added in the space.")
+    url      : str = Field(None, description = "External resource link location if resource is not stored locally.")
+
+class ContentModel(BaseModel):
+    content: List[FileModel] = Field(None, description = "List of files that need to be added, this list can also contain directories")
 
 ### define helper functions for the api ###
 
@@ -158,11 +166,13 @@ async def add_space(*,space_id: str = Path(None,description="space_id name"), it
     
     #try and init a git repo and a rocrate
     git.Repo.init(os.path.join(tocheckpath))
-    #change current wd to ini the rocrate
+    #change current wd to init the rocrate
     currentwd = os.getcwd()
-    os.chdir(tocheckpath)
+    #make project dir
+    os.mkdir(os.sep.join((tocheckpath,'project')))
+    os.chdir(os.sep.join((tocheckpath,'project')))
     crate = ROCrate() 
-    crate.write_crate(tocheckpath)
+    crate.write_crate(os.sep.join((tocheckpath,'project')))
     os.chdir(currentwd)
     with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
         json.dump(data, file)
@@ -193,7 +203,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
         data = json.load(file)
         try:
             toreturn = data[space_id]
-            space_folder = data[space_id]['storage_path']
+            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     toreturn = []
@@ -203,6 +213,103 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 
+@app.post('/spaces/{space_id}/content',tags=["Content","Post"], status_code=202)
+def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            toreturn = data[space_id]
+            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    datalog = []
+    crate = ROCrate(space_folder)
+
+    for content_item in item.content:
+        #check if file or url are present
+        if (content_item.file_path == None and content_item.url == None):
+            content_present = False
+        #check if only url prsent:
+        if (content_item.file_path == None and content_item.url != None):
+            try:
+                crate.add_file(content_item.url, fetch_remote = False)
+            except Exception as e:
+                datalog.append({content_item.url:e})
+        #check if content_item.file_path is a directory
+        if os.path.isdir(content_item.file_path):
+            try:
+                crate.add_directory(content_item.file_path,str(os.sep.join((space_folder,content_item.folder,os.path.basename(os.path.normpath(content_item.file_path))))))
+            except Exception as e:
+                datalog.append({content_item.url:e})
+        else:
+            try:
+                crate.add_file(content_item.file_path)
+            except Exception as e:
+                datalog.append({content_item.url:e})
+
+    if len(datalog) > 0:
+        crate.write_crate(space_folder)
+        raise HTTPException(status_code=400, detail=datalog)
+
+    crate.write_crate(space_folder)
+    return {'Data':'all content successfully added to space'}
+
+'''
+@app.post('/spaces/{space_id}/content',tags=["Content","Post"], status_code=202)
+def add_new_contente(*,space_id: str = Path(None,description="space_id name"), item: ContentModel):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            toreturn = data[space_id]
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    datalog = []
+    for content_item in item.content:
+        good_file_path  = True
+        good_folder     = True
+        content_present = True
+        isurl = False
+        print(content_item, file=sys.stderr)
+        #check if file or url are present
+        if (content_item.file_path == None and content_item.url == None):
+            content_present = False
+        #check if only url prsent:
+        if (content_item.file_path == None and content_item.url != None):
+            isurl = True
+        #check if file_path is file
+        if os.path.isfile(content_item.file_path) != True:
+            good_file_path = False
+        #check if folder exists
+        if os.path.isdir(content_item.folder) != True:
+            content_item.folder = os.path.join(space_folder,content_item.folder)
+            if os.path.isdir(content_item.folder) != True:
+                good_folder = False
+        #if all good try and copy file into project folder, else add file to log og error files
+        if good_file_path == True and good_folder == True and content_present == True:
+            try:
+                shutil.copy(str(content_item.file_path),str(content_item.folder))
+                bad_request = False
+            except Exception as e:
+                bad_request = True
+            try:
+                shutil.copy(str(content_item.file_path),str(os.sep.join((space_folder,content_item.folder))))
+                bad_request = False
+            except Exception as e:
+                print(e, file=sys.stderr)
+                bad_request = True
+            if bad_request:
+                filecheck = {"good_file_path":good_file_path,"good_folder":good_folder,"content_present":content_present,"passed":False}
+                datalog.append({content_item.file_path:filecheck})
+        else:
+            filecheck = {"good_file_path":good_file_path,"good_folder":good_folder,"content_present":content_present,"passed":False}
+            datalog.append({content_item.file_path:filecheck})
+  
+    if len(datalog) > 0:
+        raise HTTPException(status_code=400, detail=datalog)
+
+    return {'Data':'all content successfully added to space'}
+'''
 @app.get('/spaces/{space_id}/content/{path_folder:path}',tags=["Content","Get"])
 def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -210,7 +317,7 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
         try:
             toreturn = data[space_id]
             allpaths = path_folder
-            space_folder = os.path.join(data[space_id]['storage_path'], path_folder)
+            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     toreturn = []
@@ -227,7 +334,7 @@ def add_space_folder(*,space_id: str = Path(None,description="space_id name"), p
         try:
             toreturn = data[space_id]
             allpaths = path_folder
-            space_folder = os.path.join(data[space_id]['storage_path'], path_folder)
+            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
             try:
                 pads(space_folder).mkdir(parents=True, exist_ok=True)
             except:
@@ -235,6 +342,10 @@ def add_space_folder(*,space_id: str = Path(None,description="space_id name"), p
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     return {'Data':'Made directory'}
+
+
+
+
     
 
 @app.get('/plugins', tags=["plugins","Get"])
