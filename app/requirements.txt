@@ -7,3 +7,4 @@ asyncio
 aiohttp
 GitPython
 rocrate
+pytest

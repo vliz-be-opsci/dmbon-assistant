@@ -5,6 +5,7 @@ import os, json, requests, asyncio, sys, aiohttp, shutil, git
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
+from collections import MutableMapping
 
 app = FastAPI(
     title = 'RO-Crate-API',
@@ -30,6 +31,9 @@ class FileModel(BaseModel):
 
 class ContentModel(BaseModel):
     content: List[FileModel] = Field(None, description = "List of files that need to be added, this list can also contain directories")
+
+class DeleteContentModel(BaseModel):
+    content: List[str] = Field(None, description = "List of files to delete , if full path given it will delete one file , of only file name given it will delete all entities in the system with file name.")
 
 ### define helper functions for the api ###
 
@@ -64,13 +68,13 @@ async def check_path_availability(tocheckpath,space_id):
 def home():
     return {'Message':'Waddup OpSci, docs can be found in the /docs route'}
 
-@app.get('/profiles',tags=["Profiles","Get"])
+@app.get('/profiles',tags=["Profiles"])
 def get_all_profiles_info():
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
         data = json.load(file)
         return data
 
-@app.get('/profiles/{profile_id}',tags=["Profiles","Get"])
+@app.get('/profiles/{profile_id}',tags=["Profiles"])
 def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
         data = json.load(file)
@@ -80,7 +84,7 @@ def get_profile_info(profile_id: str = Path(None,description="profile_id name"))
         except Exception as e:
             raise HTTPException(status_code=404, detail="profile not found")
 
-@app.delete('/profiles/{profile_id}',tags=["Profiles","Delete"], status_code=202)
+@app.delete('/profiles/{profile_id}',tags=["Profiles"], status_code=202)
 def delete_profile(profile_id: str = Path(None,description="profile_id name")):
     with open(os.path.join(os.getcwd(),"app","workflows.json")) as data_file:
             data = json.load(data_file)
@@ -92,36 +96,44 @@ def delete_profile(profile_id: str = Path(None,description="profile_id name")):
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted profile'}
 
-@app.post('/profiles/{profile_id}',tags=["Profiles","Post"], status_code=201)
+@app.post('/profiles/{profile_id}',tags=["Profiles"], status_code=201)
 def add_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
         data = json.load(file)
         if profile_id in data.keys():
             raise HTTPException(status_code=400, detail="Profile already exists")
-        data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
-        json.dump(data, file)   
-    return {'Message':'Profile added'}
+        if item.logo != None or item.description != None or item.url_ro_profile != None:
+            data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
+            with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
+                json.dump(data, file)   
+            return {'Message':'Profile added'}
+        else:
+            keys = dict(item).keys()
+            raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
 
-@app.put('/profiles/{profile_id}',tags=["Profiles","Put"], status_code=202)
+@app.put('/profiles/{profile_id}',tags=["Profiles"], status_code=202)
 def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
         data = json.load(file)
     for profile in data.keys():
         if profile_id == profile:
-            data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile} 
-            with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
-                json.dump(data, file)  
-                return {'Data':'Update successfull'} 
+            if item.logo != None or item.description != None or item.url_ro_profile != None:
+                data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile} 
+                with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
+                    json.dump(data, file)  
+                    return {'Data':'Update successfull'} 
+            else:
+                keys = dict(item).keys()
+                raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
     raise HTTPException(status_code=404, detail="profile not found")
 
-@app.get('/spaces',tags=["Spaces","Get"])
+@app.get('/spaces',tags=["Spaces"])
 def get_all_spaces():
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
         return data
 
-@app.get('/spaces/{space_id}',tags=["Spaces","Get"])
+@app.get('/spaces/{space_id}',tags=["Spaces"])
 def get_space_info(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -131,7 +143,7 @@ def get_space_info(*,space_id: str = Path(None,description="space_id name")):
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
 
-@app.delete('/spaces/{space_id}',tags=["Spaces","Delete"], status_code=202)
+@app.delete('/spaces/{space_id}',tags=["Spaces"], status_code=202)
 def delete_space(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json")) as data_file:
             data = json.load(data_file)
@@ -145,7 +157,7 @@ def delete_space(*,space_id: str = Path(None,description="space_id name")):
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted space'}
 
-@app.post('/spaces/{space_id}',tags=["Spaces","Post"], status_code=201)
+@app.post('/spaces/{space_id}',tags=["Spaces"], status_code=201)
 async def add_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
     tocheckpath = str(item.storage_path)
     returnmessage = "Space created in folder: " + str(os.path.join(tocheckpath))
@@ -178,7 +190,7 @@ async def add_space(*,space_id: str = Path(None,description="space_id name"), it
         json.dump(data, file)
     return {'Message':returnmessage}
 
-@app.put('/spaces/{space_id}',tags=["Spaces","Put"], status_code=202)
+@app.put('/spaces/{space_id}',tags=["Spaces"], status_code=202)
 async def update_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
     tocheckpath = str(item.storage_path)
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
@@ -197,7 +209,7 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
             return {'Data':'Update successfull'} 
     raise HTTPException(status_code=404, detail="Space not found")
 
-@app.get('/spaces/{space_id}/content',tags=["Content","Get"])
+@app.get('/spaces/{space_id}/content',tags=["Content"])
 def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -213,7 +225,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 
-@app.post('/spaces/{space_id}/content',tags=["Content","Post"], status_code=202)
+@app.post('/spaces/{space_id}/content',tags=["Content"], status_code=202)
 def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -224,7 +236,7 @@ def add_new_content(*,space_id: str = Path(None,description="space_id name"), it
             raise HTTPException(status_code=404, detail="Space not found")
     datalog = []
     crate = ROCrate(space_folder)
-
+    repo = git.Repo(data[space_id]['storage_path'])
     for content_item in item.content:
         #check if file or url are present
         if (content_item.file_path == None and content_item.url == None):
@@ -246,71 +258,43 @@ def add_new_content(*,space_id: str = Path(None,description="space_id name"), it
                 crate.add_file(content_item.file_path)
             except Exception as e:
                 datalog.append({content_item.url:e})
-
+    crate.write_crate(space_folder)
+    repo.git.add(u=True)
     if len(datalog) > 0:
-        crate.write_crate(space_folder)
         raise HTTPException(status_code=400, detail=datalog)
 
-    crate.write_crate(space_folder)
     return {'Data':'all content successfully added to space'}
 
-'''
-@app.post('/spaces/{space_id}/content',tags=["Content","Post"], status_code=202)
-def add_new_contente(*,space_id: str = Path(None,description="space_id name"), item: ContentModel):
+@app.delete('/spaces/{space_id}/content',tags=["Content"], status_code=202)
+def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
             toreturn = data[space_id]
-            space_folder = data[space_id]['storage_path']
+            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
-    datalog = []
-    for content_item in item.content:
-        good_file_path  = True
-        good_folder     = True
-        content_present = True
-        isurl = False
-        print(content_item, file=sys.stderr)
-        #check if file or url are present
-        if (content_item.file_path == None and content_item.url == None):
-            content_present = False
-        #check if only url prsent:
-        if (content_item.file_path == None and content_item.url != None):
-            isurl = True
-        #check if file_path is file
-        if os.path.isfile(content_item.file_path) != True:
-            good_file_path = False
-        #check if folder exists
-        if os.path.isdir(content_item.folder) != True:
-            content_item.folder = os.path.join(space_folder,content_item.folder)
-            if os.path.isdir(content_item.folder) != True:
-                good_folder = False
-        #if all good try and copy file into project folder, else add file to log og error files
-        if good_file_path == True and good_folder == True and content_present == True:
-            try:
-                shutil.copy(str(content_item.file_path),str(content_item.folder))
-                bad_request = False
-            except Exception as e:
-                bad_request = True
-            try:
-                shutil.copy(str(content_item.file_path),str(os.sep.join((space_folder,content_item.folder))))
-                bad_request = False
-            except Exception as e:
-                print(e, file=sys.stderr)
-                bad_request = True
-            if bad_request:
-                filecheck = {"good_file_path":good_file_path,"good_folder":good_folder,"content_present":content_present,"passed":False}
-                datalog.append({content_item.file_path:filecheck})
-        else:
-            filecheck = {"good_file_path":good_file_path,"good_folder":good_folder,"content_present":content_present,"passed":False}
-            datalog.append({content_item.file_path:filecheck})
-  
-    if len(datalog) > 0:
-        raise HTTPException(status_code=400, detail=datalog)
 
-    return {'Data':'all content successfully added to space'}
-'''
-@app.get('/spaces/{space_id}/content/{path_folder:path}',tags=["Content","Get"])
+    crate = ROCrate(space_folder)
+    print(crate.get_entities)
+    for content_item in item.content:
+        print(content_item)
+        try:
+            crate.delete(crate.dereference(content_item))
+        except Exception as e:
+            print(e)
+        '''
+        with open(os.path.join(space_folder,"ro-crate-metadata.json"), "r+") as file:
+            data = json.load(file)
+            
+        
+        os.remove(os.path.join(space_folder,"ro-crate-metadata.json"))
+        with open(os.path.join(space_folder,"ro-crate-metadata.json"), 'w') as f:
+            json.dump(data, f, indent=4)
+        '''
+    return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
+
+@app.get('/spaces/{space_id}/content/{path_folder:path}',tags=["Content"])
 def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -327,7 +311,7 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 
-@app.post('/spaces/{space_id}/content/{path_folder:path}',tags=["Content","Post"], status_code=202)
+@app.post('/spaces/{space_id}/content/{path_folder:path}',tags=["Content"], status_code=202)
 def add_space_folder(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder path to make")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -348,6 +332,6 @@ def add_space_folder(*,space_id: str = Path(None,description="space_id name"), p
 
     
 
-@app.get('/plugins', tags=["plugins","Get"])
+@app.get('/plugins', tags=["plugins"])
 def get_al_plugin_info():
     return {'data': 'TODO'}
