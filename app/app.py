@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Path, Query, HTTPException, status
 from typing import List, Optional, Set
 from pydantic import BaseModel, Field
-import os, json, requests, asyncio, sys, aiohttp, shutil, git
+import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
@@ -11,7 +11,6 @@ app = FastAPI(
     title = 'RO-Crate-API',
     description='RO-Crate manager Rest-API'
 )
-
 
 ### define class profiles for the api ###
 
@@ -23,11 +22,11 @@ class ProfileModel(BaseModel):
 class SpaceModel(BaseModel):
     storage_path: str = Field(None, description = "Valid path on local storage where ROcrate data will be stored")
     RO_profile: str = Field(None, description = "Ro-Profile name that will be used for the space")
+    remote_url: Optional[str] = Field(None, description = "git repo url to get project from")
 
 class FileModel(BaseModel):
-    file_path: str = Field(None, description = "Filepath that needs to be added to the space, can also be a directory")
-    folder   : str = Field("/", description = "Folderpath where the file needs to be added in the space.")
-    url      : str = Field(None, description = "External resource link location if resource is not stored locally.")
+    name     : str = Field(None, description = "Name of the file that will be added, can be filepath")
+    content  : str = Field(None, description = "Filepath that needs to be added to the space, can also be a directory or url")
 
 class ContentModel(BaseModel):
     content: List[FileModel] = Field(None, description = "List of files that need to be added, this list can also contain directories")
@@ -68,13 +67,13 @@ async def check_path_availability(tocheckpath,space_id):
 def home():
     return {'Message':'Waddup OpSci, docs can be found in the /docs route'}
 
-@app.get('/profiles',tags=["Profiles"])
+@app.get('/profiles/',tags=["Profiles"])
 def get_all_profiles_info():
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
         data = json.load(file)
         return data
 
-@app.get('/profiles/{profile_id}',tags=["Profiles"])
+@app.get('/profiles/{profile_id}/',tags=["Profiles"])
 def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
         data = json.load(file)
@@ -84,7 +83,7 @@ def get_profile_info(profile_id: str = Path(None,description="profile_id name"))
         except Exception as e:
             raise HTTPException(status_code=404, detail="profile not found")
 
-@app.delete('/profiles/{profile_id}',tags=["Profiles"], status_code=202)
+@app.delete('/profiles/{profile_id}/',tags=["Profiles"], status_code=202)
 def delete_profile(profile_id: str = Path(None,description="profile_id name")):
     with open(os.path.join(os.getcwd(),"app","workflows.json")) as data_file:
             data = json.load(data_file)
@@ -96,22 +95,23 @@ def delete_profile(profile_id: str = Path(None,description="profile_id name")):
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted profile'}
 
-@app.post('/profiles/{profile_id}',tags=["Profiles"], status_code=201)
-def add_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
+@app.post('/profiles/',tags=["Profiles"], status_code=201)
+def add_profile(*,item: ProfileModel):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
         data = json.load(file)
+        profile_id = uuid.uuid4().hex
         if profile_id in data.keys():
             raise HTTPException(status_code=400, detail="Profile already exists")
         if item.logo != None or item.description != None or item.url_ro_profile != None:
             data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
             with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
                 json.dump(data, file)   
-            return {'Message':'Profile added'}
+            return {'Message':'Profile added',"profile_id": profile_id}
         else:
             keys = dict(item).keys()
             raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
 
-@app.put('/profiles/{profile_id}',tags=["Profiles"], status_code=202)
+@app.put('/profiles/{profile_id}/',tags=["Profiles"], status_code=202)
 def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
         data = json.load(file)
@@ -127,13 +127,13 @@ def update_profile(*,profile_id: str = Path(None,description="profile_id name"),
                 raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
     raise HTTPException(status_code=404, detail="profile not found")
 
-@app.get('/spaces',tags=["Spaces"])
+@app.get('/spaces/',tags=["Spaces"])
 def get_all_spaces():
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
         return data
 
-@app.get('/spaces/{space_id}',tags=["Spaces"])
+@app.get('/spaces/{space_id}/',tags=["Spaces"])
 def get_space_info(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -143,7 +143,7 @@ def get_space_info(*,space_id: str = Path(None,description="space_id name")):
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
 
-@app.delete('/spaces/{space_id}',tags=["Spaces"], status_code=202)
+@app.delete('/spaces/{space_id}/',tags=["Spaces"], status_code=202)
 def delete_space(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json")) as data_file:
             data = json.load(data_file)
@@ -157,10 +157,11 @@ def delete_space(*,space_id: str = Path(None,description="space_id name")):
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted space'}
 
-@app.post('/spaces/{space_id}',tags=["Spaces"], status_code=201)
-async def add_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
+@app.post('/spaces/',tags=["Spaces"], status_code=201)
+async def add_space(*,item: SpaceModel):
     tocheckpath = str(item.storage_path)
     returnmessage = "Space created in folder: " + str(os.path.join(tocheckpath))
+    space_id = uuid.uuid4().hex
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
         if space_id in data.keys():
@@ -174,7 +175,7 @@ async def add_space(*,space_id: str = Path(None,description="space_id name"), it
             print(response.status, file=sys.stderr)
             if response.status != 200:
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
-        data[space_id]= {'storage_path':tocheckpath,'ro_profile':item.RO_profile}
+        data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
     
     #try and init a git repo and a rocrate
     git.Repo.init(os.path.join(tocheckpath))
@@ -188,9 +189,9 @@ async def add_space(*,space_id: str = Path(None,description="space_id name"), it
     os.chdir(currentwd)
     with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
         json.dump(data, file)
-    return {'Message':returnmessage}
+    return {'Message':returnmessage, 'space_id': space_id}
 
-@app.put('/spaces/{space_id}',tags=["Spaces"], status_code=202)
+@app.put('/spaces/{space_id}/',tags=["Spaces"], status_code=202)
 async def update_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
     tocheckpath = str(item.storage_path)
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
@@ -203,13 +204,13 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
                 print(response.status, file=sys.stderr)
                 if response.status != 200:
                     raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
-            data[space_id]= {'storage_path':info["storage_path"],'ro_profile':item.RO_profile}
+            data[space_id]= {'storage_path':info["storage_path"],'RO_profile':item.RO_profile}
             with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file:
                 json.dump(data, file)  
             return {'Data':'Update successfull'} 
     raise HTTPException(status_code=404, detail="Space not found")
 
-@app.get('/spaces/{space_id}/content',tags=["Content"])
+@app.get('/spaces/{space_id}/content/',tags=["Content"])
 def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -225,39 +226,52 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 
-@app.post('/spaces/{space_id}/content',tags=["Content"], status_code=202)
-def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel):
+@app.post('/spaces/{space_id}/content/',tags=["Content"], status_code=202)
+def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
+
+    try:
+        toreturn = data[space_id] 
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Space not found")
+
+    if path_folder == None:
         try:
-            toreturn = data[space_id]
-            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
+            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project'))) 
+        except:
+            raise HTTPException(status_code=400, detail="Directory could not be made")
+    else:
+        space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
+        try:
+            pads(space_folder).mkdir(parents=True, exist_ok=True)
+        except:
+            raise HTTPException(status_code=400, detail="Directory could not be made")
+
     datalog = []
     crate = ROCrate(space_folder)
     repo = git.Repo(data[space_id]['storage_path'])
     for content_item in item.content:
         #check if file or url are present
-        if (content_item.file_path == None and content_item.url == None):
+        if (content_item.content == None and content_item.name == None):
             content_present = False
         #check if only url prsent:
-        if (content_item.file_path == None and content_item.url != None):
+        if ('.html' in content_item.content or 'http' in content_item.content):
             try:
-                crate.add_file(content_item.url, fetch_remote = False)
+                crate.add_file(content_item.content, fetch_remote = False)
             except Exception as e:
-                datalog.append({content_item.url:e})
-        #check if content_item.file_path is a directory
-        if os.path.isdir(content_item.file_path):
+                datalog.append({content_item.content:e})
+        #check if content_item.content is a directory
+        if os.path.isdir(content_item.content):
             try:
-                crate.add_directory(content_item.file_path,str(os.sep.join((space_folder,content_item.folder,os.path.basename(os.path.normpath(content_item.file_path))))))
+                crate.add_directory(content_item.content,str(os.sep.join((space_folder,os.path.basename(os.path.normpath(content_item.content))))))
             except Exception as e:
-                datalog.append({content_item.url:e})
+                datalog.append({content_item.content:e})
         else:
             try:
-                crate.add_file(content_item.file_path)
+                crate.add_file(content_item.content)
             except Exception as e:
-                datalog.append({content_item.url:e})
+                datalog.append({content_item.content:e})
     crate.write_crate(space_folder)
     repo.git.add(u=True)
     if len(datalog) > 0:
@@ -265,7 +279,7 @@ def add_new_content(*,space_id: str = Path(None,description="space_id name"), it
 
     return {'Data':'all content successfully added to space'}
 
-@app.delete('/spaces/{space_id}/content',tags=["Content"], status_code=202)
+@app.delete('/spaces/{space_id}/content/',tags=["Content"], status_code=202)
 def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -310,27 +324,6 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
             if '.git' not in dirpath:
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
-
-@app.post('/spaces/{space_id}/content/{path_folder:path}',tags=["Content"], status_code=202)
-def add_space_folder(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder path to make")):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
-        data = json.load(file)
-        try:
-            toreturn = data[space_id]
-            allpaths = path_folder
-            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
-            try:
-                pads(space_folder).mkdir(parents=True, exist_ok=True)
-            except:
-                raise HTTPException(status_code=400, detail="Directory could not be made")
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-    return {'Data':'Made directory'}
-
-
-
-
-    
 
 @app.get('/plugins', tags=["plugins"])
 def get_al_plugin_info():

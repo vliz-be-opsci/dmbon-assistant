@@ -8,3 +8,4 @@ aiohttp
 GitPython
 rocrate
 pytest
+uuid

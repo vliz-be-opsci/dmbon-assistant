@@ -1,5 +1,9 @@
 from fastapi.testclient import TestClient
 import os, tempfile, sys
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 from app.app import app
 
 client = TestClient(app)
@@ -141,22 +145,97 @@ def test_delete_profile_success():
 def test_get_all_spaces():
     response = client.get("/spaces")
     assert response.status_code == 200
+
 # post_space_success   : status_code 201 , right display of storage path and ro-profile 
 def test_post_space_success():
     testdir = os.getcwd()
     response = client.post("/spaces/test",
         json={
-            "storage_path": testdir,
+            "storage_path": str(testdir),
             "RO_profile": "new"
             }
     )
     assert response.status_code == 201
     response = client.get("/spaces/test")
     assert response.json() == {
-                            "storage_path": testdir,
+                            "storage_path": os.path.join(str(testdir),'test'),
                             "RO_profile": "new"
                             }
     client.delete("/spaces/test")
-# 
+
+# post_space_fail     : status_code 400
+def test_post_space_fail():
+    testdir = os.getcwd()
+    response = client.post("/spaces/test",
+        json={
+            "storage_path": str(testdir),
+            "RO_profile": "wdfrgveuihwdvfuihjl"
+            }
+    )
+    assert response.status_code == 400
+    os.rmdir(os.path.join(testdir,"test"))    
+
+# get_space_success   : status_code 200
+def test_get_all_spaces():
+    testdir = os.getcwd()
+    client.post("/spaces/test",
+        json={
+            "storage_path": str(testdir),
+            "RO_profile": "new"
+            }
+    )
+    response = client.get("/spaces/test")
+    assert response.status_code == 200
+    assert response.json() == {
+                            "storage_path": os.path.join(str(testdir),'test'),
+                            "RO_profile": "new"
+                            }
+    client.delete("/spaces/test")
+
+# get_space_fail      : status_code 400
+def test_get_space_fail():
+    response = client.get("/spaces/teqegrqwrgrqgwt")
+    assert response.status_code == 404
+
+# put_space_success   : status_code 202
+def test_put_space_success():
+    testdir = os.getcwd()
+    client.post("/spaces/test",
+        json={
+            "storage_path": str(testdir),
+            "RO_profile": "new"
+            }
+    )
+    response = client.put("/spaces/test",
+        json={
+            "storage_path": str(testdir),
+            "RO_profile": "new2"
+            }
+    )
+    assert response.status_code == 202
+    response = client.get("/spaces/test")
+    assert response.json() == {
+                            "storage_path": os.path.join(str(testdir),'test'),
+                            "RO_profile": "new2"
+                            }
+    client.delete("/spaces/test")
+
+# put_space_fail    : status_code 400
+def test_put_space_fail():
+    testdir = os.getcwd()
+    client.post("/spaces/test",
+        json={
+            "storage_path": str(testdir),
+            "RO_profile": "new"
+            }
+    )
+    response = client.put("/spaces/test",
+        json={
+            "storage_path": str(testdir),
+            "RO_profile": "nefqdsfqsdregq"
+            }
+    )
+    assert response.status_code == 400
+    client.delete("/spaces/test")
 
 ### content ###
