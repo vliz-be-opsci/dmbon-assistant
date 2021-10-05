@@ -232,7 +232,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
     return {'Data':toreturn}
 
 @app.post('/spaces/{space_id}/content/',tags=["Content"], status_code=202)
-async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
+def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
 
@@ -274,14 +274,14 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
                 datalog.append({content_item.content:e})
         else:
             try:
+                print("trying to add {}".format(content_item.content), file=sys.stderr)
                 crate.add_file(content_item.content)
             except Exception as e:
                 datalog.append({content_item.content:e})
-    try:
-        await crate.write_crate(space_folder)
-    except:
-        pass
-    repo.git.add(u=True)
+    
+
+    crate.write_crate(space_folder)
+    repo.git.add(all=True)
     if len(datalog) > 0:
         raise HTTPException(status_code=400, detail=datalog)
 
@@ -304,9 +304,9 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
         crate.delete(crate.dereference(content_item))
         del_path = os.path.join(space_folder,content_item)
         os.remove(del_path)
-        
-    repo.git.add(all=True)
+
     crate.write_crate(space_folder)
+    repo.git.add(all=True)
     return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
 
 @app.get('/spaces/{space_id}/content/{path_folder:path}',tags=["Content"])
@@ -367,6 +367,53 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         toreturn.append(toappend)
         i+=1
     return {'data':toreturn}
+
+@app.post('/spaces/{space_id}/git/{command}}', tags=["git"], status_code=200)
+def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
+    toreturn =[]
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+
+    repo = git.Repo(space_folder)
+
+    if command != "commit" and command != "push" and command != "pull":
+        raise HTTPException(status_code=400, detail="No valid command given, valid commands are (commit,push,pull)")
+
+    #repo commit
+    if command == "commit":
+        try:
+            print("before commit", file=sys.stderr)
+            repo.index.commit("RO-crate API commit")   # <--- TODO: ADD user to the commit message for better cross scientists performance
+            print("after commit", file=sys.stderr)
+            return {"data":"{} successfull".format(str(command))}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=e)
+    
+    try:
+        print(repo.remote().refs, file=sys.stderr)
+    except:
+        raise HTTPException(status_code=400, detail="repo has no remote references to push or pull to.")
+
+    # try and do push pull
+    if command == "push":
+        try:
+            origin = repo.remote(name='origin')
+            origin.push()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=e)
+    
+    if command == "pull":
+        try:
+            origin = repo.remote(name='origin')
+            origin.pull()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=e)
+    
+    
 
 @app.get('/plugins', tags=["plugins"])
 def get_al_plugin_info():
