@@ -6,6 +6,8 @@ requests
 asyncio
 aiohttp
 GitPython
-rocrate
+#rocrate
+-e git://github.com/ResearchObject/ro-crate-py.git#egg=rocrate
+datetime
 pytest
 uuid

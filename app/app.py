@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Path, Query, HTTPException, status
 from typing import List, Optional, Set
 from pydantic import BaseModel, Field
-import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid
+import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess
+from datetime import datetime
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
@@ -178,7 +179,7 @@ async def add_space(*,item: SpaceModel):
         data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
     
     #try and init a git repo and a rocrate
-    git.Repo.init(os.path.join(tocheckpath))
+    repo = git.Repo.init(os.path.join(tocheckpath))
     #change current wd to init the rocrate
     currentwd = os.getcwd()
     #make project dir
@@ -189,6 +190,10 @@ async def add_space(*,item: SpaceModel):
     os.chdir(currentwd)
     with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
         json.dump(data, file)
+        
+    repo.git.add(all=True)
+    repo.index.commit("initial commit")
+    repo.create_head('master')
     return {'Message':returnmessage, 'space_id': space_id}
 
 @app.put('/spaces/{space_id}/',tags=["Spaces"], status_code=202)
@@ -227,7 +232,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
     return {'Data':toreturn}
 
 @app.post('/spaces/{space_id}/content/',tags=["Content"], status_code=202)
-def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
+async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
 
@@ -272,7 +277,10 @@ def add_new_content(*,space_id: str = Path(None,description="space_id name"), it
                 crate.add_file(content_item.content)
             except Exception as e:
                 datalog.append({content_item.content:e})
-    crate.write_crate(space_folder)
+    try:
+        await crate.write_crate(space_folder)
+    except:
+        pass
     repo.git.add(u=True)
     if len(datalog) > 0:
         raise HTTPException(status_code=400, detail=datalog)
@@ -284,28 +292,21 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
-            toreturn = data[space_id]
             space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
-
-    crate = ROCrate(space_folder)
-    print(crate.get_entities)
-    for content_item in item.content:
-        print(content_item)
-        try:
-            crate.delete(crate.dereference(content_item))
-        except Exception as e:
-            print(e)
-        '''
-        with open(os.path.join(space_folder,"ro-crate-metadata.json"), "r+") as file:
-            data = json.load(file)
-            
         
-        os.remove(os.path.join(space_folder,"ro-crate-metadata.json"))
-        with open(os.path.join(space_folder,"ro-crate-metadata.json"), 'w') as f:
-            json.dump(data, f, indent=4)
-        '''
+    repo = git.Repo(data[space_id]['storage_path'])
+    crate = ROCrate(space_folder)
+    print(crate.get_entities())
+        
+    for content_item in item.content:
+        crate.delete(crate.dereference(content_item))
+        del_path = os.path.join(space_folder,content_item)
+        os.remove(del_path)
+        
+    repo.git.add(all=True)
+    crate.write_crate(space_folder)
     return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
 
 @app.get('/spaces/{space_id}/content/{path_folder:path}',tags=["Content"])
@@ -324,6 +325,48 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
             if '.git' not in dirpath:
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
+
+@app.get('/spaces/{space_id}/git/status/', tags=["git"], status_code=200)
+def get_git_status(*,space_id: str = Path(None,description="space_id name")):
+    toreturn =[]
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    #function to pull data from remote if remote was provided and if pulse finds diff 
+    repo = git.Repo(space_folder)
+    print(repo.heads)
+    hcommit = repo.head.commit
+    diff_list = hcommit.diff()
+    difff_list = hcommit.diff(ignore_blank_lines=True, ignore_space_at_eol=True,create_patch=True)
+    print(diff_list, file=sys.stderr)
+    i = 0
+    for diff in diff_list:
+        toappend = {}
+        print(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
+        toappend["change_type"] = diff.change_type
+        # Returns true if it is a new file
+        print(diff.new_file) 
+        toappend["newfile"] = diff.new_file
+        # Print the old file path
+        print(diff.a_path)
+        toappend["a_path"] = diff.a_path
+        # Print the new file path. If the filename (or path) was changed it will differ
+        print(diff.b_path) 
+        toappend["b_path"] = diff.b_path
+        toappend["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")
+        # text of diff make unified diff first 
+        unified_diff = "--- "+diff.a_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
+        unified_diff = unified_diff+"+++ "+diff.b_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
+        tocleandiff = str(difff_list[i])
+        ofinterst = tocleandiff.split("---")[1].split("\ No newline at end of file")[0]
+        unified_diff = unified_diff + ofinterst
+        toappend['text'] = unified_diff
+        toreturn.append(toappend)
+        i+=1
+    return {'data':toreturn}
 
 @app.get('/plugins', tags=["plugins"])
 def get_al_plugin_info():
