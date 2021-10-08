@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Path, Query, HTTPException, status
 from typing import List, Optional, Set
 from pydantic import BaseModel, Field
-import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess
+import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess, stat
 from datetime import datetime
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
@@ -36,6 +36,11 @@ class DeleteContentModel(BaseModel):
     content: List[str] = Field(None, description = "List of files to delete , if full path given it will delete one file , of only file name given it will delete all entities in the system with file name.")
 
 ### define helper functions for the api ###
+
+def on_rm_error(func, path, exc_info):
+    #from: https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
+    os.chmod(path, stat.S_IWRITE)
+    os.unlink(path)
 
 async def check_path_availability(tocheckpath,space_id):
     if os.path.isdir(os.path.join(tocheckpath)) == False:
@@ -151,9 +156,21 @@ def delete_space(*,space_id: str = Path(None,description="space_id name")):
             try:
                 #delete the folder where the project was stored
                 shutil.rmtree(data[space_id]["storage_path"])
-                del data[space_id]
-            except Exception as e:
-                raise HTTPException(status_code=500, detail="Space delete failed") 
+            except:
+                try:
+                    for i in os.listdir(data[space_id]["storage_path"]):
+                        if i.endswith('git'):
+                            tmp = os.path.join(data[space_id]["storage_path"], i)
+                            # We want to unhide the .git folder before unlinking it.
+                            while True:
+                                subprocess.call(['attrib', '-H', tmp])
+                                break
+                            shutil.rmtree(tmp, onerror=on_rm_error)
+                    shutil.rmtree(data[space_id]["storage_path"])
+                except Exception as e:
+                    raise HTTPException(status_code=500, detail="Space delete failed {}".format(e)) 
+            del data[space_id]
+            
     with open(os.path.join(os.getcwd(),"app","projects.json"), 'w') as data_file:
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted space'}
@@ -178,22 +195,43 @@ async def add_space(*,item: SpaceModel):
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
         data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
     
-    #try and init a git repo and a rocrate
-    repo = git.Repo.init(os.path.join(tocheckpath))
-    #change current wd to init the rocrate
-    currentwd = os.getcwd()
-    #make project dir
-    os.mkdir(os.sep.join((tocheckpath,'project')))
-    os.chdir(os.sep.join((tocheckpath,'project')))
-    crate = ROCrate() 
-    crate.write_crate(os.sep.join((tocheckpath,'project')))
-    os.chdir(currentwd)
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
-        json.dump(data, file)
-        
-    repo.git.add(all=True)
-    repo.index.commit("initial commit")
-    repo.create_head('master')
+    if item.remote_url != None or item.remote_url != "String":
+        try:
+            git.Repo.clone_from(item.remote_url, os.path.join(tocheckpath))
+            repo = git.Repo(os.path.join(tocheckpath))
+            #check if rocratemetadata.json is present in git project
+            print("before file found", file=sys.stderr)
+            if os.path.isfile(os.path.join(tocheckpath, 'ro-crate-metadata.json')) == False and os.path.isfile(os.path.join(tocheckpath, 'project', 'ro-crate-metadata.json')) == False:
+                currentwd = os.getcwd()
+                os.mkdir(os.sep.join((tocheckpath,'project')))
+                os.chdir(os.sep.join((tocheckpath,'project')))
+                crate = ROCrate() 
+                crate.write_crate(os.sep.join((tocheckpath,'project')))
+                os.chdir(currentwd)
+                repo.git.add(all=True)
+                repo.index.commit("initial commit")
+                repo.create_head('master')
+            with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
+                    json.dump(data, file)
+            return {'Message':returnmessage, 'space_id': space_id}
+        except :
+            raise HTTPException(status_code=400, detail="Non valid git url given")
+    else:
+        #try and init a git repo and a rocrate
+        repo = git.Repo.init(os.path.join(tocheckpath))
+        #change current wd to init the rocrate
+        currentwd = os.getcwd()
+        #make project dir
+        os.mkdir(os.sep.join((tocheckpath,'project')))
+        os.chdir(os.sep.join((tocheckpath,'project')))
+        crate = ROCrate() 
+        crate.write_crate(os.sep.join((tocheckpath,'project')))
+        os.chdir(currentwd)
+        with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
+            json.dump(data, file)
+        repo.git.add(all=True)
+        repo.index.commit("initial commit")
+        repo.create_head('master')
     return {'Message':returnmessage, 'space_id': space_id}
 
 @app.put('/spaces/{space_id}/',tags=["Spaces"], status_code=202)
@@ -403,6 +441,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
         try:
             origin = repo.remote(name='origin')
             origin.push()
+            return {"data":"{} successfull".format(str(command))}
         except Exception as e:
             raise HTTPException(status_code=500, detail=e)
     
@@ -410,6 +449,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
         try:
             origin = repo.remote(name='origin')
             origin.pull()
+            return {"data":"{} successfull".format(str(command))}
         except Exception as e:
             raise HTTPException(status_code=500, detail=e)
     
