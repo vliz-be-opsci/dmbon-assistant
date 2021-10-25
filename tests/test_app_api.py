@@ -18,13 +18,13 @@ def test_read_main():
 
 # get_all_profiles     : status_code 200 
 def test_get_all_profiles():
-    response = client.get("/profiles")
+    response = client.get("/profiles/")
     assert response.status_code == 200
 
 # post_profile_success : status_code 201 , right display of values , test if profile is in get all profiles
 def test_post_profile_success():
     response = client.post(
-        "/profiles/test",
+        "/profiles/",
         json={
             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
             "description": "string",
@@ -32,40 +32,45 @@ def test_post_profile_success():
             }
     )
     assert response.status_code == 201
-    assert response.json() == {"Message": "Profile added"}
-    response = client.get("/profiles/test")
+    totestprofile = response.json()
+    totestprofile = totestprofile['profile_id']
+    print(totestprofile, file=sys.stderr)
+    response = client.get("/profiles/"+str(totestprofile)+'/')
     assert response.json() == {
                             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
                             "description": "string",
                             "url_ro_profile": "string"
                             }
-    response = client.delete("/profiles/test")
+    response = client.delete("/profiles/"+str(totestprofile)+'/')
 
 # post_profile_fail    : status_code 400 , missing desciption or url roprofile
 def test_post_profile_fail():
     response = client.post(
-            "/profiles/test",
+            "/profiles/",
             json={
                 }
         )
     assert response.status_code == 400
     response = client.delete("/profiles/test")
-
 # delete_fail          : status_code 400 , check if no profile was deleted with get profiles
 def test_delete_profile_fail():
-    response = client.delete("/profiles/fail")
+    response = client.delete("/profiles/fbidw/")
     assert response.status_code == 400 or response.status_code == 500
 
 # put_success          : status_code 202 , check if desciption/logo/url_ro_profile have changed 
 def test_put_success():
-    client.post("/profiles/test",
+    response = client.post("/profiles/",
         json={
             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
             "description": "string",
             "url_ro_profile": "string"
             }
     )
-    response = client.put("/profiles/test",
+    
+    totestprofile = response.json()
+    totestprofile = totestprofile['profile_id']
+    
+    response = client.put("/profiles/"+str(totestprofile)+'/',
         json={
             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
             "description": "diff string",
@@ -73,53 +78,58 @@ def test_put_success():
             }
         )
     assert response.status_code == 202
-    response = client.get("/profiles/test")
+    response = client.get("/profiles/"+str(totestprofile)+'/')
     assert response.json() == {
                                 "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
                                 "description": "diff string",
                                 "url_ro_profile": "diff string"
                               }
-    client.delete("/profiles/test")
+    client.delete("/profiles/"+str(totestprofile)+'/')
 
 # put_fail             : status_code 400 , check if profile hasn't been changed
 def test_put_fail():
-    client.post("/profiles/test",
+    response = client.post("/profiles/",
         json={
             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
             "description": "string",
             "url_ro_profile": "string"
             }
     )
-    response = client.put("/profiles/test",
+    totestprofile = response.json()
+    totestprofile = totestprofile['profile_id']
+    response = client.put("/profiles/"+ str(totestprofile)+'/',
         json={"test":"lol"
             }
         )
     assert response.status_code == 400
-    response = client.get("/profiles/test")
+    response = client.get("/profiles/"+ str(totestprofile)+'/')
     assert response.json() == {
                             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
                             "description": "string",
                             "url_ro_profile": "string"
                             }
-    client.delete("/profiles/test")
+    client.delete("/profiles/"+ str(totestprofile)+'/')
 
 # get_profile_success  : status_code 200 , check if profile is indeed found
 def test_get_success():
-    client.post("/profiles/test",
+    response = client.post("/profiles/",
         json={
             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
             "description": "string",
             "url_ro_profile": "string"
             }
     )
-    response = client.get("/profiles/test")
+    totestprofile = response.json()
+    totestprofile = totestprofile['profile_id']
+    
+    response = client.get("/profiles/"+str(totestprofile)+'/')
     assert response.status_code == 200
     assert response.json() == {
                             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
                             "description": "string",
                             "url_ro_profile": "string"
                             }
-    client.delete("/profiles/test")
+    client.delete("/profiles/"+str(totestprofile)+'/')
 
 # get_profile_fail     : status_code 400 
 def test_get_fail():
@@ -128,15 +138,19 @@ def test_get_fail():
 
 # delete_success       : status_code 202 , check if profile is deleted
 def test_delete_profile_success():
-    client.post(
-        "/profiles/test",
+    response = client.post(
+        "/profiles/",
         json={
             "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
             "description": "string",
             "url_ro_profile": "string"
             }
     )
-    response = client.delete("/profiles/test")
+    
+    totestprofile = response.json()
+    totestprofile = totestprofile['profile_id']
+    
+    response = client.delete("/profiles/"+str(totestprofile)+'/')
     assert response.status_code == 202
 
 ### spaces ###
@@ -149,48 +163,56 @@ def test_get_all_spaces():
 # post_space_success   : status_code 201 , right display of storage path and ro-profile 
 def test_post_space_success():
     testdir = os.getcwd()
-    response = client.post("/spaces/test",
+    response = client.post("/spaces/",
         json={
             "storage_path": str(testdir),
-            "RO_profile": "new"
+            "RO_profile": "test_profile_git",
+            "remote_url": 'string'
             }
     )
     assert response.status_code == 201
-    response = client.get("/spaces/test")
+    
+    totestprofile = response.json()
+    totestprofile = totestprofile['space_id']
+    
+    response = client.get("/spaces/"+str(totestprofile)+"/")
     assert response.json() == {
-                            "storage_path": os.path.join(str(testdir),'test'),
-                            "RO_profile": "new"
+                            "storage_path": os.path.join(str(testdir),str(totestprofile)),
+                            "RO_profile": "test_profile_git"
                             }
-    client.delete("/spaces/test")
+    client.delete("/spaces/"+str(totestprofile)+'/')
 
 # post_space_fail     : status_code 400
 def test_post_space_fail():
     testdir = os.getcwd()
-    response = client.post("/spaces/test",
+    response = client.post("/spaces/",
         json={
             "storage_path": str(testdir),
             "RO_profile": "wdfrgveuihwdvfuihjl"
             }
     )
     assert response.status_code == 400
-    os.rmdir(os.path.join(testdir,"test"))    
+    #os.rmdir(os.path.join(testdir,"test"))    
 
 # get_space_success   : status_code 200
 def test_get_all_spaces():
     testdir = os.getcwd()
-    client.post("/spaces/test",
+    response = client.post("/spaces/",
         json={
             "storage_path": str(testdir),
-            "RO_profile": "new"
+            "RO_profile": "test_profile_git",
+            "remote_url": 'string'
             }
     )
-    response = client.get("/spaces/test")
+    totestprofile = response.json()
+    totestprofile = totestprofile['space_id']
+    response = client.get("/spaces/"+str(totestprofile)+'/')
     assert response.status_code == 200
     assert response.json() == {
-                            "storage_path": os.path.join(str(testdir),'test'),
-                            "RO_profile": "new"
+                            "storage_path": os.path.join(str(testdir),str(totestprofile)),
+                            "RO_profile": "test_profile_git"
                             }
-    client.delete("/spaces/test")
+    client.delete("/spaces/"+str(totestprofile)+"/")
 
 # get_space_fail      : status_code 400
 def test_get_space_fail():
@@ -200,42 +222,53 @@ def test_get_space_fail():
 # put_space_success   : status_code 202
 def test_put_space_success():
     testdir = os.getcwd()
-    client.post("/spaces/test",
+    response = client.post("/spaces/",
         json={
             "storage_path": str(testdir),
-            "RO_profile": "new"
+            "RO_profile": "test_profile_git",
+            "remote_url": 'string'
             }
     )
-    response = client.put("/spaces/test",
+    
+    totestprofile = response.json()
+    totestprofile = totestprofile['space_id']
+    
+    response = client.put("/spaces/"+str(totestprofile)+"/",
         json={
             "storage_path": str(testdir),
-            "RO_profile": "new2"
+            "RO_profile": "ARMS_Descriptor",
+            "remote_url": 'string'
             }
     )
     assert response.status_code == 202
-    response = client.get("/spaces/test")
+    response = client.get("/spaces/"+str(totestprofile)+'/')
     assert response.json() == {
-                            "storage_path": os.path.join(str(testdir),'test'),
-                            "RO_profile": "new2"
+                            "storage_path": os.path.join(str(testdir),str(totestprofile)),
+                            "RO_profile": "ARMS_Descriptor"
                             }
-    client.delete("/spaces/test")
+    client.delete("/spaces/"+str(totestprofile)+'/')
 
 # put_space_fail    : status_code 400
 def test_put_space_fail():
     testdir = os.getcwd()
-    client.post("/spaces/test",
+    response = client.post("/spaces/",
         json={
             "storage_path": str(testdir),
-            "RO_profile": "new"
+            "RO_profile": "ARMS_Descriptor",
+            "remote_url": 'string'
             }
     )
-    response = client.put("/spaces/test",
+    
+    totestprofile = response.json()
+    totestprofile = totestprofile['space_id']
+    
+    response = client.put("/spaces/"+str(totestprofile)+'/',
         json={
             "storage_path": str(testdir),
             "RO_profile": "nefqdsfqsdregq"
             }
     )
     assert response.status_code == 400
-    client.delete("/spaces/test")
+    client.delete("/spaces/"+str(totestprofile)+'/')
 
 ### content ###

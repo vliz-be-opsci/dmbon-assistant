@@ -4,4 +4,11 @@ services:
     build: .
     ports:
        - 8081:80
+    stage: test
+    script:
+      - pytest --junitxml=report.xml
+    artifacts:
+      when: always
+      reports:
+        junit: report.xml
 

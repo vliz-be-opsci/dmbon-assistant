@@ -195,7 +195,7 @@ async def add_space(*,item: SpaceModel):
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
         data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
     
-    if item.remote_url != None or item.remote_url != "String":
+    if item.remote_url != None and item.remote_url != "string":
         try:
             git.Repo.clone_from(item.remote_url, os.path.join(tocheckpath))
             repo = git.Repo(os.path.join(tocheckpath))
