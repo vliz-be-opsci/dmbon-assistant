@@ -1,2 +1,4 @@
 venv/
 app/projects.json
+*.pyc
+app/projects.json
