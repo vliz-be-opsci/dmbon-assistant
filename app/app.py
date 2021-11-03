@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Path, Query, HTTPException, status
+from fastapi.openapi.utils import get_openapi
 from typing import List, Optional, Set
 from pydantic import BaseModel, Field
 import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess, stat
@@ -7,11 +8,39 @@ from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
 from collections import MutableMapping
-
-app = FastAPI(
-    title = 'RO-Crate-API',
-    description='RO-Crate manager Rest-API'
+from fastapi.staticfiles import StaticFiles
+from fastapi.openapi.docs import (
+    get_redoc_html,
+    get_swagger_ui_html,
+    get_swagger_ui_oauth2_redirect_html,
 )
+
+app = FastAPI(docs_url=None, redoc_url=None)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " - Swagger UI",
+        oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+        swagger_js_url="/static/swagger-ui-bundle.js",
+        swagger_css_url="/static/swagger-ui.css",
+    )
+
+
+@app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+async def swagger_ui_redirect():
+    return get_swagger_ui_oauth2_redirect_html()
+
+
+@app.get("/redoc", include_in_schema=False)
+async def redoc_html():
+    return get_redoc_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " - ReDoc",
+        redoc_js_url="/static/redoc.standalone.js",
+    )
 
 ### define class profiles for the api ###
 
@@ -28,6 +57,15 @@ class SpaceModel(BaseModel):
 class FileModel(BaseModel):
     name     : str = Field(None, description = "Name of the file that will be added, can be filepath")
     content  : str = Field(None, description = "Filepath that needs to be added to the space, can also be a directory or url")
+    
+class AnnotationModel(BaseModel):
+    URI_predicate_name : str = Field(None, description = "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates.\
+                                                for more info about the allowed predicates, use TODO: insert api call for predicates here.")
+    value    : str = Field(None, description = "Value linked to the URI predicate name chosen")
+
+class AnnotationsModel(BaseModel):
+    Annotations: List[AnnotationModel] = Field(None, description = "List of annotations to add to resource. \
+                                              for more info about the allowed annotation predicates, use TODO: insert api call for predicates here.")
 
 class ContentModel(BaseModel):
     content: List[FileModel] = Field(None, description = "List of files that need to be added, this list can also contain directories")
@@ -36,6 +74,14 @@ class DeleteContentModel(BaseModel):
     content: List[str] = Field(None, description = "List of files to delete , if full path given it will delete one file , of only file name given it will delete all entities in the system with file name.")
 
 ### define helper functions for the api ###
+
+def check_space_name(spacename):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+        data = json.load(file)
+    for space, info in data.items():
+        if spacename == space:
+            return True
+    return False
 
 def on_rm_error(func, path, exc_info):
     #from: https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
@@ -141,13 +187,16 @@ def get_all_spaces():
 
 @app.get('/spaces/{space_id}/',tags=["Spaces"])
 def get_space_info(*,space_id: str = Path(None,description="space_id name")):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
-        data = json.load(file)
-        try:
-            toreturn = data[space_id]
-            return toreturn
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
+    if check_space_name(space_id):
+        with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+            data = json.load(file)
+            try:
+                toreturn = data[space_id]
+                return toreturn
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=e)
+    else:
+        raise HTTPException(status_code=404, detail="Space not found")
 
 @app.delete('/spaces/{space_id}/',tags=["Spaces"], status_code=202)
 def delete_space(*,space_id: str = Path(None,description="space_id name")):
@@ -364,7 +413,7 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 
-@app.get('/spaces/{space_id}/git/status/', tags=["git"], status_code=200)
+@app.get('/spaces/{space_id}/git/status/', tags=["Git"], status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -406,7 +455,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         i+=1
     return {'data':toreturn}
 
-@app.post('/spaces/{space_id}/git/{command}}', tags=["git"], status_code=200)
+@app.post('/spaces/{space_id}/git/{command}}', tags=["Git"], status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -453,8 +502,130 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
         except Exception as e:
             raise HTTPException(status_code=500, detail=e)
     
-    
+### space resource annotation ###
 
-@app.get('/plugins', tags=["plugins"])
+@app.get('/spaces/{space_id}/annotation/', tags=["Annotation"], status_code=200)
+def get_all_resources_annotation(*,space_id: str = Path(None,description="space_id name")):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    #read in ROCrate metadata file
+    with open(os.path.join(space_folder,'project','ro-crate-metadata.json'), "r+") as projectfile:
+        #print(projectfile)
+        data = json.load(projectfile)
+        all_files = []
+        #get all files from the projectfile
+        for dictionaries in data["@graph"]:
+            for item, value in dictionaries.items():
+                if item == "@id":
+                    all_files.append(value)
+        print(all_files)
+        #foreach file get all the attributes
+        files_attributes = {}
+        for file in all_files:
+            if file != "ro-crate-metadata.json" and file != './':
+                if "." in file:
+                    files_attributes[file]= {}
+                    for dictionaries in data["@graph"]:
+                        for item, value in dictionaries.items():
+                            if item == "@id" and value==file:
+                                for item_save, value_save in dictionaries.items():
+                                    files_attributes[file][item_save] = value_save
+    return {"data":files_attributes}
+
+@app.get('/spaces/{space_id}/annotation/{path_folder:path}', tags=["Annotation"], status_code=200)
+def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path or file name to the file")):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    #read in ROCrate metadata file
+    with open(os.path.join(space_folder,'project','ro-crate-metadata.json'), "r+") as projectfile:
+        #print(projectfile)
+        data = json.load(projectfile)
+        all_files = []
+        #get all files from the projectfile
+        for dictionaries in data["@graph"]:
+            for item, value in dictionaries.items():
+                if item == "@id":
+                    all_files.append(value)
+        print(all_files)
+        #foreach file get all the attributes
+        files_attributes = {}
+        for file in all_files:
+            if file != "ro-crate-metadata.json" and file != './' and file == path_folder:
+                if "." in file:
+                    files_attributes[file]= {}
+                    for dictionaries in data["@graph"]:
+                        for item, value in dictionaries.items():
+                            if item == "@id" and value==file:
+                                for item_save, value_save in dictionaries.items():
+                                    files_attributes[file][item_save] = value_save
+                return {"data":files_attributes}
+        raise HTTPException(status_code=404, detail="Resource not found.")
+            
+
+#TODO : Add content modal for the annotation of the resources
+
+@app.post('/spaces/{space_id}/annotation/{path_folder:path}}', tags=["Annotation"], status_code=200)
+def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
+    return {"message":"TODO"}
+
+@app.post('/spaces/{space_id}/annotation/}', tags=["Annotation"], status_code=200)
+def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+    return {"message":"TODO"}
+
+@app.put('/spaces/{space_id}/annotation/{path_folder:path}}', tags=["Annotation"], status_code=200)
+def update_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
+    return {"message":"TODO"}
+
+@app.put('/spaces/{space_id}/annotation/}', tags=["Annotation"], status_code=200)
+def update_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+    return {"message":"TODO"}
+
+@app.delete('/spaces/{space_id}/annotation/{path_folder:path}}', tags=["Annotation"], status_code=200)
+def delete_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
+    return {"message":"TODO"}
+
+@app.delete('/spaces/{space_id}/annotation/}', tags=["Annotation"], status_code=200)
+def delete_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+    return {"message":"TODO"}
+
+### statistics ###
+
+
+### predicate suggestion ###
+
+
+
+### Plugins ###
+
+@app.get('/plugins', tags=["Plugins"])
 def get_al_plugin_info():
     return {'data': 'TODO'}
+
+
+### Custom API look ###
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="RO-Crate maker API",
+        version="0.0.1",
+        description='RO-Crate manager Rest-API',
+        routes=app.routes,
+    )
+    openapi_schema["info"]["x-logo"] = {
+        "url": "https://biocompute-objects.github.io/bco-ro-crate/assets/img/biocomputeobject-rocrate.svg?20201014"
+    }
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi

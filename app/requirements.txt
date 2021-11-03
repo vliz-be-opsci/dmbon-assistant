@@ -11,3 +11,4 @@ GitPython
 datetime
 pytest
 uuid
+aiofiles

@@ -272,3 +272,17 @@ def test_put_space_fail():
     client.delete("/spaces/"+str(totestprofile)+'/')
 
 ### content ###
+
+# get content
+
+# post content
+
+# delete content
+
+# get content from a folder
+
+### git ###
+
+# get git status
+
+# post git commands (push, pull, commit)
