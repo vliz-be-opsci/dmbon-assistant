@@ -76,6 +76,17 @@ class DeleteContentModel(BaseModel):
 
 ### define helper functions for the api ###
 
+#TODO: function that reads into the roprofile rocrate metadata and finds the conforms to part ;
+#  1: gets the shacl or other constraint files.
+#  2: reciprocly go through all rocrate conform to untill all contraints are gathered. 
+#  3: combines all the contraints into 1 contraint file and return this in a folder that is a sibling of the project folder.
+
+#TODO: function that searches for the typechanger for mimetypes when adding new files to the rocrate , be it either from url or from local system
+
+#TODO: figure out how to get the mimetype of url resources added (maybe through name?)
+
+#TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
+
 def check_space_name(spacename):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
