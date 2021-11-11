@@ -1,3 +1,4 @@
+from requests import exceptions
 from fastapi import FastAPI, Path, Query, HTTPException, status
 from fastapi.openapi.utils import get_openapi
 from typing import List, Optional, Set
@@ -14,7 +15,8 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
-import shacl_helper as shclh
+# import shacl_helper as shclh
+import app.ro_crate_reader_functions as ro_read
 
 app = FastAPI(docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -167,6 +169,16 @@ def add_profile(*,item: ProfileModel):
         if profile_id in data.keys():
             raise HTTPException(status_code=400, detail="Profile already exists")
         if item.logo != None or item.description != None or item.url_ro_profile != None:
+            
+            #add check for the url of the profile:
+            try:
+                tocheckrocrate = ro_read.rocrate_helper(item.url_ro_profile)
+                tocheckrocrate.get_all_metadata_files()
+                tocheckrocrate.get_ttl_files()
+                print(tocheckrocrate.ttlinfo)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail="error : {}".format(e))
+            
             data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
             with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
                 json.dump(data, file)   
@@ -254,7 +266,17 @@ async def add_space(*,item: SpaceModel):
             print(response.status, file=sys.stderr)
             if response.status != 200:
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
+            if response.status == 200:
+                os.mkdir(os.sep.join((tocheckpath,'constraints')))
+                urlprofile = (await response.json())['url_ro_profile']
+                print('json file profile:  ',urlprofile, file=sys.stderr)
+                secondtest = ro_read.rocrate_helper(urlprofile)
+                secondtest.get_all_metadata_files()
+                secondtest.get_ttl_files()
+                with open(os.path.join(tocheckpath,'constraints','all_contraints.ttl'), 'w') as file:  # Use file to refer to the file object
+                    file.write(secondtest.ttlinfo)
         data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
+        
     
     if item.remote_url != None and item.remote_url != "string":
         try:

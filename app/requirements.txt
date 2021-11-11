@@ -12,3 +12,7 @@ datetime
 pytest
 uuid
 aiofiles
+pyshacl
+unidiff
+#py-vocab-search
+-e git+ssh://gitlab.vliz.be/datac/openscience/py-vocab-search@master#egg=py-vocab-search
