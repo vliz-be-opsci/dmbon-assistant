@@ -89,7 +89,7 @@ class rocrate_helper:
         self.ttlinfo = ""
         for i in self.all_metadata:
             for part in i["data"]["@graph"]:
-                if ".ttl" in part["@id"]:
+                if ".ttl" in part["@id"]:  #TODO: go through graph of the file itself and see if the graph declares itself as a shacl file
                     togeturl = i["location"].replace("ro-crate-metadata.json",part['@id'])
                     r = requests.get(url = togeturl)
                     self.ttlinfo = self.ttlinfo + r.text
