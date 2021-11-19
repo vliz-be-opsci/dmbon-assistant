@@ -11,9 +11,13 @@ GitPython
 datetime
 pytest
 uuid
+<<<<<<< HEAD
 aiofiles
 pyshacl
 unidiff
 importLib
 #py-vocab-search
 #-e git+ssh://gitlab.vliz.be/datac/openscience/py-vocab-search@master#egg=py-vocab-search
+=======
+aiofiles
+>>>>>>> parent of 2ed9af5 (added support for profiles coming from git urls with ttl files in them)
