@@ -1,9 +1,9 @@
-from requests import exceptions
-from fastapi import FastAPI, Path, Query, HTTPException, status, APIRouter, Depends
+from fastapi import FastAPI, Path, Query, HTTPException, status, APIRouter
 from fastapi.openapi.utils import get_openapi
 from typing import List, Optional, Set
 from pydantic import BaseModel, Field
 import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess, stat
+from importlib import import_module
 from datetime import datetime
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
@@ -15,11 +15,12 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
+import app.ro_crate_reader_functions as ro_read
+#import shacl_helper as shclh
 
-directoryname = os.path.dirname(os.path.abspath(__file__)).split(os.path.sep)[-1]
 router = APIRouter(
-    prefix="/"+str(directoryname)+"/"+str(os.path.abspath(__file__).split(os.path.sep)[-1].split(".")[0]),
-    tags=[directoryname],
+    prefix="/content",
+    tags=["Content"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -84,7 +85,7 @@ async def check_path_availability(tocheckpath,space_id):
     if os.path.isdir(os.path.join(tocheckpath)) == False:
         raise HTTPException(status_code=400, detail="Given storage path does not exist on local storage")
     #check if given path is already used by another project
-    toposturl = 'http://localhost:6656/spaces' #TODO : figure out how to not hardcode this <---
+    toposturl = 'http://localhost:6656/apiv1/spaces' #TODO : figure out how to not hardcode this <---
     async with ClientSession() as session:
         response = await session.request(method='GET', url=toposturl)
         text = await response.content.read()
@@ -107,13 +108,77 @@ async def check_path_availability(tocheckpath,space_id):
 
 ### api paths ###
 
-@router.get('/',tags=["Spaces"])
+### api paths ###
+
+
+
+@router.get('/profiles/')
+def get_all_profiles_info():
+    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
+        data = json.load(file)
+        return data
+
+@router.get('/profiles/{profile_id}/')
+def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
+    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            toreturn = data[profile_id]
+            return toreturn
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="profile not found")
+
+@router.delete('/profiles/{profile_id}/', status_code=202)
+def delete_profile(profile_id: str = Path(None,description="profile_id name")):
+    with open(os.path.join(os.getcwd(),"app","workflows.json")) as data_file:
+            data = json.load(data_file)
+            try:
+                del data[profile_id]
+            except Exception as e:
+                raise HTTPException(status_code=500, detail="Data delete failed")
+    with open(os.path.join(os.getcwd(),"app","workflows.json"), 'w') as data_file:
+        data = json.dump(data, data_file)    
+        return {'message':'successfully deleted profile'}
+
+@router.post('/profiles/', status_code=201)
+def add_profile(*,item: ProfileModel):
+    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
+        data = json.load(file)
+        profile_id = uuid.uuid4().hex
+        if profile_id in data.keys():
+            raise HTTPException(status_code=400, detail="Profile already exists")
+        if item.logo != None or item.description != None or item.url_ro_profile != None:
+            data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
+            with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
+                json.dump(data, file)   
+            return {'Message':'Profile added',"profile_id": profile_id}
+        else:
+            keys = dict(item).keys()
+            raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
+
+@router.put('/profiles/{profile_id}/', status_code=202)
+def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
+    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
+        data = json.load(file)
+    for profile in data.keys():
+        if profile_id == profile:
+            if item.logo != None or item.description != None or item.url_ro_profile != None:
+                data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile} 
+                with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
+                    json.dump(data, file)  
+                    return {'Data':'Update successfull'} 
+            else:
+                keys = dict(item).keys()
+                raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
+    raise HTTPException(status_code=404, detail="profile not found")
+
+@router.get('/spaces/')
 def get_all_spaces():
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
         return data
 
-@router.get('/{space_id}/',tags=["Spaces"])
+@router.get('/spaces/{space_id}/')
 def get_space_info(*,space_id: str = Path(None,description="space_id name")):
     if check_space_name(space_id):
         with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -126,7 +191,7 @@ def get_space_info(*,space_id: str = Path(None,description="space_id name")):
     else:
         raise HTTPException(status_code=404, detail="Space not found")
 
-@router.delete('/{space_id}/',tags=["Spaces"], status_code=202)
+@router.delete('/spaces/{space_id}/', status_code=202)
 def delete_space(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json")) as data_file:
             data = json.load(data_file)
@@ -152,7 +217,7 @@ def delete_space(*,space_id: str = Path(None,description="space_id name")):
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted space'}
 
-@router.post('/',tags=["Spaces"], status_code=201)
+@router.post('/spaces/', status_code=201)
 async def add_space(*,item: SpaceModel):
     tocheckpath = str(item.storage_path)
     returnmessage = "Space created in folder: " + str(os.path.join(tocheckpath))
@@ -170,17 +235,7 @@ async def add_space(*,item: SpaceModel):
             print(response.status, file=sys.stderr)
             if response.status != 200:
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
-            if response.status == 200:
-                os.mkdir(os.sep.join((tocheckpath,'constraints')))
-                urlprofile = (await response.json())['url_ro_profile']
-                print('json file profile:  ',urlprofile, file=sys.stderr)
-                secondtest = ro_read.rocrate_helper(urlprofile)
-                secondtest.get_all_metadata_files()
-                secondtest.get_ttl_files()
-                with open(os.path.join(tocheckpath,'constraints','all_contraints.ttl'), 'w') as file:  # Use file to refer to the file object
-                    file.write(secondtest.ttlinfo)
         data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
-        
     
     if item.remote_url != None and item.remote_url != "string":
         try:
@@ -221,7 +276,7 @@ async def add_space(*,item: SpaceModel):
         repo.create_head('master')
     return {'Message':returnmessage, 'space_id': space_id}
 
-@router.put('/{space_id}/',tags=["Spaces"], status_code=202)
+@router.put('/spaces/{space_id}/', status_code=202)
 async def update_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
     tocheckpath = str(item.storage_path)
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
@@ -240,7 +295,7 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
             return {'Data':'Update successfull'} 
     raise HTTPException(status_code=404, detail="Space not found")
 
-@router.get('/{space_id}/content/',tags=["Content"])
+@router.get('/spaces/{space_id}/content/')
 def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -256,7 +311,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 
-@router.post('/{space_id}/content/',tags=["Content"], status_code=202)
+@router.post('/spaces/{space_id}/content/', status_code=202)
 def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -312,7 +367,7 @@ def add_new_content(*,space_id: str = Path(None,description="space_id name"), it
 
     return {'Data':'all content successfully added to space'}
 
-@router.delete('/{space_id}/content/',tags=["Content"], status_code=202)
+@router.delete('/spaces/{space_id}/content/', status_code=202)
 def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -334,7 +389,7 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
     repo.git.add(all=True)
     return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
 
-@router.get('/{space_id}/content/{path_folder:path}',tags=["Content"])
+@router.get('/spaces/{space_id}/content/{path_folder:path}')
 def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -351,7 +406,7 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 
-@router.get('/{space_id}/git/status/', tags=["Git"], status_code=200)
+@router.get('/spaces/{space_id}/git/status/', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -393,7 +448,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         i+=1
     return {'data':toreturn}
 
-@router.post('/{space_id}/git/{command}}', tags=["Git"], status_code=200)
+@router.post('/spaces/{space_id}/git/{command}}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -442,7 +497,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
     
 ### space resource annotation ###
 
-@router.get('/{space_id}/annotation/', tags=["Annotation"], status_code=200)
+@router.get('/spaces/{space_id}/annotation/', status_code=200)
 def get_all_resources_annotation(*,space_id: str = Path(None,description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -474,7 +529,7 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
                                     files_attributes[file][item_save] = value_save
     return {"data":files_attributes}
 
-@router.get('/{space_id}/annotation/{path_folder:path}', tags=["Annotation"], status_code=200)
+@router.get('/spaces/{space_id}/annotation/{path_folder:path}', status_code=200)
 def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path or file name to the file")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -510,27 +565,39 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
 
 #TODO : Add content modal for the annotation of the resources
 
-@router.post('/{space_id}/annotation/{path_folder:path}', tags=["Annotation"], status_code=200)
+@router.post('/spaces/{space_id}/annotation/{path_folder:path}}', status_code=200)
 def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.post('/{space_id}/annotation/', tags=["Annotation"], status_code=200)
+@router.post('/spaces/{space_id}/annotation/}', status_code=200)
 def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
-    
     return {"message":"TODO"}
 
-@router.put('/{space_id}/annotation/{path_folder:path}', tags=["Annotation"], status_code=200)
+@router.put('/spaces/{space_id}/annotation/{path_folder:path}}', status_code=200)
 def update_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.patch('/{space_id}/annotation/', tags=["Annotation"], status_code=200)
+@router.put('/spaces/{space_id}/annotation/}', status_code=200)
 def update_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.delete('/{space_id}/annotation/{path_folder:path}', tags=["Annotation"], status_code=200)
+@router.delete('/spaces/{space_id}/annotation/{path_folder:path}}', status_code=200)
 def delete_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.delete('/{space_id}/annotation/', tags=["Annotation"], status_code=200)
+@router.delete('/spaces/{space_id}/annotation/}', status_code=200)
 def delete_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
+
+### statistics ###
+
+
+### predicate suggestion ###
+
+
+
+### Plugins ###
+
+@router.get('/plugins', tags=["Plugins"])
+def get_al_plugin_info():
+    return {'data': 'TODO'}

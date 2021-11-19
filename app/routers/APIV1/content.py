@@ -15,11 +15,10 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
-import app.ro_crate_reader_functions as ro_read
 
 router = APIRouter(
-    prefix="",
-    tags=["Profiles"],
+    prefix="/content",
+    tags=["Content"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -108,69 +107,112 @@ async def check_path_availability(tocheckpath,space_id):
 ### api paths ###
 
 @router.get('/')
-def get_all_profiles_info():
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
-        data = json.load(file)
-        return data
-
-@router.get('/{profile_id}/')
-def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
+def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
-            toreturn = data[profile_id]
-            return toreturn
+            toreturn = data[space_id]
+            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
         except Exception as e:
-            raise HTTPException(status_code=404, detail="profile not found")
+            raise HTTPException(status_code=404, detail="Space not found")
+    toreturn = []
+    for (dirpath, dirnames, filenames) in os.walk(space_folder):
+        for filen in filenames:
+            if '.git' not in dirpath:
+                toreturn.append({"file":filen,"folder":dirpath})
+    return {'Data':toreturn}
 
-@router.delete('/{profile_id}/', status_code=202)
-def delete_profile(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","workflows.json")) as data_file:
-            data = json.load(data_file)
-            try:
-                del data[profile_id]
-            except Exception as e:
-                raise HTTPException(status_code=500, detail="Data delete failed")
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), 'w') as data_file:
-        data = json.dump(data, data_file)    
-        return {'message':'successfully deleted profile'}
-
-@router.post('/', status_code=201)
-def add_profile(*,item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
+@router.post('/', status_code=202)
+def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
-        profile_id = uuid.uuid4().hex
-        if profile_id in data.keys():
-            raise HTTPException(status_code=400, detail="Profile already exists")
-        if item.logo != None or item.description != None or item.url_ro_profile != None:
-            #add check for the url of the profile:
+
+    try:
+        toreturn = data[space_id] 
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Space not found")
+
+    if path_folder == None:
+        try:
+            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project'))) 
+        except:
+            raise HTTPException(status_code=400, detail="Directory could not be made")
+    else:
+        space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
+        try:
+            pads(space_folder).mkdir(parents=True, exist_ok=True)
+        except:
+            raise HTTPException(status_code=400, detail="Directory could not be made")
+
+    datalog = []
+    crate = ROCrate(space_folder)
+    repo = git.Repo(data[space_id]['storage_path'])
+    for content_item in item.content:
+        #check if file or url are present
+        if (content_item.content == None and content_item.name == None):
+            content_present = False
+        #check if only url prsent:
+        if ('.html' in content_item.content or 'http' in content_item.content):
             try:
-                tocheckrocrate = ro_read.rocrate_helper(item.url_ro_profile)
-                tocheckrocrate.get_all_metadata_files()
-                tocheckrocrate.get_ttl_files()
-                print(tocheckrocrate.ttlinfo)
+                crate.add_file(content_item.content, fetch_remote = False)
             except Exception as e:
-                raise HTTPException(status_code=500, detail="error : {}".format(e))
-            data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
-            with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
-                json.dump(data, file)   
-            return {'Message':'Profile added',"profile_id": profile_id}
+                datalog.append({content_item.content:e})
+        #check if content_item.content is a directory
+        if os.path.isdir(content_item.content):
+            try:
+                crate.add_directory(content_item.content,str(os.sep.join((space_folder,os.path.basename(os.path.normpath(content_item.content))))))
+            except Exception as e:
+                datalog.append({content_item.content:e})
         else:
-            keys = dict(item).keys()
-            raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
+            try:
+                print("trying to add {}".format(content_item.content), file=sys.stderr)
+                crate.add_file(content_item.content)
+            except Exception as e:
+                datalog.append({content_item.content:e})
+    
 
-@router.put('/{profile_id}/', status_code=202)
-def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
+    crate.write_crate(space_folder)
+    repo.git.add(all=True)
+    if len(datalog) > 0:
+        raise HTTPException(status_code=400, detail=datalog)
+
+    return {'Data':'all content successfully added to space'}
+
+@router.delete('/', status_code=202)
+def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
-    for profile in data.keys():
-        if profile_id == profile:
-            if item.logo != None or item.description != None or item.url_ro_profile != None:
-                data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile} 
-                with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
-                    json.dump(data, file)  
-                    return {'Data':'Update successfull'} 
-            else:
-                keys = dict(item).keys()
-                raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
-    raise HTTPException(status_code=404, detail="profile not found")
+        try:
+            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+        
+    repo = git.Repo(data[space_id]['storage_path'])
+    crate = ROCrate(space_folder)
+    print(crate.get_entities())
+        
+    for content_item in item.content:
+        crate.delete(crate.dereference(content_item))
+        del_path = os.path.join(space_folder,content_item)
+        os.remove(del_path)
+
+    crate.write_crate(space_folder)
+    repo.git.add(all=True)
+    return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
+
+@router.get('/{path_folder:path}')
+def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            toreturn = data[space_id]
+            allpaths = path_folder
+            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    toreturn = []
+    for (dirpath, dirnames, filenames) in os.walk(space_folder):
+        for filen in filenames:
+            if '.git' not in dirpath:
+                toreturn.append({"file":filen,"folder":dirpath})
+    return {'Data':toreturn}

@@ -15,11 +15,10 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
-import app.ro_crate_reader_functions as ro_read
 
 router = APIRouter(
-    prefix="",
-    tags=["Profiles"],
+    prefix="/git",
+    tags=["Git"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -107,70 +106,91 @@ async def check_path_availability(tocheckpath,space_id):
 
 ### api paths ###
 
-@router.get('/')
-def get_all_profiles_info():
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
-        data = json.load(file)
-        return data
-
-@router.get('/{profile_id}/')
-def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
+@router.get('/status/', status_code=200)
+def get_git_status(*,space_id: str = Path(None,description="space_id name")):
+    toreturn =[]
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
-            toreturn = data[profile_id]
-            return toreturn
+            space_folder = data[space_id]['storage_path']
         except Exception as e:
-            raise HTTPException(status_code=404, detail="profile not found")
+            raise HTTPException(status_code=404, detail="Space not found")
+    #function to pull data from remote if remote was provided and if pulse finds diff 
+    repo = git.Repo(space_folder)
+    print(repo.heads)
+    hcommit = repo.head.commit
+    diff_list = hcommit.diff()
+    difff_list = hcommit.diff(ignore_blank_lines=True, ignore_space_at_eol=True,create_patch=True)
+    print(diff_list, file=sys.stderr)
+    i = 0
+    for diff in diff_list:
+        toappend = {}
+        print(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
+        toappend["change_type"] = diff.change_type
+        # Returns true if it is a new file
+        print(diff.new_file) 
+        toappend["newfile"] = diff.new_file
+        # Print the old file path
+        print(diff.a_path)
+        toappend["a_path"] = diff.a_path
+        # Print the new file path. If the filename (or path) was changed it will differ
+        print(diff.b_path) 
+        toappend["b_path"] = diff.b_path
+        toappend["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")
+        # text of diff make unified diff first 
+        unified_diff = "--- "+diff.a_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
+        unified_diff = unified_diff+"+++ "+diff.b_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
+        tocleandiff = str(difff_list[i])
+        ofinterst = tocleandiff.split("---")[1].split("\ No newline at end of file")[0]
+        unified_diff = unified_diff + ofinterst
+        toappend['text'] = unified_diff
+        toreturn.append(toappend)
+        i+=1
+    return {'data':toreturn}
 
-@router.delete('/{profile_id}/', status_code=202)
-def delete_profile(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","workflows.json")) as data_file:
-            data = json.load(data_file)
-            try:
-                del data[profile_id]
-            except Exception as e:
-                raise HTTPException(status_code=500, detail="Data delete failed")
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), 'w') as data_file:
-        data = json.dump(data, data_file)    
-        return {'message':'successfully deleted profile'}
-
-@router.post('/', status_code=201)
-def add_profile(*,item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
+@router.post('/{command}}', status_code=200)
+def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
+    toreturn =[]
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
-        profile_id = uuid.uuid4().hex
-        if profile_id in data.keys():
-            raise HTTPException(status_code=400, detail="Profile already exists")
-        if item.logo != None or item.description != None or item.url_ro_profile != None:
-            #add check for the url of the profile:
-            try:
-                tocheckrocrate = ro_read.rocrate_helper(item.url_ro_profile)
-                tocheckrocrate.get_all_metadata_files()
-                tocheckrocrate.get_ttl_files()
-                print(tocheckrocrate.ttlinfo)
-            except Exception as e:
-                raise HTTPException(status_code=500, detail="error : {}".format(e))
-            data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
-            with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
-                json.dump(data, file)   
-            return {'Message':'Profile added',"profile_id": profile_id}
-        else:
-            keys = dict(item).keys()
-            raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
 
-@router.put('/{profile_id}/', status_code=202)
-def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
-        data = json.load(file)
-    for profile in data.keys():
-        if profile_id == profile:
-            if item.logo != None or item.description != None or item.url_ro_profile != None:
-                data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile} 
-                with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
-                    json.dump(data, file)  
-                    return {'Data':'Update successfull'} 
-            else:
-                keys = dict(item).keys()
-                raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
-    raise HTTPException(status_code=404, detail="profile not found")
+    repo = git.Repo(space_folder)
+
+    if command != "commit" and command != "push" and command != "pull":
+        raise HTTPException(status_code=400, detail="No valid command given, valid commands are (commit,push,pull)")
+
+    #repo commit
+    if command == "commit":
+        try:
+            print("before commit", file=sys.stderr)
+            repo.index.commit("RO-crate API commit")   # <--- TODO: ADD user to the commit message for better cross scientists performance
+            print("after commit", file=sys.stderr)
+            return {"data":"{} successfull".format(str(command))}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=e)
+    
+    try:
+        print(repo.remote().refs, file=sys.stderr)
+    except:
+        raise HTTPException(status_code=400, detail="repo has no remote references to push or pull to.")
+
+    # try and do push pull
+    if command == "push":
+        try:
+            origin = repo.remote(name='origin')
+            origin.push()
+            return {"data":"{} successfull".format(str(command))}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=e)
+    
+    if command == "pull":
+        try:
+            origin = repo.remote(name='origin')
+            origin.pull()
+            return {"data":"{} successfull".format(str(command))}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=e)

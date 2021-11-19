@@ -58,5 +58,10 @@
         "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
         "description": "uuid4 test descitprion",
         "url_ro_profile": "propare test for html string"
+    },
+    "1193456ea0984c6bba1b6d4100e65cb9": {
+        "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test normal",
+        "url_ro_profile": "https://github.com/cedricdcc/test_rocrate_repo.git"
     }
 }
