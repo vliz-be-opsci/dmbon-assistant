@@ -74,6 +74,96 @@ class DeleteContentModel(BaseModel):
 
 #TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
+def complete_metadata_crate(source_path_crate):
+    relation = []
+    for root, dirs, files in os.walk(source_path_crate, topdown=False):   
+        for name in files:
+            if root.split(source_path_crate)[-1] == "":
+                parent_folder = ""
+                relative_path = "./"
+            else:
+                relative_path = root.split(source_path_crate)[-1]
+                parent_folder = relative_path.split(os.path.sep)[-1]
+            relation.append({'parent_folder':parent_folder,"relative_path":relative_path,"name":name})
+    all_ids = []
+    for x in relation:
+        #print(x)
+        all_ids.append(x["name"])
+    #open up the metadata.json file
+    
+    with open(os.path.join(source_path_crate, 'ro-crate-metadata.json')) as json_file:
+        data = json.load(json_file)
+    #print(data)
+    
+    #check if the ids from relation are present in the json file
+    all_meta_ids = []
+    for id in data['@graph']:
+        all_meta_ids.append(id['@id'])
+        #print(id['@id'])
+    for i in all_ids: 
+        if i not in all_meta_ids:
+            #print("not present: "+ i)
+            #check if parent is present in the file
+            
+            def add_folder_path(path_folder):
+                toaddppaths = path_folder.split("\\")
+                previous = "./"
+                for toadd in toaddppaths:         
+                    if str(toadd+"/") not in all_meta_ids:
+                        if toadd != "":
+                            data['@graph'].append({'@id':toadd+"/", '@type':"Dataset", 'hasPart':[]})
+                            # add ro right haspart
+                            for ids in data['@graph']:
+                                if ids['@id'] == previous:
+                                    ids['hasPart'].append({'@id':toadd+"/"})
+                            all_meta_ids.append(str(toadd+"/"))
+                    if toadd == "":
+                        previous = './'
+                    else:
+                        previous = toadd+"/"
+                        
+                            
+            for checkparent in relation:
+                if checkparent['name'] == i:
+                    if str(checkparent['parent_folder']+"/") not in all_meta_ids:
+                        if checkparent['parent_folder'] != "":
+                            #make the parent_folder in ids
+                            data['@graph'].append({'@id':checkparent['parent_folder']+"/", '@type':"Dataset", 'hasPart':[]})
+                            #check if folder has no parent
+                            if len(checkparent['relative_path'].split("\\")) == 2:
+                                print(checkparent['relative_path'].split("\\"))
+                                for ids in data['@graph']:
+                                    if ids['@id'] == './':
+                                        if {'@id':checkparent['relative_path'].split("\\")[-1]+"/"} not in ids['hasPart']:
+                                            ids['hasPart'].append({'@id':checkparent['relative_path'].split("\\")[-1]+"/"})
+                            
+                            add_folder_path(checkparent['relative_path'])
+                    #add the non present id to the folder haspart
+                    for ids in data['@graph']:
+                        if checkparent['parent_folder'] == "":
+                            if ids['@id'] == "."+checkparent['parent_folder']+"/":
+                                ids['hasPart'].append({'@id':i})
+                        else:
+                            if ids['@id'] == checkparent['parent_folder']+"/":
+                                ids['hasPart'].append({'@id':i})
+            #add the id to the @graph
+            data['@graph'].append({'@id':i, '@type':"File"})
+            #add id to ./ folder if necessary
+    
+    #remove duplicates
+    seen_ids = []
+    for ids in data['@graph']:
+        if ids['@id'] in seen_ids:
+            data['@graph'].remove(ids)
+        else:
+            seen_ids.append(ids['@id'])
+    
+    #write the rocrate file back 
+    with open(os.path.join(source_path_crate, 'ro-crate-metadata.json'), 'w') as json_file:
+        json.dump(data, json_file)
+    
+    return data
+
 def check_space_name(spacename):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
@@ -184,11 +274,11 @@ async def add_space(*,item: SpaceModel):
                 secondtest = ro_read.rocrate_helper(urlprofile)
                 secondtest.get_all_metadata_files()
                 secondtest.get_ttl_files()
-                with open(os.path.join(tocheckpath,'constraints','all_contraints.ttl'), 'w') as file:  # Use file to refer to the file object
+                with open(os.path.join(tocheckpath,'constraints','all_constraints.ttl'), 'w') as file:  # Use file to refer to the file object
                     file.write(secondtest.ttlinfo)
                 data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
     
-    if item.remote_url != None and item.remote_url != "string":
+    if item.remote_url != None and item.remote_url != "string" and  item.remote_url != "":
         try:
             git.Repo.clone_from(item.remote_url, os.path.join(tocheckpath))
             repo = git.Repo(os.path.join(tocheckpath))
@@ -245,3 +335,16 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
                 json.dump(data, file)  
             return {'Data':'Update successfull'} 
     raise HTTPException(status_code=404, detail="Space not found")
+
+@router.get('/{space_id}/fixcrate', status_code=201, tags=["Spaces"])
+async def fix_crate(*,space_id: str = Path(None,description="space_id name")): 
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            toreturn = data[space_id]
+            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    
+    test = complete_metadata_crate(source_path_crate=space_folder)
+    return {'Data':test} 

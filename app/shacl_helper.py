@@ -88,7 +88,7 @@ class ShapesInfoGraph():
         return toreturncategories
 
     def target_for_shape(self,nodeshape):
-        target = self.sg.objects(nodeshape,SH_targetClass)
+        target = ShapesInfoGraph.object_values(self.sg.objects(nodeshape,SH_targetClass))
         return target
     
     def properties_for_shape(self,nodeshape):
@@ -100,20 +100,22 @@ class ShapesInfoGraph():
             datatype = ShapesInfoGraph.object_values(self.sg.objects(prop_node,SH_datatype))
             mincount = ShapesInfoGraph.object_values(self.sg.objects(prop_node,SH_mincount))
             maxcount = ShapesInfoGraph.object_values(self.sg.objects(prop_node,SH_maxcount))
-
+            node     = ShapesInfoGraph.object_values(self.sg.objects(prop_node,SH_node))
             values   = ShapesInfoGraph.object_values(self.sg.objects(prop_node,SH_in))    
             if values is not None: 
                 new_vals = ShapesInfoGraph.object_values(self.sg.objects(values)) 
                 categoricals =  self.get_categories(categories=categoricals, tochecknodes=new_vals) 
-            props_dict[path] = {"type":datatype,"min":mincount,"max":maxcount,"values":categoricals}
+            props_dict[path] = {"type":datatype,"min":mincount,"max":maxcount,"values":categoricals,"node":node}
 
         return props_dict
     
     def full_shacl_graph_dict(self):
         tureturn = []
         for nodeshape in self.node_shapes:
-            props = self.properties_for_shape(nodeshape)
-            tureturn.append(props)
+            target = self.target_for_shape(nodeshape) 
+            print("target for :",nodeshape," == ", target , file=sys.stderr)
+            props  = self.properties_for_shape(nodeshape)
+            tureturn.append({"node":nodeshape,"target":target,"properties":props})
         return tureturn
 
 

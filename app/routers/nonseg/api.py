@@ -19,8 +19,7 @@ import app.ro_crate_reader_functions as ro_read
 #import shacl_helper as shclh
 
 router = APIRouter(
-    prefix="/content",
-    tags=["Content"],
+    prefix="",
     responses={404: {"description": "Not found"}},
 )
 
@@ -107,10 +106,6 @@ async def check_path_availability(tocheckpath,space_id):
             return [returnmessage,tocheckpath]
 
 ### api paths ###
-
-### api paths ###
-
-
 
 @router.get('/profiles/')
 def get_all_profiles_info():

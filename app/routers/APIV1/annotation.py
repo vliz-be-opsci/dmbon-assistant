@@ -15,6 +15,7 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
+import app.shacl_helper as shclh
 
 router = APIRouter(
     prefix="/annotation",
@@ -139,7 +140,7 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
                                 for item_save, value_save in dictionaries.items():
                                     files_attributes[file][item_save] = value_save
     return {"data":files_attributes}
-
+'''
 @router.get('/{path_folder:path}', status_code=200)
 def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path or file name to the file")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -172,30 +173,46 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
                                     files_attributes[file][item_save] = value_save
                 return {"data":files_attributes}
         raise HTTPException(status_code=404, detail="Resource not found.")
-            
-
+'''           
 #TODO : Add content modal for the annotation of the resources
 
-@router.post('/{path_folder:path}}', status_code=200)
+@router.get('/terms', status_code=200)
+def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
+    toreturn = {}
+    #TODO from json select which shacl file should be taken
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    #read in shacl file 
+    path_shacl = os.path.join(space_folder,"constraints","all_constraints.ttl")
+    print(path_shacl, file=sys.stderr)
+    test = shclh.ShapesInfoGraph(path_shacl)
+    shacldata = test.full_shacl_graph_dict()
+    return {"data":shacldata}
+
+@router.post('/{path_folder:path}', status_code=200)
 def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.post('/}', status_code=200)
+@router.post('/', status_code=200)
 def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.put('/{path_folder:path}}', status_code=200)
+@router.put('/{path_folder:path}', status_code=200)
 def update_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.put('/}', status_code=200)
+@router.put('/', status_code=200)
 def update_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.delete('/{path_folder:path}}', status_code=200)
+@router.delete('/{path_folder:path}', status_code=200)
 def delete_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
-@router.delete('/}', status_code=200)
+@router.delete('/', status_code=200)
 def delete_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
