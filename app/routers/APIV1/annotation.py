@@ -193,26 +193,153 @@ def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
     shacldata = test.full_shacl_graph_dict()
     return {"data":shacldata}
 
-@router.post('/{path_folder:path}', status_code=200)
-def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
-    return {"message":"TODO"}
+@router.patch('/{path_folder:path}', status_code=200)
+def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file relative to where the space is stored"), item: AnnotationsModel):
+    #get path of metadatafile
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    #get all the files under the path folder 
+    space_foldere = os.path.join(space_folder,"project", path_folder)
+    tocheck_folder = os.path.join(space_folder,"project")
+    print(tocheck_folder , file=sys.stderr)
+    all_files = []
+    for root, dirs, files in os.walk(space_foldere, topdown=False):   
+        for name in files:
+            print(name , file=sys.stderr)
+            all_files.append(name)
+    
+    #load in metadata files
+    with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json')) as json_file:
+        data = json.load(json_file)
+    
+    #annotate all the files according to annotations given 
+    for to_annotate in all_files:
+        if to_annotate != "ro-crate-metadata.json":
+            all_annotations = item.Annotations
+            for annotation in all_annotations:
+                print("current annotation: "+ annotation.URI_predicate_name, file=sys.stderr)
+                for ids in data['@graph']:
+                    if ids['@id'] == to_annotate:
+                        ids[annotation.URI_predicate_name]= annotation.value
 
-@router.post('/', status_code=200)
+    #write back data to meta json file
+    with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json'), 'w') as json_file:
+        json.dump(data, json_file)
+        
+    return {"Data":data}
+
+@router.patch('/', status_code=200)
 def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
-    return {"message":"TODO"}
+    #get path of metadatafile
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    space_folder = os.path.join(space_folder,"project")
+    #get all the files under the path folder 
+    all_files = []
+    for root, dirs, files in os.walk(space_folder, topdown=False):   
+        for name in files:
+            all_files.append(name)
+    
+    #load in metadata files
+    with open(os.path.join(space_folder, 'ro-crate-metadata.json')) as json_file:
+        data = json.load(json_file)
+    
+    #annotate all the files according to annotations given 
+    for to_annotate in all_files:
+        all_annotations = str(item.Annotations)
+        for annotation in all_annotations:
+            print(annotation, file=sys.stderr)
+            for ids in data['@graph']:
+                if ids['@id'] == to_annotate:
+                    ids[annotation.URI_predicate_name]= annotation.value
 
-@router.put('/{path_folder:path}', status_code=200)
-def update_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
-    return {"message":"TODO"}
-
-@router.put('/', status_code=200)
-def update_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
-    return {"message":"TODO"}
+    #write back data to meta json file
+    with open(os.path.join(space_folder, 'ro-crate-metadata.json'), 'w') as json_file:
+        json.dump(data, json_file)
+        
+    return {"Data":data}
 
 @router.delete('/{path_folder:path}', status_code=200)
 def delete_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
-    return {"message":"TODO"}
+    #get path of metadatafile
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    #get all the files under the path folder 
+    space_foldere = os.path.join(space_folder,"project", path_folder)
+    tocheck_folder = os.path.join(space_folder,"project")
+    print(tocheck_folder , file=sys.stderr)
+    all_files = []
+    for root, dirs, files in os.walk(space_foldere, topdown=False):   
+        for name in files:
+            print(name , file=sys.stderr)
+            all_files.append(name)
+    
+    #load in metadata files
+    with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json')) as json_file:
+        data = json.load(json_file)
+    
+    #annotate all the files according to annotations given 
+    for to_annotate in all_files:
+        if to_annotate != "ro-crate-metadata.json":
+            all_annotations = item.Annotations
+            for annotation in all_annotations:
+                print("current annotation: "+ annotation.URI_predicate_name, file=sys.stderr)
+                for ids in data['@graph']:
+                    if ids['@id'] == to_annotate:
+                        try:
+                            ids.pop(annotation.URI_predicate_name)
+                        except:
+                            pass
+
+    #write back data to meta json file
+    with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json'), 'w') as json_file:
+        json.dump(data, json_file)
+        
+    return {"Data":data}
 
 @router.delete('/', status_code=200)
 def delete_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
-    return {"message":"TODO"}
+    #get path of metadatafile
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    space_folder = os.path.join(space_folder,"project")
+    #get all the files under the path folder 
+    all_files = []
+    for root, dirs, files in os.walk(space_folder, topdown=False):   
+        for name in files:
+            all_files.append(name)
+    
+    #load in metadata files
+    with open(os.path.join(space_folder, 'ro-crate-metadata.json')) as json_file:
+        data = json.load(json_file)
+    
+    #annotate all the files according to annotations given 
+    for to_annotate in all_files:
+        all_annotations = str(item.Annotations)
+        for annotation in all_annotations:
+            print(annotation, file=sys.stderr)
+            for ids in data['@graph']:
+                if ids['@id'] == to_annotate:
+                    ids.pop(annotation.URI_predicate_name)
+
+    #write back data to meta json file
+    with open(os.path.join(space_folder, 'ro-crate-metadata.json'), 'w') as json_file:
+        json.dump(data, json_file)
+        
+    return {"Data":data}

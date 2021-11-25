@@ -27,7 +27,7 @@ from .routers.nonseg.router import router as non_segmented_router
 app = FastAPI(docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(apiv1_router, prefix = "/apiv1", tags= ['API V1'])
-app.include_router(non_segmented_router, prefix = "/nonseg_api", tags= ['API non segmented'])
+#app.include_router(non_segmented_router, prefix = "/nonseg_api", tags= ['API non segmented'])
 
 
 def custom_openapi():

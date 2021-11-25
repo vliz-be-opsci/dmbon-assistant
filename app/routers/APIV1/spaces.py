@@ -115,7 +115,11 @@ def complete_metadata_crate(source_path_crate):
                             # add ro right haspart
                             for ids in data['@graph']:
                                 if ids['@id'] == previous:
-                                    ids['hasPart'].append({'@id':toadd+"/"})
+                                    try:
+                                        ids['hasPart'].append({'@id':toadd+"/"})
+                                    except:
+                                        ids['hasPart'] = []
+                                        ids['hasPart'].append({'@id':toadd+"/"})
                             all_meta_ids.append(str(toadd+"/"))
                     if toadd == "":
                         previous = './'
