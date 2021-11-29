@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Path, Query, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from typing import List, Optional, Set
 from pydantic import BaseModel, Field
@@ -29,6 +30,20 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(apiv1_router, prefix = "/apiv1", tags= ['API V1'])
 #app.include_router(non_segmented_router, prefix = "/nonseg_api", tags= ['API non segmented'])
 
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def custom_openapi():
     if app.openapi_schema:

@@ -116,7 +116,10 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     #function to pull data from remote if remote was provided and if pulse finds diff 
-    repo = git.Repo(space_folder)
+    try:
+        repo = git.Repo(space_folder)
+    except:
+        repo = git.Repo(os.path.join(space_folder,"project"))
     print(repo.heads)
     hcommit = repo.head.commit
     diff_list = hcommit.diff()
@@ -157,9 +160,11 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
             space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
-
-    repo = git.Repo(space_folder)
-
+    try:
+        repo = git.Repo(space_folder)
+    except:
+        repo = git.Repo(os.path.join(space_folder,"project"))
+        
     if command != "commit" and command != "push" and command != "pull":
         raise HTTPException(status_code=400, detail="No valid command given, valid commands are (commit,push,pull)")
 

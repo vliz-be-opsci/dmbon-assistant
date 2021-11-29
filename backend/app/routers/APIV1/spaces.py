@@ -212,7 +212,11 @@ async def check_path_availability(tocheckpath,space_id):
 def get_all_spaces():
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
-        return data
+        toreturn = []
+        for i,y in data.items():
+            toreturn.append({'name':i,'storage_path':y['storage_path'],'RO_profile':y['RO_profile']})
+            
+        return toreturn
 
 @router.get('/{space_id}/', tags=["Spaces"])
 def get_space_info(*,space_id: str = Path(None,description="space_id name")):
@@ -298,11 +302,24 @@ async def add_space(*,item: SpaceModel):
                 repo.git.add(all=True)
                 repo.index.commit("initial commit")
                 repo.create_head('master')
+                    
             with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
                     json.dump(data, file)
             return {'Message':returnmessage, 'space_id': space_id}
-        except :
-            raise HTTPException(status_code=400, detail="Non valid git url given")
+        
+        except:
+            try:
+                #clone the git repo again but in the project folder that is made
+                check_aval = await check_path_availability(str(item.storage_path),space_id)
+                tocheckpath = check_aval[1]
+                git.Repo.clone_from(item.remote_url, os.path.join(tocheckpath,"project"))
+                #make the ro-crate-metadata.json file 
+                shutil.copyfile(os.path.join(os.getcwd(),"app","ro-crate-metadata.json"),os.sep.join((tocheckpath,'project',"ro-crate-metadata.json")))
+                with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
+                    json.dump(data, file)
+                return {'Message':returnmessage, 'space_id': space_id}
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
     else:
         #try and init a git repo and a rocrate
         repo = git.Repo.init(os.path.join(tocheckpath))
