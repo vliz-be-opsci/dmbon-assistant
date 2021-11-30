@@ -140,9 +140,9 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
                                 for item_save, value_save in dictionaries.items():
                                     files_attributes[file][item_save] = value_save
     return {"data":files_attributes}
-'''
-@router.get('/{path_folder:path}', status_code=200)
-def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path or file name to the file")):
+
+@router.get('/file/{file_id}', status_code=200)
+def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
@@ -157,23 +157,13 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         #get all files from the projectfile
         for dictionaries in data["@graph"]:
             for item, value in dictionaries.items():
-                if item == "@id":
-                    all_files.append(value)
+                if item == "@id" and value == file_id:
+                    for item_save, value_save in dictionaries.items():
+                        all_files.append({'predicate':item_save,'value':value_save})
         print(all_files)
-        #foreach file get all the attributes
-        files_attributes = {}
-        for file in all_files:
-            if file != "ro-crate-metadata.json" and file != './' and file == path_folder:
-                if "." in file:
-                    files_attributes[file]= {}
-                    for dictionaries in data["@graph"]:
-                        for item, value in dictionaries.items():
-                            if item == "@id" and value==file:
-                                for item_save, value_save in dictionaries.items():
-                                    files_attributes[file][item_save] = value_save
-                return {"data":files_attributes}
-        raise HTTPException(status_code=404, detail="Resource not found.")
-'''           
+        return {'data':all_files}
+    raise HTTPException(status_code=404, detail="Resource not found.")
+       
 #TODO : Add content modal for the annotation of the resources
 
 @router.get('/terms', status_code=200)
@@ -191,7 +181,7 @@ def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
     print(path_shacl, file=sys.stderr)
     test = shclh.ShapesInfoGraph(path_shacl)
     shacldata = test.full_shacl_graph_dict()
-    return {"data":shacldata}
+    return shacldata
 
 @router.patch('/{path_folder:path}', status_code=200)
 def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file relative to where the space is stored"), item: AnnotationsModel):

@@ -120,7 +120,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
         for filen in filenames:
             if '.git' not in dirpath:
                 toreturn.append({"file":filen,"folder":dirpath})
-    return {'Data':toreturn}
+    return toreturn
 
 @router.post('/', status_code=202)
 def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  

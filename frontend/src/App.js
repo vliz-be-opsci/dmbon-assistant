@@ -1,42 +1,22 @@
 import './App.css';
-import React, {useState, useEffect} from 'react';
-import axios from 'axios';
-
+import {Route, Routes} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
-
-
+import SpacePage from './pages/spaces';
+import SpaceSpecificPage from './pages/specific_space';
+import FileSpecificPage from './pages/specific_file';
+import Navbar from './components/navbar_general';
 function App() {
-
-  //define all constants first
-  const [spaceList, setSpacesList] = useState([]) 
-  //All the functions here
-  useEffect(() => {
-    axios.get('http://localhost:6656/apiv1/spaces/')
-      .then(res => {
-        console.log(res.data)
-        setSpacesList(res.data)
-      })
-  });
-
-
-
 
   return (
     <div className="App">
-      Hello, world!
+      <Navbar/>
       <div className="container">
-        <h1>Task Manager</h1>
-        <h6 className="card text-white bg-primary">FastApi -React</h6>
-        <h5 className="card text-white bg-dark">All spaces</h5>
-        <div>
-          <ul>
-            {spaceList.map((space)=> 
-              <li>
-                {space}
-              </li>
-            )}
-          </ul>
-        </div>
+        <Routes>
+          <Route path='/spaces' element={<SpacePage/>} />
+          <Route path='/spaces/:SpaceId' element={<SpaceSpecificPage/>} />
+          <Route path='/spaces/:SpaceId/:FileId' element={<FileSpecificPage/>} />
+        </Routes>
       </div>
     </div>
   );
