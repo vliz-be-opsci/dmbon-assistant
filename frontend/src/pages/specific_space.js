@@ -27,6 +27,7 @@ function SpaceSpecificPage() {
     return (
         <div>
             <h5 className="card text-white bg-dark">Specific Space : {SpaceId}</h5>
+            <h5 className="card text-white bg-info">location space: {spaceList[0].folder}</h5>
             <div>
             <FilesView listfiles= {spaceList} />
             </div>

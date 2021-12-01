@@ -1,11 +1,14 @@
 import './App.css';
 import {Route, Routes} from 'react-router-dom';
-import {useNavigate, useParams} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SpacePage from './pages/spaces';
 import SpaceSpecificPage from './pages/specific_space';
 import FileSpecificPage from './pages/specific_file';
 import Navbar from './components/navbar_general';
+import SpaceOverviewPage from './pages/space_overview';
+import HierarchicalSpacePage from './pages/hierarchical_space_storage';
+import GitPage from './pages/git';
+import SettingsSpacePage from './pages/settings_space';
 function App() {
 
   return (
@@ -14,8 +17,12 @@ function App() {
       <div className="container">
         <Routes>
           <Route path='/spaces' element={<SpacePage/>} />
-          <Route path='/spaces/:SpaceId' element={<SpaceSpecificPage/>} />
-          <Route path='/spaces/:SpaceId/:FileId' element={<FileSpecificPage/>} />
+          <Route path='/spaces/:SpaceId/all_files' element={<SpaceSpecificPage/>} />
+          <Route path='/spaces/:SpaceId/files/*' element={<HierarchicalSpacePage/>} />
+          <Route path='/spaces/:SpaceId' element={<SpaceOverviewPage/>} />
+          <Route path='/spaces/:SpaceId/git' element={<GitPage/>} />
+          <Route path='/spaces/:SpaceId/settings' element={<SettingsSpacePage/>} />
+          <Route path='/spaces/:SpaceId/all_files/:FileId' element={<FileSpecificPage/>} />
         </Routes>
       </div>
     </div>
