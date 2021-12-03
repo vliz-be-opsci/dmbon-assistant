@@ -190,11 +190,14 @@ async def check_path_availability(tocheckpath,space_id):
         response = await session.request(method='GET', url=toposturl)
         text = await response.content.read()
         all_spaces = json.loads(text.decode('utf8').replace("'", '"'))
-        for space,info_space in all_spaces.items():
-            print(info_space["storage_path"], file=sys.stderr)
-            print(str("/".join((tocheckpath,str(space_id)))), file=sys.stderr)
-            if info_space['storage_path'] == str("/".join((tocheckpath,str(space_id)))) or info_space['storage_path'] == str(tocheckpath):
-                raise HTTPException(status_code=400, detail="Given storage path is already in use by another project")
+        try:
+            for space,info_space in all_spaces.items():
+                print(info_space["storage_path"], file=sys.stderr)
+                print(str("/".join((tocheckpath,str(space_id)))), file=sys.stderr)
+                if info_space['storage_path'] == str("/".join((tocheckpath,str(space_id)))) or info_space['storage_path'] == str(tocheckpath):
+                    raise HTTPException(status_code=400, detail="Given storage path is already in use by another project")
+        except:
+            pass
     if len(os.listdir(os.path.join(tocheckpath)) ) != 0:
         try:
             os.mkdir(os.path.join(tocheckpath,str(space_id)))
@@ -364,8 +367,12 @@ async def fix_crate(*,space_id: str = Path(None,description="space_id name")):
         try:
             toreturn = data[space_id]
             space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
+            try:
+                repo = git.Repo(data[space_id]['storage_path'])
+            except:
+                repo = git.Repo(space_folder)
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
-    
     test = complete_metadata_crate(source_path_crate=space_folder)
+    repo.git.add(all=True)
     return {'Data':test} 

@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import React from 'react';
+import {useParams} from 'react-router-dom';
 function SpaceOverviewPage() {
 
     //define all constants first

@@ -127,28 +127,31 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     print(diff_list, file=sys.stderr)
     i = 0
     for diff in diff_list:
-        toappend = {}
-        print(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
-        toappend["change_type"] = diff.change_type
-        # Returns true if it is a new file
-        print(diff.new_file) 
-        toappend["newfile"] = diff.new_file
-        # Print the old file path
-        print(diff.a_path)
-        toappend["a_path"] = diff.a_path
-        # Print the new file path. If the filename (or path) was changed it will differ
-        print(diff.b_path) 
-        toappend["b_path"] = diff.b_path
-        toappend["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")
-        # text of diff make unified diff first 
-        unified_diff = "--- "+diff.a_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
-        unified_diff = unified_diff+"+++ "+diff.b_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
-        tocleandiff = str(difff_list[i])
-        ofinterst = tocleandiff.split("---")[1].split("\ No newline at end of file")[0]
-        unified_diff = unified_diff + ofinterst
-        toappend['text'] = unified_diff
-        toreturn.append(toappend)
-        i+=1
+        try:
+            toappend = {}
+            print(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
+            toappend["change_type"] = diff.change_type
+            # Returns true if it is a new file
+            print(diff.new_file) 
+            toappend["newfile"] = diff.new_file
+            # Print the old file path
+            print(diff.a_path)
+            toappend["a_path"] = diff.a_path
+            # Print the new file path. If the filename (or path) was changed it will differ
+            print(diff.b_path) 
+            toappend["b_path"] = diff.b_path
+            toappend["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")
+            # text of diff make unified diff first 
+            unified_diff = "--- "+diff.a_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
+            unified_diff = unified_diff+"+++ "+diff.b_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
+            tocleandiff = str(difff_list[i])
+            ofinterst = tocleandiff.split("---")[1].split("\ No newline at end of file")[0]
+            unified_diff = unified_diff + ofinterst
+            toappend['text'] = unified_diff
+            toreturn.append(toappend)
+            i+=1
+        except:
+            pass
     return {'data':toreturn}
 
 @router.post('/{command}}', status_code=200)

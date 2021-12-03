@@ -123,7 +123,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
     return toreturn
 
 @router.post('/', status_code=202)
-def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
+async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
 
@@ -169,9 +169,14 @@ def add_new_content(*,space_id: str = Path(None,description="space_id name"), it
                 crate.add_file(content_item.content)
             except Exception as e:
                 datalog.append({content_item.content:e})
-    
-
     crate.write_crate(space_folder)
+    try:
+        crate.write_crate(space_folder)
+    except:
+        #auto resolve the crate by calling the space fixcrate 
+        toposturl = 'http://localhost:6656/apiv1/spaces/'+space_id+'/fixcrate' #TODO : figure out how to not hardcode this <---
+        async with ClientSession() as session:
+            response = await session.request(method='GET', url=toposturl)
     repo.git.add(all=True)
     if len(datalog) > 0:
         raise HTTPException(status_code=400, detail=datalog)

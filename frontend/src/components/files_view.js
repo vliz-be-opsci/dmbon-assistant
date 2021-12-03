@@ -1,7 +1,7 @@
 
-import {useNavigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {Table} from 'react-bootstrap';
-
+import { FaArrowLeft } from "react-icons/fa";
  const Relative_folder = (folder) => {
     const {SpaceId} = useParams();
     try {
@@ -33,7 +33,7 @@ function FilesView(props) {
                 <tbody>
                     <tr>
                         <td>
-                            <a href={parenturl}>./</a>
+                            <a href={parenturl}>./ <FaArrowLeft /></a>
                         </td>
                     </tr>
                     {props.listfiles.map(file =>

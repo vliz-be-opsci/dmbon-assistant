@@ -9,6 +9,9 @@ import SpaceOverviewPage from './pages/space_overview';
 import HierarchicalSpacePage from './pages/hierarchical_space_storage';
 import GitPage from './pages/git';
 import SettingsSpacePage from './pages/settings_space';
+import HomePage from './pages/home_page';
+import Footer from './components/footer';
+
 function App() {
 
   return (
@@ -16,6 +19,7 @@ function App() {
       <Navbar/>
       <div className="container">
         <Routes>
+          <Route path='/' element={<HomePage/>} />
           <Route path='/spaces' element={<SpacePage/>} />
           <Route path='/spaces/:SpaceId/all_files' element={<SpaceSpecificPage/>} />
           <Route path='/spaces/:SpaceId/files/*' element={<HierarchicalSpacePage/>} />
@@ -25,6 +29,7 @@ function App() {
           <Route path='/spaces/:SpaceId/all_files/:FileId' element={<FileSpecificPage/>} />
         </Routes>
       </div>
+      <Footer />
     </div>
   );
 }
