@@ -26,8 +26,8 @@ function HierarchicalSpacePage() {
   useEffect(() => {
     fetchSpaces();
   },[]);
-	if (typeof folder_get !== 'undefined') {
-    if(folder_get.length > 0){
+
+	if (typeof folder_get !== 'undefined' && folder_get.length > 0) {
 			return (
 				<div>
 						<h5 className="card text-white bg-dark">Specific Space : {SpaceId}</h5>
@@ -37,9 +37,6 @@ function HierarchicalSpacePage() {
 					<div>Number of changes to page: {countRef.current}</div>
 				</div>
 			)
-    }else{
-			window.location.href = `/spaces/${SpaceId}/all_files`;
-    }
 	}else{
 		window.location.href = `/spaces/${SpaceId}/all_files`;
 	}

@@ -1,7 +1,7 @@
 //import some css here
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Navbar, Container, Nav, NavDropdown} from 'react-bootstrap';
-import {FaHome, FaFolderOpen, FaGitAlt, FaCog} from 'react-icons/fa';
+import {FaHome, FaFolderOpen, FaGitAlt, FaCog, FaFlask} from 'react-icons/fa';
 
 function NavBar() {
     const url = window.location.href;
@@ -16,6 +16,7 @@ function NavBar() {
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto justify-content-center">
+                            <Nav.Link href= {`/spaces/${spaceid}/`}><FaFlask size="1.5em"/></Nav.Link>
                             <Nav.Link href= {`/spaces/${spaceid}/files`}><FaFolderOpen size="1.5em"/></Nav.Link>
                             <Nav.Link href= {`/spaces/${spaceid}/git`}><FaGitAlt size="1.5em"/></Nav.Link>
                         </Nav>
