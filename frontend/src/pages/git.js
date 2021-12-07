@@ -48,9 +48,6 @@ export default class GitPage extends React.Component {
       return (
           <div>
               <div>
-                current component rendered: {message}
-              </div>
-              <div>
                 <hr />
                 <button onClick={() => this.updateMessage("commit")} id="commit_btn" type="button" style={{width:"23%",margin:"10px"}} class="btn btn-success" >Commit</button>
                 <button  id="push_btn" type="button" style={{width:"23%",margin:"10px"}} class="btn btn-primary">Push</button>
