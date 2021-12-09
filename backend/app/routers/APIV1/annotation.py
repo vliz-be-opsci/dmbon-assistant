@@ -154,15 +154,83 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         #print(projectfile)
         data = json.load(projectfile)
         all_files = []
+        
+        #implement the shacl constraint check here
+        #read in shacl file 
+        path_shacl = os.path.join(space_folder,"constraints","all_constraints.ttl")
+        print(path_shacl, file=sys.stderr)
+        test = shclh.ShapesInfoGraph(path_shacl)
+        shacldata = test.full_shacl_graph_dict()
+        #convert the chacl file to have all the properties per node id
+        node_properties_dicts = []
+        for node_to_check in shacldata:
+            toaddnode = {}
+            if node_to_check["target"] is not None:
+                target = node_to_check["target"].split("/")[-1]
+                toaddnode[target] = []
+                for propname , semantic_properties in node_to_check["properties"].items():
+                    #add reciproce checking for nodes in nodes here 
+                    
+                    toaddnode[target].append({propname.split('/')[-1]: semantic_properties})
+                node_properties_dicts.append(toaddnode)
+        
+        print(node_properties_dicts, file=sys.stderr)
+                
+        
+        all_predicates = []
         #get all files from the projectfile
         for dictionaries in data["@graph"]:
             for item, value in dictionaries.items():
                 if item == "@id" and value == file_id:
                     for item_save, value_save in dictionaries.items():
+                        all_predicates.append(item_save)
                         all_files.append({'predicate':item_save,'value':value_save})
-        print(all_files)
-        return {'data':all_files}
-    raise HTTPException(status_code=404, detail="Resource not found.")
+        
+        if len(all_predicates) == 0:
+            raise HTTPException(status_code=404, detail="Resource not found.")
+        
+        #get all predicates and if they are required
+        for items in all_files:
+            if items["predicate"] == "@type":
+                for node in node_properties_dicts:
+                    for nodekey, nodevalue in node.items():
+                        if nodekey == items["value"]:
+                            all_props = []
+                            for prop in nodevalue:
+                                for propkey, propvalue in prop.items():
+                                    propmin = 0
+                                    for propattribute, propattributevalue in propvalue.items():
+                                        print(propattribute, file=sys.stderr)
+                                        if propmin == 0:
+                                            if propattribute == "min" and propattributevalue is not None:
+                                                propmin = 1
+                                    all_props.append({propkey:propmin})
+                                print(all_props, file=sys.stderr)
+        try:                              
+            present = 0
+            missing = 0
+            cond_present = 0
+            cond_missing = 0
+            for prop in all_props:
+                for propkey, propvalue in  prop.items():
+                    if propvalue == 1 and propkey not in all_predicates:
+                        missing+=1
+                    if propvalue != 1 and propkey not in all_predicates:
+                        cond_missing+=1
+                    if propvalue != 1 and propkey in all_predicates:
+                        cond_present+=1
+                    if propvalue == 1 and propkey in all_predicates:
+                        present+=1
+            
+            green_percent = ((present / len(all_props)) * 100) + ((cond_present / len(all_props)) * 100)
+            red_percent   = (missing / len(all_props)) * 100
+            orange_percent = (cond_missing / len(all_props)) * 100
+            summary_file = {'green': green_percent, 'orange': orange_percent, 'red': red_percent} 
+        except Exception as e:
+            print(e, file=sys.stderr)
+            summary_file = {'green': 0, 'orange': 0, 'red': 0} 
+        return {'data':all_files, 'summary': summary_file}
+    
        
 #TODO : Add content modal for the annotation of the resources
 

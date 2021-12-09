@@ -2,7 +2,9 @@
 import {useParams} from 'react-router-dom';
 import {Table} from 'react-bootstrap';
 import { FaArrowLeft } from "react-icons/fa";
- const Relative_folder = (folder) => {
+import PredicateProgressbar from './predicates_progressbar';
+
+const Relative_folder = (folder) => {
     const {SpaceId} = useParams();
     try {
         console.log(folder);
@@ -28,6 +30,7 @@ function FilesView(props) {
                     <tr>
                         <th>File Name</th>
                         <th>Relative storage location</th>
+                        <th>Semantic Progress</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,6 +46,9 @@ function FilesView(props) {
                             </td>
                             <td>
                                 <a href={ '/spaces/'+SpaceId+'/files'+ Relative_folder(file.folder)}>{Relative_folder(file.folder)} </a>
+                            </td>
+                            <td>
+                                <PredicateProgressbar key={props.key} filee={file.file}/>
                             </td>
                         </tr>
                     )}

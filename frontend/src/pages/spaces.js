@@ -24,8 +24,6 @@ function SpacePage() {
 
     return (
         <div>
-            <h1>Task Manager</h1>
-            <h6 className="card text-white bg-primary">FastApi -React</h6>
             <h5 className="card text-white bg-dark">All spaces</h5>
             <div>
             <SpacesView listspace= {spaceList} />
