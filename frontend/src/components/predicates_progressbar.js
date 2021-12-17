@@ -18,7 +18,7 @@ function PredicateProgressbar(props) {
 
     //get the info of the profiles
     const fetchFileSummary = async () => {
-        axios.get(`http://localhost:6656/apiv1/spaces/${SpaceId}/annotation/file/${filename}`)
+        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${filename}`)
           .then(res => {
             console.log(res.data.summary)
             setFileSummary(res.data.summary)

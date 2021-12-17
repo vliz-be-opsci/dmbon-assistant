@@ -30,6 +30,10 @@ router.include_router(content_router, prefix="/{space_id}")
 router.include_router(git_router, prefix="/{space_id}")
 router.include_router(annotation_router, prefix="/{space_id}")
 
+## import the config file for the specific route of the api ##
+from dotenv import load_dotenv
+load_dotenv()
+BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
 ### define class profiles for the api ###
 
 class ProfileModel(BaseModel):
@@ -217,7 +221,13 @@ def get_all_spaces():
         data = json.load(file)
         toreturn = []
         for i,y in data.items():
-            toreturn.append({'name':i,'storage_path':y['storage_path'],'RO_profile':y['RO_profile']})
+            clicktrough_url = BASE_URL_SERVER + 'apiv1/' + 'spaces/' + i 
+            #example_url: https://example.org/dmbon/ns/entity_types#Space
+            toreturn.append({'name':i,
+                             'storage_path':y['storage_path'],
+                             'RO_profile':y['RO_profile'],
+                             '@type':'https://example.org/dmbon/ns/entity_types#Space',
+                             'url_space':clicktrough_url})
             
         return toreturn
 
@@ -227,7 +237,18 @@ def get_space_info(*,space_id: str = Path(None,description="space_id name")):
         with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
             data = json.load(file)
             try:
-                toreturn = data[space_id]
+                for i,y in data.items():
+                    if i == space_id:
+                        clicktrough_url = BASE_URL_SERVER + 'apiv1/' + 'spaces/' + i 
+                        #example_url: https://example.org/dmbon/ns/entity_types#Space
+                        toreturn= { 'name':i,
+                                    'storage_path':y['storage_path'],
+                                    'RO_profile':y['RO_profile'],
+                                    '@type':'https://example.org/dmbon/ns/entity_types#Space',
+                                    'url_content':clicktrough_url+"/content",
+                                    'url_metadata':clicktrough_url+"/annotation",
+                                    'url_constraints':clicktrough_url+"/annotation/terms"}
+                
                 return toreturn
             except Exception as e:
                 raise HTTPException(status_code=500, detail=e)

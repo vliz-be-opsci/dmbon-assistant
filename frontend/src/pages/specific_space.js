@@ -6,6 +6,12 @@ import FilesView from './../components/files_view';
 import ReactLoading from 'react-loading';
 import {Button, Modal} from 'react-bootstrap';
 import {FaTools, FaUpload, FaEdit, FaTrashAlt} from 'react-icons/fa';
+
+import $ from 'jquery';
+
+
+
+
 function SpaceSpecificPage() {
 
   //define all constants first
@@ -45,6 +51,40 @@ function SpaceSpecificPage() {
   const rejectStyle = {
     borderColor: '#ff1744'
   };
+
+  // axios function to delete specifix file from rocrate space
+  const deleteFileRocrate = async (todelete) => {
+    console.log('todelete content: '+ todelete)
+    axios.delete(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content/`,{
+      data:{"content": todelete}
+    })
+      .then(res => {
+        console.log(res.data)
+
+      }, (error) => {
+        console.log(error);
+      })
+  }
+
+    //jquery functions
+  $(document).ready(function() {
+    $('#delete_btn').click(function () {   
+        console.log('delete clicked'); 
+        var array = []
+        var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+
+        for (var i = 0; i < checkboxes.length; i++) {
+          if(checkboxes[i].value != 'ro-crate-metadata.json' && checkboxes[i].value != 'on'){
+            array.push(checkboxes[i].value)
+          }
+        }
+        console.log(array);
+        deleteFileRocrate(array);
+        window.location.href = `/spaces/${SpaceId}/all_files`;
+    });
+  });
+
+
   //All the functions here
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -79,7 +119,7 @@ function SpaceSpecificPage() {
   ]);
 
   const fetchSpaces = async () => {
-    axios.get(`http://localhost:6656/apiv1/spaces/${SpaceId}/content`)
+    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content`)
       .then(res => {
         console.log(res.data)
         setSpacesList(res.data)
@@ -89,7 +129,7 @@ function SpaceSpecificPage() {
   }
 
   const fixCrate = async () => {
-    axios.get(`http://localhost:6656/apiv1/spaces/${SpaceId}/fixcrate`)
+    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/fixcrate`)
       .then(res => {
         console.log(res.data)
         countRef.current++;
@@ -110,9 +150,6 @@ function SpaceSpecificPage() {
       setLoading(true);
       fixCrate();
     }
-    if(message == "delete"){
-      alert('deleting stuff: TODO');
-    }
   }
 
   if (Loading){
@@ -130,7 +167,7 @@ function SpaceSpecificPage() {
             <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-success" ><FaUpload size="1.5em"/></button>
             <button onClick={() => updateMessage("annotate")} id="annotate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaEdit size="1.5em"/></button>
             <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaTools size="1.5em"/></button>
-            <button onClick={() => updateMessage("delete")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-danger"><FaTrashAlt size="1.5em"/></button>
+            <button onClick={() => updateMessage("delete")} id="delete_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-danger"><FaTrashAlt size="1.5em"/></button>
           <div>
           <FilesView key={countRef.current} listfiles= {spaceList} />
           </div>

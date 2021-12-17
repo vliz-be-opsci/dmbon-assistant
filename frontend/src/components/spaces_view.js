@@ -8,7 +8,7 @@ function SpacesView(props) {
 
     //get the info of the profiles
     const fetchProfiles = async () => {
-        axios.get('http://localhost:6656/apiv1/profiles/')
+        axios.get(process.env.REACT_APP_BASE_URL_SERVER+'apiv1/profiles/')
           .then(res => {
             console.log(res.data)
             setProfilesList(res.data)

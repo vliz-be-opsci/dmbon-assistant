@@ -10,7 +10,8 @@ function SpacePage() {
   //All the functions here
 
   const fetchSpaces = async () => {
-    axios.get('http://localhost:6656/apiv1/spaces/')
+    console.log(process.env.REACT_APP_BASE_URL_SERVER);
+    axios.get(process.env.REACT_APP_BASE_URL_SERVER+'apiv1/spaces/')
       .then(res => {
         console.log(res.data)
         setSpacesList(res.data)

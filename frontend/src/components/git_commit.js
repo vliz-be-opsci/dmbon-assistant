@@ -6,7 +6,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import 'react-gh-like-diff/dist/css/diff2html.min.css';
 import { ReactGhLikeDiff } from 'react-gh-like-diff';
 import ReactLoading from 'react-loading';
-import {Accordion} from 'react-bootstrap';
+import {Accordion, Form, Button} from 'react-bootstrap';
 
 function GitCommit() {
     const [GitDiff, setGitDiff] = useState("") 
@@ -14,7 +14,7 @@ function GitCommit() {
     const {SpaceId} = useParams();
     //get the info of the profiles
     const fetchGitDiff = async () => {
-        axios.get(`http://localhost:6656/apiv1/spaces/${SpaceId}/git/status`)
+        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status`)
           .then(res => {
             console.log(res.data.data)
             let arrayLength = res.data.data.length;
@@ -36,6 +36,13 @@ function GitCommit() {
         fetchGitDiff();
     },[]);
 
+    const submitform = event => {
+        //prevent reload page
+        event.preventDefault();
+        console.log(event.target.elements.git_commit_summary.value);
+        console.log(event.target.elements.git_commit_description.value);
+    }
+
     if(Loading){
         return(
             
@@ -52,13 +59,19 @@ function GitCommit() {
                     <Accordion.Item eventKey="0">
                         <Accordion.Header>Commit form</Accordion.Header>
                         <Accordion.Body>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                        est laborum.
+                        <Form onSubmit={submitform}>
+                            <Form.Group className="mb-3" controlId="git_commit_summary">
+                                <Form.Label>Summary</Form.Label>
+                                <Form.Control type="text" placeholder="update rocrate" />
+                            </Form.Group>
+                            <Form.Group className="mb-3" controlId="git_commit_description">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control as="textarea" rows={3} placeholder="description update rocrate"/>
+                            </Form.Group>
+                            <Button variant="success" type="submit" className="large">
+                                Submit Commit 
+                            </Button>
+                        </Form>
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="1">

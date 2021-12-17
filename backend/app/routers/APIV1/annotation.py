@@ -23,6 +23,11 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+## import the config file for the specific route of the api ##
+from dotenv import load_dotenv
+load_dotenv()
+BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
+
 ### define class profiles for the api ###
 
 class ProfileModel(BaseModel):
@@ -134,6 +139,8 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
             if file != "ro-crate-metadata.json" and file != './':
                 if "." in file:
                     files_attributes[file]= {}
+                    clicktrough_url = BASE_URL_SERVER + 'apiv1/' + 'spaces/' + space_id + '/annotation/file/' + file
+                    files_attributes[file]['url_file_metadata'] = clicktrough_url
                     for dictionaries in data["@graph"]:
                         for item, value in dictionaries.items():
                             if item == "@id" and value==file:

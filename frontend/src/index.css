@@ -16,3 +16,11 @@ html {
   overflow-y:scroll;
   height: 101%;
 }
+
+.large {
+  width: 100%;
+}
+
+.filetd {
+  width: 40%;
+}

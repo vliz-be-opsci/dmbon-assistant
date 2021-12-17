@@ -13,7 +13,7 @@ function FileSpecificPage() {
   //All the functions here
 
   const fetchSpaces = async () => {
-    axios.get(`http://localhost:6656/apiv1/spaces/${SpaceId}/annotation/file/${FileId}`)
+    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${FileId}`)
       .then(res => {
         console.log(res.data)
         setSpacesList(res.data.data)

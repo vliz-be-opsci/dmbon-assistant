@@ -1,3 +1,4 @@
+from logging import exception
 from fastapi import FastAPI, Path, Query, HTTPException, status, APIRouter
 from fastapi.openapi.utils import get_openapi
 from typing import List, Optional, Set
@@ -10,6 +11,7 @@ from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
 from collections import MutableMapping
 from fastapi.staticfiles import StaticFiles
+import glob
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
@@ -21,6 +23,11 @@ router = APIRouter(
     tags=["Content"],
     responses={404: {"description": "Not found"}},
 )
+
+## import the config file for the specific route of the api ##
+from dotenv import load_dotenv
+load_dotenv()
+BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
 
 ### define class profiles for the api ###
 
@@ -194,14 +201,40 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
         
     repo = git.Repo(data[space_id]['storage_path'])
     crate = ROCrate(space_folder)
-    print(crate.get_entities())
-        
-    for content_item in item.content:
-        crate.delete(crate.dereference(content_item))
-        del_path = os.path.join(space_folder,content_item)
-        os.remove(del_path)
+    try:
+        for content_item in item.content:
+            crate.delete(crate.dereference(content_item))
+            del_path = os.path.join(space_folder,content_item)
+            os.remove(del_path)
+        crate.write_crate(space_folder)
+    except:
+        for content_item in item.content:
+            print("to delete content: " + content_item, file=sys.stderr)
+            #find the file that must be deleted
+            to_find_delete = glob.glob(space_folder + "/**/"+content_item, recursive = True)
+            for qzef in to_find_delete:
+                print("to delete content path : " + qzef, file=sys.stderr)
+                os.remove(qzef)
+            #open the rocrate metadata.json and delete the id from the rocrate 
+            with open(os.path.join(space_folder, 'ro-crate-metadata.json')) as json_file:
+                data = json.load(json_file)
+            for i in range(len(data['@graph'])):
+                try:
+                    if data['@graph'][i]['@id'] == content_item:
+                        del data['@graph'][i]
+                except:
+                    pass
+                try:
+                    for parto in range(len(data['@graph'][i]['hasPart'])):
+                        if data['@graph'][i]['hasPart'][parto]["@id"] == content_item:
+                            del data['@graph'][i]['hasPart'][parto]
+                except:
+                    pass
+            
+            #write the rocrate file back 
+            with open(os.path.join(space_folder, 'ro-crate-metadata.json'), 'w') as json_file:
+                json.dump(data, json_file)
 
-    crate.write_crate(space_folder)
     repo.git.add(all=True)
     return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
 

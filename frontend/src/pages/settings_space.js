@@ -10,7 +10,7 @@ function SettingsSpacePage() {
     const {SpaceId} = useParams();
     function deletespace(e) {
         e.preventDefault();
-        axios.delete(`http://localhost:6656/apiv1/spaces/${SpaceId}`)
+        axios.delete(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}`)
         .then(() => window.location.href = `/spaces`);
     }
     //<input directory="" webkitdirectory="" type="file" />

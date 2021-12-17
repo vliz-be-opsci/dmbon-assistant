@@ -82,7 +82,7 @@ function HierarchicalSpacePage() {
   ]);
 
   const fetchSpaces = async () => {
-    axios.get(`http://localhost:6656/apiv1/spaces/${SpaceId}/content${folder_get}`)
+    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content${folder_get}`)
       .then(res => {
         console.log(res.data)
         setSpacesList(res.data.Data)
@@ -95,7 +95,7 @@ function HierarchicalSpacePage() {
   },[]);
 
   const fixCrate = async () => {
-    axios.get(`http://localhost:6656/apiv1/spaces/${SpaceId}/fixcrate`)
+    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/fixcrate`)
       .then(res => {
         console.log(res.data)
         countRef.current++;

@@ -11,7 +11,7 @@ import GitPage from './pages/git';
 import SettingsSpacePage from './pages/settings_space';
 import HomePage from './pages/home_page';
 import Footer from './components/footer';
-
+require('dotenv').config()
 function App() {
 
   return (
