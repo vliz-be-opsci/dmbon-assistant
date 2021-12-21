@@ -79,6 +79,34 @@ class DeleteContentModel(BaseModel):
 #TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
 def complete_metadata_crate(source_path_crate):
+    
+    ## get all the file_ids with their metadata ##
+    #open up the metadata.json file
+    with open(os.path.join(source_path_crate, 'ro-crate-metadata.json')) as json_file:
+        datao = json.load(json_file)
+        
+    #check if the ids from relation are present in the json file
+    all_meta_ids_data = []
+    for id in datao['@graph']:
+        toappend_id = {}
+        toappand_data_values = []
+        for key_id, value_id in id.items():
+            if key_id != "@id":
+                toappand_data_values.append({key_id:value_id})
+        toappend_id[id['@id']] = toappand_data_values
+        all_meta_ids_data.append(toappend_id)
+    
+    print(all_meta_ids_data, file=sys.stderr)
+    
+    ## start from fresh file with metadata template  ##
+    with open(os.path.join(os.getcwd(),'app', 'ro-crate-metadata.json')) as json_file:
+        data = json.load(json_file)
+        
+    print( data, file=sys.stderr)
+    
+    
+    ## add data to the fresh file ##
+      
     relation = []
     for root, dirs, files in os.walk(source_path_crate, topdown=False):   
         for name in files:
@@ -93,11 +121,6 @@ def complete_metadata_crate(source_path_crate):
     for x in relation:
         #print(x)
         all_ids.append(x["name"])
-    #open up the metadata.json file
-    
-    with open(os.path.join(source_path_crate, 'ro-crate-metadata.json')) as json_file:
-        data = json.load(json_file)
-    #print(data)
     
     #check if the ids from relation are present in the json file
     all_meta_ids = []
@@ -166,10 +189,20 @@ def complete_metadata_crate(source_path_crate):
         else:
             seen_ids.append(ids['@id'])
     
+    ## add file_ids metadata correspondingly ##
+    for ids in data['@graph']:
+        for tocheck_id in all_meta_ids_data:
+            if ids['@id'] in str(tocheck_id.keys()):
+                for dict_single_metadata in tocheck_id[ids['@id']]:
+                    for key_dict_single_meta, value_dcit_sinle_meta in dict_single_metadata.items():
+                        if key_dict_single_meta not in ids.keys():
+                            print(key_dict_single_meta, file=sys.stderr)
+                            ids[key_dict_single_meta] = value_dcit_sinle_meta
+                            
     #write the rocrate file back 
     with open(os.path.join(source_path_crate, 'ro-crate-metadata.json'), 'w') as json_file:
         json.dump(data, json_file)
-    
+
     return data
 
 def check_space_name(spacename):

@@ -42,7 +42,7 @@ function SpacesView(props) {
             {props.listspace.map(space =>
                 <ul>
                     <a href={'/spaces/' + space.name }>
-                        <button className="bg-info">
+                        <button className="bg-info space_button">
                             <div >
                                 <h5>
                                     space id : {space.name}
