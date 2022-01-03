@@ -26,17 +26,7 @@ function FileAnnotationView(props) {
                                 <Button variant="info" style={{margin: "1%", float:"left"} } onClick={handleShow}><FaPencilAlt color="white"></FaPencilAlt></Button>
                                 <Button variant="danger" style={{margin: "1%", float:"left"}} id= {annotation.predicate}><FaTrashAlt></FaTrashAlt></Button>
                                 {annotation.predicate}
-                                <Modal show={show} onHide={handleClose}>
-                                    <Modal.Header closeButton>
-                                    <Modal.Title>Editing Annotation</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>inputfield here {annotation.predicate}</Modal.Body>
-                                    <Modal.Footer>
-                                    <Button variant="secondary" onClick={handleClose}>
-                                        close
-                                    </Button>
-                                    </Modal.Footer>
-                                </Modal> 
+                                
                             </td>
                             <td>
                                 {annotation.value}
@@ -45,7 +35,17 @@ function FileAnnotationView(props) {
                     )}
                 </tbody>
             </Table>   
-            
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Editing Annotation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>inputfield here</Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    close
+                </Button>
+                </Modal.Footer>
+            </Modal> 
         </div>
     )
 }
