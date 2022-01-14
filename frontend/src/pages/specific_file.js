@@ -30,7 +30,7 @@ function FileSpecificPage() {
             <h5 className="card text-white bg-dark">Space : {SpaceId}</h5>
             <h5 className="card text-white bg-info">File : {FileId}</h5>
             <div>
-            <FileAnnotationView listannotations={spaceList} />
+            <FileAnnotationView listannotations={spaceList}/>
             </div>
             <div>Number of changes to page: {countRef.current}</div>
         </div>

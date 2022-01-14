@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
 import SpacesView from './../components/spaces_view.js'
-
+import {Button} from 'react-bootstrap';
+import { FaPlus} from 'react-icons/fa';
 function SpacePage() {
 
 //define all constants first
@@ -26,6 +27,7 @@ function SpacePage() {
     return (
         <div>
             <h5 className="card text-white bg-dark">All spaces</h5>
+            <Button variant="danger" style={{width: '100%', marginBottom:'1%'}}><FaPlus></FaPlus> Add Space <FaPlus></FaPlus></Button>
             <div>
             <SpacesView listspace= {spaceList} />
             </div>

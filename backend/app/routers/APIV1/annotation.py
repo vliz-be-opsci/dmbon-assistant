@@ -257,6 +257,39 @@ def make_resource_annotation_single_file(*,space_id: str = Path(None,description
         
     return {"Data":data, "Warnings":warnings}
 
+@router.delete('/file/{file_id}/{predicate}', status_code=200)
+def delete_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), predicate: str = Path(None,description="To delete predicate from the file annotations")):
+    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    
+    tocheck_folder = os.path.join(space_folder,"project")
+    todelete = False
+    #load in metadata files
+    with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json')) as json_file:
+        data = json.load(json_file)
+
+    #find id of file and delete predicate of existing 
+    for ids in data['@graph']:
+        if ids['@id'] == file_id:
+            todelete = True
+            try:
+                ids.pop(predicate)
+            except:
+                raise HTTPException(status_code=404, detail="predicate not found")
+            
+    if todelete != True:
+        raise HTTPException(status_code=404, detail="file_id not found")
+                        
+    #write back data to meta json file
+    with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json'), 'w') as json_file:
+        json.dump(data, json_file)
+        
+    return {"Data":data}
+
 @router.get('/file/{file_id}', status_code=200)
 def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -272,8 +305,10 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         all_files = []
         
         #implement the shacl constraint check here
-        #read in shacl file 
+        #read in shacl file
         path_shacl = os.path.join(space_folder,"constraints","all_constraints.ttl")
+        f_constraints = open(path_shacl, "r")
+        f_constraints_text = f_constraints.read()
         print(path_shacl, file=sys.stderr)
         test = shclh.ShapesInfoGraph(path_shacl)
         shacldata = test.full_shacl_graph_dict()
@@ -285,14 +320,12 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
                 target = node_to_check["target"].split("/")[-1]
                 toaddnode[target] = []
                 for propname , semantic_properties in node_to_check["properties"].items():
-                    #add reciproce checking for nodes in nodes here 
-                    
+                    #add reciproce checking for nodes in nodes here
                     toaddnode[target].append({propname.split('/')[-1]: semantic_properties})
                 node_properties_dicts.append(toaddnode)
         
         print(node_properties_dicts, file=sys.stderr)
-                
-        
+                 
         all_predicates = []
         #get all files from the projectfile
         for dictionaries in data["@graph"]:
@@ -312,6 +345,7 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
                     for nodekey, nodevalue in node.items():
                         if nodekey == items["value"]:
                             all_props = []
+                            all_props_shacl = []
                             for prop in nodevalue:
                                 for propkey, propvalue in prop.items():
                                     propmin = 0
@@ -321,18 +355,14 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
                                         if propmin == 0:
                                             if propattribute == "min" and propattributevalue is not None:
                                                 propmin = 1
-                                        
                                         if propattribute == "type" and propattributevalue is not None:
                                             proptype = propattributevalue
-                                        
                                         if propattribute == "type" and propattributevalue is None:
                                             proptype = 'String'
-                                        
                                         if propattribute == "values" and propattributevalue is not None:
-                                            valueprop = propattributevalue
-                                                
+                                            valueprop = propattributevalue                                             
                                     all_props.append({propkey:{'min':propmin,'value':valueprop,'typeprop':proptype}})
-
+                                    all_props_shacl.append({'label':propkey,'min':propmin,'value':valueprop,'typeprop':proptype})
                                 print(all_props, file=sys.stderr)
         try:                              
             present = 0
@@ -357,7 +387,7 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         except Exception as e:
             print(e, file=sys.stderr)
             summary_file = {'green': 0, 'orange': 0, 'red': 0} 
-        return {'data':all_files, 'summary': summary_file, 'shacl_requirements': all_props}
+        return {'data':all_files, 'summary': summary_file, 'shacl_requirements': all_props_shacl, 'shacl_original': f_constraints_text}
     
        
 #TODO : Add content modal for the annotation of the resources
