@@ -4,7 +4,9 @@ import {useParams} from 'react-router-dom';
 import axios from 'axios';
 import React, {useState, useEffect, useRef} from 'react';
 import 'react-gh-like-diff/dist/css/diff2html.min.css';
-import {Form, Forms} from 'react-bootstrap';
+import {Form, Forms, Button} from 'react-bootstrap';
+import { Formik } from 'formik';
+
 function ShaclForm() {
     const [shaclList, setShaclList] = useState([]) 
     const countRef = useRef(0);
@@ -39,7 +41,7 @@ function ShaclForm() {
                                 </Form.Select></Form.Group></>
                 }
                 if(component.value.length == 0 ){
-                    toreturn = <><Form.Group><Form.Label>{component.label}</Form.Label><Form.Control required type="text"  placeholder={component.label} /></Form.Group></>
+                    toreturn = <><Form.Group><Form.Label>{component.label}</Form.Label><Form.Control required type="text"  placeholder={component.label}/></Form.Group></>
                 }
             }
         }
@@ -56,7 +58,7 @@ function ShaclForm() {
                                 </Form.Select></Form.Group></>
                 }
                 if(component.value.length == 0 ){
-                    toreturn = <><Form.Group><Form.Label>{component.label}</Form.Label><Form.Control type="text"  placeholder={component.label} /></Form.Group></>
+                    toreturn = <><Form.Group><Form.Label>{component.label}</Form.Label><Form.Control type="text"  placeholder={component.label}/></Form.Group></>
                 }
             }
         }
@@ -66,19 +68,35 @@ function ShaclForm() {
 
     const shaclrender = (shacllist) => {
         let shaclUI = [];
+        let formikInitialVals = {};
         for (let i = 0; i < shacllist.shaclList.length; i++) {
             console.log(shacllist.shaclList[i]);
+            formikInitialVals[shacllist.shaclList[i].label] = "";
             //perform other function to determine the UI of the element
             shaclUI.push(LogicShaclComponent(shacllist.shaclList[i]));
             //shaclUI.push(<><Form.Group><Form.Label>{shacllist.shaclList[i].label}</Form.Label><Form.Control type="text"  placeholder={shacllist.shaclList[i].label} /></Form.Group></>);
           }
-          console.log(shaclUI);
+          console.log(formikInitialVals);
         return(<>
-        <Form>
+        <Formik onSubmit={console.log} initialValues={formikInitialVals}>
+        {( {values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting }) => (
+        <Form onSubmit={handleSubmit}>
             {shaclUI.map(file =>
                     <>{file} </>
             )}
+            <hr />
+        <Button variant="primary" type="submit">
+            Submit
+        </Button>
         </Form>
+      )}
+        </Formik>
         </>)
     }
 

@@ -3,7 +3,6 @@ import {useParams} from 'react-router-dom';
 import axios from 'axios';
 import {Button, Modal} from 'react-bootstrap';
 function SettingsSpacePage() {
-
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
