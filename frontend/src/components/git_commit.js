@@ -14,7 +14,7 @@ function GitCommit() {
     const {SpaceId} = useParams();
     //get the info of the profiles
     const fetchGitDiff = async () => {
-        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status`)
+        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status/`)
           .then(res => {
             console.log(res.data.data)
             let arrayLength = res.data.data.length;
@@ -41,6 +41,14 @@ function GitCommit() {
         event.preventDefault();
         console.log(event.target.elements.git_commit_summary.value);
         console.log(event.target.elements.git_commit_description.value);
+        //do axios request to post to submit all the changes to git 
+        setLoading(true);
+        axios.post(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/commit`)
+        .then(response => {setLoading(false);})
+        .catch(error => {
+        setLoading(false);
+        alert('There was an error!', error);
+        });
     }
 
     if(Loading){

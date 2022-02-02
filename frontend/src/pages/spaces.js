@@ -40,8 +40,8 @@ function SpacePage() {
               setLoading(false);
               alert('There was an error!', error);
           });
-      
   }
+  
   const fetchSpaces = async () => {
     console.log(process.env.REACT_APP_BASE_URL_SERVER);
     axios.get(process.env.REACT_APP_BASE_URL_SERVER+'apiv1/spaces/')
@@ -83,7 +83,7 @@ function SpacePage() {
   if(Loading){
       return(
         <div class="busy">
-            <ReactLoading type='bars' color='blue' height={'20vw'} width={'20vw'} />
+            <ReactLoading type='bars' color='grey' height={'20vw'} width={'20vw'} />
         </div>
       )
       }else{

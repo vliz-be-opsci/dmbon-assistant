@@ -154,7 +154,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
             pass
     return {'data':toreturn}
 
-@router.post('/{command}}', status_code=200)
+@router.post('/{command}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
@@ -190,15 +190,17 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
     if command == "push":
         try:
             origin = repo.remote(name='origin')
-            origin.push()
-            return {"data":"{} successfull".format(str(command))}
         except Exception as e:
             raise HTTPException(status_code=500, detail=e)
+        origin.push()
+        return {"data":"{} successfull".format(str(command))}
+        
     
     if command == "pull":
         try:
             origin = repo.remote(name='origin')
-            origin.pull()
-            return {"data":"{} successfull".format(str(command))}
         except Exception as e:
             raise HTTPException(status_code=500, detail=e)
+        origin.pull()
+        return {"data":"{} successfull".format(str(command))}
+        

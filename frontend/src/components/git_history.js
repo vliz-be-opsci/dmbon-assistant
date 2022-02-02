@@ -13,7 +13,7 @@ function GitHistory() {
     const {SpaceId} = useParams();
     //get the info of the profiles
     const fetchGitDiff = async () => {
-        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status`)
+        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status/`)
           .then(res => {
             console.log(res.data.data)
             let arrayLength = res.data.data.length;

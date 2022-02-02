@@ -63,5 +63,10 @@
         "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
         "description": "test normal",
         "url_ro_profile": "https://github.com/cedricdcc/test_rocrate_repo.git"
+    },
+    "TestFeb2022": {
+        "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test normal of other combined profile",
+        "url_ro_profile": "https://github.com/cedricdcc/test_other_repo.git"
     }
 }
