@@ -123,7 +123,7 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     #read in ROCrate metadata file
-    with open(os.path.join(space_folder,'project','ro-crate-metadata.json'), "r+") as projectfile:
+    with open(os.path.join(space_folder,'repo','ro-crate-metadata.json'), "r+") as projectfile:
         #print(projectfile)
         data = json.load(projectfile)
         all_files = []
@@ -159,7 +159,7 @@ def make_resource_annotation_single_file(*,space_id: str = Path(None,description
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     #read in ROCrate metadata file
-    with open(os.path.join(space_folder,'project','ro-crate-metadata.json'), "r+") as projectfile:
+    with open(os.path.join(space_folder,'repo','ro-crate-metadata.json'), "r+") as projectfile:
         #print(projectfile)
         data = json.load(projectfile)
     ## get constraint values from shacl file for file ##
@@ -251,7 +251,7 @@ def make_resource_annotation_single_file(*,space_id: str = Path(None,description
             
         ## implement annotation in the data is found , send warning message is annotation title not found in constraints ##
     ## write back to metadata file and return metadata.json file 
-    tocheck_folder = os.path.join(space_folder,"project")
+    tocheck_folder = os.path.join(space_folder,"repo")
     with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json'), 'w') as json_file:
         json.dump(data, json_file)
         
@@ -266,7 +266,7 @@ def delete_resource_annotation(*,space_id: str = Path(None,description="space_id
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     
-    tocheck_folder = os.path.join(space_folder,"project")
+    tocheck_folder = os.path.join(space_folder,"repo")
     todelete = False
     #load in metadata files
     with open(os.path.join(tocheck_folder, 'ro-crate-metadata.json')) as json_file:
@@ -299,7 +299,7 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     #read in ROCrate metadata file
-    with open(os.path.join(space_folder,'project','ro-crate-metadata.json'), "r+") as projectfile:
+    with open(os.path.join(space_folder,'repo','ro-crate-metadata.json'), "r+") as projectfile:
         #print(projectfile)
         data = json.load(projectfile)
         all_files = []
@@ -418,8 +418,8 @@ def make_resource_annotations(*,space_id: str = Path(None,description="space_id 
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     #get all the files under the path folder 
-    space_foldere = os.path.join(space_folder,"project", path_folder)
-    tocheck_folder = os.path.join(space_folder,"project")
+    space_foldere = os.path.join(space_folder,"repo", path_folder)
+    tocheck_folder = os.path.join(space_folder,"repo")
     print(tocheck_folder , file=sys.stderr)
     all_files = []
     for root, dirs, files in os.walk(space_foldere, topdown=False):   
@@ -456,7 +456,7 @@ def make_annotations_for_all_resources(*,space_id: str = Path(None,description="
             space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
-    space_folder = os.path.join(space_folder,"project")
+    space_folder = os.path.join(space_folder,"repo")
     #get all the files under the path folder 
     all_files = []
     for root, dirs, files in os.walk(space_folder, topdown=False):   
@@ -492,8 +492,8 @@ def delete_resource_annotations(*,space_id: str = Path(None,description="space_i
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     #get all the files under the path folder 
-    space_foldere = os.path.join(space_folder,"project", path_folder)
-    tocheck_folder = os.path.join(space_folder,"project")
+    space_foldere = os.path.join(space_folder,"repo", path_folder)
+    tocheck_folder = os.path.join(space_folder,"repo")
     print(tocheck_folder , file=sys.stderr)
     all_files = []
     for root, dirs, files in os.walk(space_foldere, topdown=False):   
@@ -533,7 +533,7 @@ def delete_annotations_for_all_resources(*,space_id: str = Path(None,description
             space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
-    space_folder = os.path.join(space_folder,"project")
+    space_folder = os.path.join(space_folder,"repo")
     #get all the files under the path folder 
     all_files = []
     for root, dirs, files in os.walk(space_folder, topdown=False):   

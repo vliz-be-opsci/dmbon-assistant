@@ -96,6 +96,9 @@ class rocrate_helper:
         return self.ttlinfo
 
 
+
+
+
 '''
 #test zone              
 test = rocrate_helper("C:\\Users\\cedric\\Desktop\\no importante\\ad117931652f4dccb6ef0bb3b3393cc2\\project")

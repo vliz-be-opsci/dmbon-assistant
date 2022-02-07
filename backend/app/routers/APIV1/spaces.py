@@ -349,12 +349,12 @@ async def add_space(*,item: SpaceModel):
             repo = git.Repo(os.path.join(tocheckpath))
             #check if rocratemetadata.json is present in git project
             print("before file found", file=sys.stderr)
-            if os.path.isfile(os.path.join(tocheckpath, 'ro-crate-metadata.json')) == False and os.path.isfile(os.path.join(tocheckpath, 'project', 'ro-crate-metadata.json')) == False:
+            if os.path.isfile(os.path.join(tocheckpath, 'ro-crate-metadata.json')) == False and os.path.isfile(os.path.join(tocheckpath, 'repo', 'ro-crate-metadata.json')) == False:
                 currentwd = os.getcwd()
-                os.mkdir(os.sep.join((tocheckpath,'project')))
-                os.chdir(os.sep.join((tocheckpath,'project')))
+                os.mkdir(os.sep.join((tocheckpath,'repo')))
+                os.chdir(os.sep.join((tocheckpath,'repo')))
                 crate = ROCrate() 
-                crate.write_crate(os.sep.join((tocheckpath,'project')))
+                crate.write_crate(os.sep.join((tocheckpath,'repo')))
                 os.chdir(currentwd)
                 repo.git.add(all=True)
                 repo.index.commit("initial commit")
@@ -369,9 +369,9 @@ async def add_space(*,item: SpaceModel):
                 #clone the git repo again but in the project folder that is made
                 check_aval = await check_path_availability(str(item.storage_path),space_id)
                 tocheckpath = check_aval[1]
-                git.Repo.clone_from(item.remote_url, os.path.join(tocheckpath,"project"))
+                git.Repo.clone_from(item.remote_url, os.path.join(tocheckpath,"repo"))
                 #make the ro-crate-metadata.json file 
-                shutil.copyfile(os.path.join(os.getcwd(),"app","ro-crate-metadata.json"),os.sep.join((tocheckpath,'project',"ro-crate-metadata.json")))
+                shutil.copyfile(os.path.join(os.getcwd(),"app","ro-crate-metadata.json"),os.sep.join((tocheckpath,'repo',"ro-crate-metadata.json")))
                 with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
                     json.dump(data, file)
                 return {'Message':returnmessage, 'space_id': space_id}
@@ -379,14 +379,13 @@ async def add_space(*,item: SpaceModel):
                 raise HTTPException(status_code=400, detail=str(e))
     else:
         #try and init a git repo and a rocrate
-        repo = git.Repo.init(os.path.join(tocheckpath))
-        #change current wd to init the rocrate
         currentwd = os.getcwd()
-        #make project dir
-        os.mkdir(os.sep.join((tocheckpath,'project')))
-        os.chdir(os.sep.join((tocheckpath,'project')))
+        os.mkdir(os.sep.join((tocheckpath,'repo')))
+        os.chdir(os.sep.join((tocheckpath,'repo')))
+        repo = git.Repo.init(os.path.join(tocheckpath, 'repo'))
+        #change current wd to init the rocrate
         crate = ROCrate() 
-        crate.write_crate(os.sep.join((tocheckpath,'project')))
+        crate.write_crate(os.sep.join((tocheckpath,'repo')))
         os.chdir(currentwd)
         with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
             json.dump(data, file)
@@ -420,7 +419,7 @@ async def fix_crate(*,space_id: str = Path(None,description="space_id name")):
         data = json.load(file)
         try:
             toreturn = data[space_id]
-            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
+            space_folder = os.sep.join((data[space_id]['storage_path'],'repo'))
             try:
                 repo = git.Repo(data[space_id]['storage_path'])
             except:

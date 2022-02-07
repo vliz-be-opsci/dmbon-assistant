@@ -119,7 +119,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
         data = json.load(file)
         try:
             toreturn = data[space_id]
-            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
+            space_folder = os.sep.join((data[space_id]['storage_path'],'repo'))
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     toreturn = []
@@ -141,11 +141,11 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
 
     if path_folder == None:
         try:
-            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project'))) 
+            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'repo'))) 
         except:
             raise HTTPException(status_code=400, detail="Directory could not be made")
     else:
-        space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
+        space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'repo')), path_folder) 
         try:
             pads(space_folder).mkdir(parents=True, exist_ok=True)
         except:
@@ -195,7 +195,7 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
-            space_folder = os.sep.join((data[space_id]['storage_path'],'project'))
+            space_folder = os.sep.join((data[space_id]['storage_path'],'repo'))
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
         
@@ -245,7 +245,7 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
         try:
             toreturn = data[space_id]
             allpaths = path_folder
-            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'project')), path_folder) 
+            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'repo')), path_folder) 
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     toreturn = []

@@ -119,7 +119,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     try:
         repo = git.Repo(space_folder)
     except:
-        repo = git.Repo(os.path.join(space_folder,"project"))
+        repo = git.Repo(os.path.join(space_folder,"repo"))
     print(repo.heads)
     hcommit = repo.head.commit
     diff_list = hcommit.diff()
@@ -166,7 +166,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
     try:
         repo = git.Repo(space_folder)
     except:
-        repo = git.Repo(os.path.join(space_folder,"project"))
+        repo = git.Repo(os.path.join(space_folder,"repo"))
         
     if command != "commit" and command != "push" and command != "pull":
         raise HTTPException(status_code=400, detail="No valid command given, valid commands are (commit,push,pull)")
