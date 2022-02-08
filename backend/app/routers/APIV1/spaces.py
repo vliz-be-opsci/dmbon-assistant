@@ -206,7 +206,7 @@ def complete_metadata_crate(source_path_crate):
     return data
 
 def check_space_name(spacename):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if spacename == space:
@@ -250,7 +250,7 @@ async def check_path_availability(tocheckpath,space_id):
 
 @router.get('/', tags=["Spaces"])
 def get_all_spaces():
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
         toreturn = []
         for i,y in data.items():
@@ -267,7 +267,7 @@ def get_all_spaces():
 @router.get('/{space_id}/', tags=["Spaces"])
 def get_space_info(*,space_id: str = Path(None,description="space_id name")):
     if check_space_name(space_id):
-        with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+        with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
             data = json.load(file)
             try:
                 for i,y in data.items():
@@ -290,7 +290,7 @@ def get_space_info(*,space_id: str = Path(None,description="space_id name")):
 
 @router.delete('/{space_id}/', status_code=202, tags=["Spaces"])
 def delete_space(*,space_id: str = Path(None,description="space_id name")):
-    with open(os.path.join(os.getcwd(),"app","projects.json")) as data_file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json")) as data_file:
             data = json.load(data_file)
             try:
                 #delete the folder where the project was stored
@@ -310,7 +310,7 @@ def delete_space(*,space_id: str = Path(None,description="space_id name")):
                     raise HTTPException(status_code=500, detail="Space delete failed {}".format(e)) 
             del data[space_id]
             
-    with open(os.path.join(os.getcwd(),"app","projects.json"), 'w') as data_file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), 'w') as data_file:
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted space'}
 
@@ -319,7 +319,7 @@ async def add_space(*,item: SpaceModel):
     tocheckpath = str(item.storage_path)
     returnmessage = "Space created in folder: " + str(os.path.join(tocheckpath))
     space_id = uuid.uuid4().hex
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
         if space_id in data.keys():
             raise HTTPException(status_code=400, detail="Space already exists")
@@ -333,13 +333,13 @@ async def add_space(*,item: SpaceModel):
             if response.status != 200:
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
             if response.status == 200:
-                os.mkdir(os.sep.join((tocheckpath,'constraints')))
+                os.mkdir(os.sep.join((tocheckpath,'workspace')))
                 urlprofile = (await response.json())['url_ro_profile']
                 print('json file profile:  ',urlprofile, file=sys.stderr)
                 secondtest = ro_read.rocrate_helper(urlprofile)
                 secondtest.get_all_metadata_files()
                 secondtest.get_ttl_files()
-                with open(os.path.join(tocheckpath,'constraints','all_constraints.ttl'), 'w') as file:  # Use file to refer to the file object
+                with open(os.path.join(tocheckpath,'workspace','all_constraints.ttl'), 'w') as file:  # Use file to refer to the file object
                     file.write(secondtest.ttlinfo)
                 data[space_id]= {'storage_path':tocheckpath,'RO_profile':item.RO_profile}
     
@@ -360,7 +360,7 @@ async def add_space(*,item: SpaceModel):
                 repo.index.commit("initial commit")
                 repo.create_head('master')
                     
-            with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
+            with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "w") as file: 
                     json.dump(data, file)
             return {'Message':returnmessage, 'space_id': space_id}
         
@@ -371,8 +371,9 @@ async def add_space(*,item: SpaceModel):
                 tocheckpath = check_aval[1]
                 git.Repo.clone_from(item.remote_url, os.path.join(tocheckpath,"repo"))
                 #make the ro-crate-metadata.json file 
-                shutil.copyfile(os.path.join(os.getcwd(),"app","ro-crate-metadata.json"),os.sep.join((tocheckpath,'repo',"ro-crate-metadata.json")))
-                with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
+                #do not try and remake the ro-crate-metadata.json file maybe check if the file is present in the repo and then try and make it. 
+                #shutil.copyfile(os.path.join(os.getcwd(),"app","webtop-work-space","ro-crate-metadata.json.json"),os.sep.join((tocheckpath,'repo',"ro-crate-metadata.json")))
+                with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "w") as file: 
                     json.dump(data, file)
                 return {'Message':returnmessage, 'space_id': space_id}
             except Exception as e:
@@ -387,7 +388,7 @@ async def add_space(*,item: SpaceModel):
         crate = ROCrate() 
         crate.write_crate(os.sep.join((tocheckpath,'repo')))
         os.chdir(currentwd)
-        with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file: 
+        with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "w") as file: 
             json.dump(data, file)
         repo.git.add(all=True)
         repo.index.commit("initial commit")
@@ -397,7 +398,7 @@ async def add_space(*,item: SpaceModel):
 @router.put('/{space_id}/', status_code=202, tags=["Spaces"])
 async def update_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
     tocheckpath = str(item.storage_path)
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if space_id == space:
@@ -408,14 +409,14 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
                 if response.status != 200:
                     raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
             data[space_id]= {'storage_path':info["storage_path"],'RO_profile':item.RO_profile}
-            with open(os.path.join(os.getcwd(),"app","projects.json"), "w") as file:
+            with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "w") as file:
                 json.dump(data, file)  
             return {'Data':'Update successfull'} 
     raise HTTPException(status_code=404, detail="Space not found")
 
 @router.get('/{space_id}/fixcrate', status_code=201, tags=["Spaces"])
 async def fix_crate(*,space_id: str = Path(None,description="space_id name")): 
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             toreturn = data[space_id]

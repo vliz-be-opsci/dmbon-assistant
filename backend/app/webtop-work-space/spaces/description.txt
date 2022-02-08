@@ -1,0 +1,1 @@
+in here all the cache for the spaces will be assigned. the current workspace folder in the spacename workspace folder.

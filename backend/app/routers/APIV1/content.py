@@ -74,7 +74,7 @@ class DeleteContentModel(BaseModel):
 #TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
 def check_space_name(spacename):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if spacename == space:
@@ -115,7 +115,7 @@ async def check_path_availability(tocheckpath,space_id):
 
 @router.get('/')
 def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             toreturn = data[space_id]
@@ -131,7 +131,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
 
 @router.post('/', status_code=202)
 async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
 
     try:
@@ -192,7 +192,7 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
 
 @router.delete('/', status_code=202)
 def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = os.sep.join((data[space_id]['storage_path'],'repo'))
@@ -240,7 +240,7 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
 
 @router.get('/{path_folder:path}')
 def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             toreturn = data[space_id]

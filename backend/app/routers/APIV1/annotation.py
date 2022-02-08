@@ -73,7 +73,7 @@ class DeleteContentModel(BaseModel):
 #TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
 def check_space_name(spacename):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if spacename == space:
@@ -116,7 +116,7 @@ async def check_path_availability(tocheckpath,space_id):
 
 @router.get('/', status_code=200)
 def get_all_resources_annotation(*,space_id: str = Path(None,description="space_id name")):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -152,7 +152,7 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
 @router.post('/file/{file_id}', status_code=200)
 def make_resource_annotation_single_file(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: AnnotationsModel):
     ## get the current metadata.json ##
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -163,7 +163,7 @@ def make_resource_annotation_single_file(*,space_id: str = Path(None,description
         #print(projectfile)
         data = json.load(projectfile)
     ## get constraint values from shacl file for file ##
-    path_shacl = os.path.join(space_folder,"constraints","all_constraints.ttl")
+    path_shacl = os.path.join(space_folder,"workspace","all_constraints.ttl")
     print(path_shacl, file=sys.stderr)
     test = shclh.ShapesInfoGraph(path_shacl)
     shacldata = test.full_shacl_graph_dict()
@@ -259,7 +259,7 @@ def make_resource_annotation_single_file(*,space_id: str = Path(None,description
 
 @router.delete('/file/{file_id}/{predicate}', status_code=200)
 def delete_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), predicate: str = Path(None,description="To delete predicate from the file annotations")):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -292,7 +292,7 @@ def delete_resource_annotation(*,space_id: str = Path(None,description="space_id
 
 @router.get('/file/{file_id}', status_code=200)
 def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -306,7 +306,7 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         
         #implement the shacl constraint check here
         #read in shacl file
-        path_shacl = os.path.join(space_folder,"constraints","all_constraints.ttl")
+        path_shacl = os.path.join(space_folder,"workspace","all_constraints.ttl")
         f_constraints = open(path_shacl, "r")
         f_constraints_text = f_constraints.read()
         print(path_shacl, file=sys.stderr)
@@ -395,14 +395,14 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
 @router.get('/terms', status_code=200)
 def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
     #TODO from json select which shacl file should be taken
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     #read in shacl file 
-    path_shacl = os.path.join(space_folder,"constraints","all_constraints.ttl")
+    path_shacl = os.path.join(space_folder,"workspace","all_constraints.ttl")
     print(path_shacl, file=sys.stderr)
     test = shclh.ShapesInfoGraph(path_shacl)
     shacldata = test.full_shacl_graph_dict()
@@ -411,7 +411,7 @@ def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
 @router.patch('/{path_folder:path}', status_code=200)
 def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file relative to where the space is stored"), item: AnnotationsModel):
     #get path of metadatafile
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -450,7 +450,7 @@ def make_resource_annotations(*,space_id: str = Path(None,description="space_id 
 @router.patch('/', status_code=200)
 def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
     #get path of metadatafile
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -485,7 +485,7 @@ def make_annotations_for_all_resources(*,space_id: str = Path(None,description="
 @router.delete('/{path_folder:path}', status_code=200)
 def delete_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
     #get path of metadatafile
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -527,7 +527,7 @@ def delete_resource_annotations(*,space_id: str = Path(None,description="space_i
 @router.delete('/', status_code=200)
 def delete_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
     #get path of metadatafile
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']

@@ -67,7 +67,7 @@ class DeleteContentModel(BaseModel):
 #TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
 def check_space_name(spacename):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if spacename == space:
@@ -109,7 +109,7 @@ async def check_path_availability(tocheckpath,space_id):
 @router.get('/status/', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     toreturn =[]
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -157,7 +157,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
 @router.post('/{command}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
     toreturn =[]
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']

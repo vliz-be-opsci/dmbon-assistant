@@ -68,7 +68,7 @@ class DeleteContentModel(BaseModel):
 #TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
 def check_space_name(spacename):
-    with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if spacename == space:
@@ -109,13 +109,13 @@ async def check_path_availability(tocheckpath,space_id):
 
 @router.get('/')
 def get_all_profiles_info():
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+") as file:
         data = json.load(file)
         return data
 
 @router.get('/{profile_id}/')
 def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+") as file:
         data = json.load(file)
         try:
             toreturn = data[profile_id]
@@ -125,19 +125,19 @@ def get_profile_info(profile_id: str = Path(None,description="profile_id name"))
 
 @router.delete('/{profile_id}/', status_code=202)
 def delete_profile(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","workflows.json")) as data_file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json")) as data_file:
             data = json.load(data_file)
             try:
                 del data[profile_id]
             except Exception as e:
                 raise HTTPException(status_code=500, detail="Data delete failed")
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), 'w') as data_file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), 'w') as data_file:
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted profile'}
 
 @router.post('/', status_code=201)
 def add_profile(*,item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+")as file:
         data = json.load(file)
         profile_id = uuid.uuid4().hex
         if profile_id in data.keys():
@@ -152,7 +152,7 @@ def add_profile(*,item: ProfileModel):
             except Exception as e:
                 raise HTTPException(status_code=500, detail="error : {}".format(e))
             data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
-            with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
+            with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "w") as file:
                 json.dump(data, file)   
             return {'Message':'Profile added',"profile_id": profile_id}
         else:
@@ -161,13 +161,13 @@ def add_profile(*,item: ProfileModel):
 
 @router.put('/{profile_id}/', status_code=202)
 def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
+    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+")as file:
         data = json.load(file)
     for profile in data.keys():
         if profile_id == profile:
             if item.logo != None or item.description != None or item.url_ro_profile != None:
                 data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile} 
-                with open(os.path.join(os.getcwd(),"app","workflows.json"), "w") as file:
+                with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "w") as file:
                     json.dump(data, file)  
                     return {'Data':'Update successfull'} 
             else:
