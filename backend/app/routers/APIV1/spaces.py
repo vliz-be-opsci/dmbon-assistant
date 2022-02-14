@@ -42,6 +42,7 @@ class ProfileModel(BaseModel):
     url_ro_profile: str = Field(None, description = "github url where the rocrate profile is located")
 
 class SpaceModel(BaseModel):
+    name_space: str = Field(None, description= "Name that the space should have")
     storage_path: str = Field(None, description = "Valid path on local storage where ROcrate data will be stored")
     RO_profile: str = Field(None, description = "Ro-Profile name that will be used for the space")
     remote_url: Optional[str] = Field(None, description = "git repo url to get project from")
@@ -99,7 +100,7 @@ def complete_metadata_crate(source_path_crate):
     print(all_meta_ids_data, file=sys.stderr)
     
     ## start from fresh file with metadata template  ##
-    with open(os.path.join(os.getcwd(),'app', 'ro-crate-metadata.json')) as json_file:
+    with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'ro-crate-metadata.json')) as json_file:
         data = json.load(json_file)
         
     print( data, file=sys.stderr)

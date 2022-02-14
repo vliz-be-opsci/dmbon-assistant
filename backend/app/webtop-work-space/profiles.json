@@ -1,72 +1,43 @@
 {
-    "OSD_Descriptor": {
-        "data": {
-            "url_picture": "https://avatars.githubusercontent.com/u/86710073?s=400&u=2a27e961d29c4e8d54391afa9807d32e04682cd5&v=4",
-            "Plugins": {
-                "RemoteSourcePlugin": {
-                    "downloadURL": "https://gitlab.vliz.be/datac/remotesourcepluginlink",
-                    "name": "RemoteSourcePlugin",
-                    "release": "1.0.0"
-                }
-            },
-            "Project_Metadata": {
-                "Description": "text",
-                "author": "text",
-                "email contactperson": "email"
-            },
-            "Remote_Sources": {
-                "release": "1.0.0",
-                "ROCrate_Semantic": "https://www.researchobject.org/ro-crate/1.1/context.jsonld"
-            },
-            "downloadURL": "https://test.be"
-        },
-        "downloadURL": "https://gitlab.vliz.be/datac",
-        "name": "Test_Descriptor",
-        "release": "1.0.0"
-    },
-    "ARMS_Descriptor": {
-        "data": {
-            "url_picture": "https://avatars.githubusercontent.com/u/86344728?s=400&u=10a7d82d31cefae8df2906c9952ec0ff7537f890&v=4",
-            "Plugins": {
-                "RemoteSourcePlugin": {
-                    "downloadURL": "https://gitlab.vliz.be/datac/remotesourcepluginlink",
-                    "name": "RemoteSourcePlugin",
-                    "release": "1.0.0"
-                }
-            },
-            "Project_Metadata": {
-                "Description": "text",
-                "author": "text",
-                "email contactperson": "email",
-                "ARMS_unit": "text"
-            },
-            "Remote_Sources": {
-                "release": "1.0.0",
-                "ROCrate_Semantic": "https://www.researchobject.org/ro-crate/1.1/context.jsonld"
-            },
-            "downloadURL": "https://test.be"
-        },
-        "downloadURL": "https://gitlab.vliz.be/datac",
-        "name": "Test_Descriptor",
-        "release": "1.0.0"
-    },
-    "test_profile_git": {
-        "roprourl": "testurlfind.com",
-        "url": null
-    },
     "7247038cc11f48ab93e6dd59cdac8e7d": {
         "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
         "description": "uuid4 test descitprion",
         "url_ro_profile": "propare test for html string"
     },
     "1193456ea0984c6bba1b6d4100e65cb9": {
+        "name_profile": "Old_method_might_not_be_working_later1",
         "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
         "description": "test normal",
         "url_ro_profile": "https://github.com/cedricdcc/test_rocrate_repo.git"
     },
     "TestFeb2022": {
+        "name_profile": "Old_method_might_not_be_working_later",
         "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
         "description": "test normal of other combined profile",
         "url_ro_profile": "https://github.com/cedricdcc/test_other_repo.git"
+    },
+    "5084a97d5b544fe0a119f704bd64d22f": {
+        "name_profile": "test_new_method",
+        "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test of the new method",
+        "url_ro_profile": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+        "seed_dependencies": [
+            "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+            "https://github.com/cedricdcc/dmbon_test_profile_crate.git",
+            "https://github.com/cedricdcc/dmbon_test_seed_crate.git",
+            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
+        ]
+    },
+    "2fe19437c5ae4349b426c9c0aa10f77f": {
+        "name_profile": "test_api_call",
+        "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test for the api call",
+        "url_ro_profile": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+        "seed_dependencies": [
+            "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+            "https://github.com/cedricdcc/dmbon_test_profile_crate.git",
+            "https://github.com/cedricdcc/dmbon_test_seed_crate.git",
+            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
+        ]
     }
 }

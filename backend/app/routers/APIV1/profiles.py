@@ -26,6 +26,7 @@ router = APIRouter(
 ### define class profiles for the api ###
 
 class ProfileModel(BaseModel):
+    name: str = Field(None, description="Name of the profile")
     logo: Optional[str] = Field(None, example = 'https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png', description = "Logo to be displayed in RO crate UI")
     description: Optional[str] = Field(None, description = "description of the RO-profile")
     url_ro_profile: str = Field(None, description = "github url where the rocrate profile is located")
@@ -137,27 +138,16 @@ def delete_profile(profile_id: str = Path(None,description="profile_id name")):
 
 @router.post('/', status_code=201)
 def add_profile(*,item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+")as file:
-        data = json.load(file)
-        profile_id = uuid.uuid4().hex
-        if profile_id in data.keys():
-            raise HTTPException(status_code=400, detail="Profile already exists")
-        if item.logo != None or item.description != None or item.url_ro_profile != None:
-            #add check for the url of the profile:
-            try:
-                tocheckrocrate = ro_read.rocrate_helper(item.url_ro_profile)
-                tocheckrocrate.get_all_metadata_files()
-                tocheckrocrate.get_ttl_files()
-                print(tocheckrocrate.ttlinfo)
-            except Exception as e:
-                raise HTTPException(status_code=500, detail="error : {}".format(e))
-            data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile}
-            with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "w") as file:
-                json.dump(data, file)   
-            return {'Message':'Profile added',"profile_id": profile_id}
-        else:
-            keys = dict(item).keys()
-            raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
+    if item.logo != None or item.description != None  or item.url_ro_profile != None or item.name != None:
+        #add check for the url of the profile:
+        try:
+            tocheckrocrate = ro_read.MakeNewProfile(profile_id=item.name, logo=item.logo ,description= item.description, repo_url=item.url_ro_profile)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="error : {}".format(e))
+        return {'Message':'Profile added'}
+    else:
+        keys = dict(item).keys()
+        raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
 
 @router.put('/{profile_id}/', status_code=202)
 def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
