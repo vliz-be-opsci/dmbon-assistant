@@ -42,7 +42,7 @@ class ProfileModel(BaseModel):
     url_ro_profile: str = Field(None, description = "github url where the rocrate profile is located")
 
 class SpaceModel(BaseModel):
-    name_space: str = Field(None, description= "Name that the space should have")
+    name: str = Field(None, description= "Name that the space should have")
     storage_path: str = Field(None, description = "Valid path on local storage where ROcrate data will be stored")
     RO_profile: str = Field(None, description = "Ro-Profile name that will be used for the space")
     remote_url: Optional[str] = Field(None, description = "git repo url to get project from")

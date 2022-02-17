@@ -23,6 +23,8 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+#profiles_by_uuid = Profile.load_all()
+
 ### define class profiles for the api ###
 
 class ProfileModel(BaseModel):
