@@ -39,5 +39,15 @@
             "https://github.com/cedricdcc/dmbon_test_seed_crate.git",
             "https://github.com/cedricdcc/my_bon_test_crate_2.git"
         ]
+    },
+    "0d972c79c8634b18b5fd13fdde8c8cb7": {
+        "name": "this_is_face_the_face_of_the_planet",
+        "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+        "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test new method object oriented from test_apiv1.py",
+        "uuid": "0d972c79c8634b18b5fd13fdde8c8cb7",
+        "seed_dependencies": [
+            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
+        ]
     }
 }

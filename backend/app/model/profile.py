@@ -1,7 +1,8 @@
 #profile model here
-from rocrategit import RoCrateGitBase
-from location import Locations
+from .rocrategit import RoCrateGitBase
+from .location import Locations
 import os, json
+import uuid as uuidmake
 
 #constants
 SEED_DEPENDENCY_MARKER_URI = "https://vliz.be/opsci/ns/dmbon/seed_crate" #TODO actual namespace and member properties tbd
@@ -32,8 +33,11 @@ class Profile(RoCrateGitBase):
         self.description = description
         self.seed_dependencies = SeedCrate.load_all(seed_dependencies) 
         if uuid is None:
-            self.uuid = uuid.uuid4().hex
-            self.detect_dependencies()
+            self.uuid = uuidmake.uuid4().hex
+            #function to download all the initial repo
+            self.init(repo_url= self.repo_url)
+            self.seed_dependencies = Profile.detect_dependencies(self)
+            print("all seed dependencies: ",self.seed_dependencies)
             self.write()
             #self.location_init_repo = self._download_repo(repo_url = self.repo_url)
             #self.get_rocrate_metadata_git_urls(rocrate_metadata_location= os.path.join(self.location_init_repo,"ro-crate-metadata.json"))
@@ -44,22 +48,25 @@ class Profile(RoCrateGitBase):
         """
         return dict(name=self.name,
                     repo_url=self.repo_url,
-                    logo=self.logo,
+                    logo_url=self.logo,
                     description=self.description,
                     uuid= self.uuid,
-                    seed_dependencies= set(self.seed_dependencies)
+                    seed_dependencies= self.seed_dependencies
                 )
 
     def location(self):
-        return Locations().get_repo_location(self.repo_url)
+        return Locations().get_repo_location_by_url(self.repo_url)
 
     def detect_dependencies(self):
-      self.sync()
-      #  use self.location() to find information ?? 
-      seed_crates = self.find_parts(SEED_DEPENDENCY_MARKER_URI)
-      # for sc in seed_creates  make SeedCrate(sc.repo_uri == sc.id?) .... sc.update_content
-      for sc in seed_crates: 
-          pass
+        self.sync()
+        #  use self.location() to find information ?? 
+        seed_crates = self.find_parts(SEED_DEPENDENCY_MARKER_URI)
+        # for sc in seed_creates  make SeedCrate(sc.repo_uri == sc.id?) .... sc.update_content
+        for sc in seed_crates: 
+            #for now the sc is assumed to be the git repo url and thus nothing happens here yet
+            print("seedcrate url: ",sc)
+            
+        return seed_crates
       
     @staticmethod
     def load(uuid :str):
@@ -72,7 +79,6 @@ class Profile(RoCrateGitBase):
         """
         #get metadata profiles 
         profiles_dict = Profile._read_profiles()
-        
         return Profile(**profiles_dict[uuid])
     
     @staticmethod
@@ -83,7 +89,7 @@ class Profile(RoCrateGitBase):
     
     def write(self):
         profiles_dict = Profile._read_profiles()
-        profiles_dict[self.profile_uuid] = self.as_dict()
+        profiles_dict[self.uuid] = self.as_dict()
         Profile._write_profiles(profiles_dict)
     
     @staticmethod
@@ -94,12 +100,15 @@ class Profile(RoCrateGitBase):
     @staticmethod
     def _write_profiles(profiles_dict: dict):
         with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'profiles.json'), 'w') as json_file:
+            print("towritedict: ",profiles_dict)
             json.dump(profiles_dict, json_file)
     
 class SeedCrate(RoCrateGitBase):
     def __init__(self,repo_url):
         self.repo_url =repo_url
-        self._location = Locations().get_repo_location(repo_url)
+        self._location = Locations().get_repo_location_by_url(repo_url)
+        if os.path.exists(self._location) == False:
+            self.init(repo_url= self.repo_url)
         # check if the location exists, if not call GitRepoCache.clone_content(location(), repo_url)
 
     def location(self):
@@ -108,5 +117,13 @@ class SeedCrate(RoCrateGitBase):
     @staticmethod
     def load_all(set_urls):
         """creates a dictionary by repo url for all passed repo urls"""
-        seeds_dict = {url: SeedCrate(url) for url in set_urls}
-        return seeds_dict
+        #TODO: have exception for NOneType input
+        try:
+            seeds_dict = {url: SeedCrate(url) for url in set_urls}
+            return seeds_dict
+        except:
+            return([])
+        
+
+### test area ###
+#make locations class

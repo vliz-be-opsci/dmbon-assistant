@@ -83,6 +83,6 @@ class Space(RoCrateGitBase):
             json.dump(spaces_dict, json_file)
           
     def location(self):
-      return Locations().get_space_location(self.name)  
+        return Locations().get_space_location_by_name(self.name)  
 
     
