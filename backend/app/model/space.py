@@ -35,8 +35,9 @@ class Space(RoCrateGitBase):
             self.seed_dependencies = Profile.load(uuid = self.ro_profile).seed_dependencies
             self.profile_repo_url = Profile.load(uuid = self.ro_profile).repo_url
             print("main repo_url     that will be used for the profile: ",str(self.profile_repo_url))
-            print("seed dependencies that will be used for the profile: ",str(self.seed_dependencies))
+            print("seed dependencies that will be used for the profile: ",str(self.seed_dependencies.keys()))
             #TODO: copy all the data of the seed dependencies to the location of the workspace folder for the space
+            #TODO: what to do if there are files with the same name?
             #TODO: copy all the template data for the space into the given storage_path for the space
             #TODO: add the new metadata to the spaces.json file
         self.workspace_path = workspace_path #TODO: when to instantiate the workspace_path
