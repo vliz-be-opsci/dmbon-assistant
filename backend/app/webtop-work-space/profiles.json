@@ -49,5 +49,15 @@
         "seed_dependencies": [
             "https://github.com/cedricdcc/my_bon_test_crate_2.git"
         ]
+    },
+    "baf81330f5fa449fa54c8d93397b43ce": {
+        "name": "test_automated_tests",
+        "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+        "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test new method object oriented from test_apiv1.py",
+        "uuid": "baf81330f5fa449fa54c8d93397b43ce",
+        "seed_dependencies": [
+            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
+        ]
     }
 }

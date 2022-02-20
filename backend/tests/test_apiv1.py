@@ -8,6 +8,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
 from app.model.profile import Profile
+from app.model.space import Space
 from app.model.location import Locations
 ### tests ###
 def on_rm_error(func, path, exc_info):
@@ -43,8 +44,35 @@ def test_make_profile():
 
 def test_check_profile():
     tottest = Profile.load(uuid = '0d972c79c8634b18b5fd13fdde8c8cb7')
-    print(tottest.name)
+    print(tottest.seed_dependencies)
+
+def test_make_space():
+    """ test to see if a profile can be correctly made
+        Steps:
+        1 -> clear out cache of spaces 
+        2 -> perform the makespace
+        3 -> perform assertions to see if everything went correctly (check if folder exists, check if the name of the folder is correct)
+        4 -> clear out cache of spaces again
+    """
+    '''
+    cache_folder = os.path.join(os.getcwd(),'app','webtop-work-space' ,'spaces')
+    for i in os.listdir(cache_folder):
+        try:
+            tmp = os.path.join(cache_folder, i)
+            while True:
+                call(['attrib', '-H', tmp])
+                break
+            shutil.rmtree(tmp, onerror=on_rm_error)
+        except Exception as e:
+            print(e)
+    '''
+    Locations(root=os.path.join(os.getcwd(),'app','webtop-work-space' ,'cache'))
+    Space(name="test_space_project",
+    storage_path=os.path.join(os.getcwd(),'app','webtop-work-space' ,'spaces'),
+    ro_profile="0d972c79c8634b18b5fd13fdde8c8cb7",
+    )
 
 #test_make_profile()
 test_check_profile()
+test_make_space()
     

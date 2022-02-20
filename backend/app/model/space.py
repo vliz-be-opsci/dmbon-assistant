@@ -1,7 +1,9 @@
 #space model here
-from location import Locations
-from rocrategit import RoCrateGitBase
+from .profile import Profile
+from .location import Locations
+from .rocrategit import RoCrateGitBase
 import os, json
+import uuid as uuidmake
 
 class Space(RoCrateGitBase):
     """ Class to represent a selectable profile for data spaces.
@@ -14,7 +16,7 @@ class Space(RoCrateGitBase):
         :type name: str
         :param storage_path: path on local disk where to store the dataset repo of the space
         :type storage_path: Path
-        :param ro_profile: profile to which the space should adhere to be
+        :param ro_profile: uuid of the profile to which the space should adhere to
         :type ro_profile: str
         :param uuid: Optional - uuid of the space
         :type uuid: str
@@ -28,8 +30,12 @@ class Space(RoCrateGitBase):
         self.ro_profile = ro_profile
         self.remote_url = remote_url #TODO: what todo with the the optionality of the property
         if uuid is None:
-            self.uuid = uuid.uuid4().hex
-            #TODO: get all the seed_dependencies from the given profile
+            self.uuid = uuidmake.uuid4().hex
+            #TODO: get all the seed_dependencies from the given profile uuid
+            self.seed_dependencies = Profile.load(uuid = self.ro_profile).seed_dependencies
+            self.profile_repo_url = Profile.load(uuid = self.ro_profile).repo_url
+            print("main repo_url     that will be used for the profile: ",str(self.profile_repo_url))
+            print("seed dependencies that will be used for the profile: ",str(self.seed_dependencies))
             #TODO: copy all the data of the seed dependencies to the location of the workspace folder for the space
             #TODO: copy all the template data for the space into the given storage_path for the space
             #TODO: add the new metadata to the spaces.json file

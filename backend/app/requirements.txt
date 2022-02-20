@@ -7,16 +7,17 @@ asyncio
 aiohttp
 GitPython
 rocrate
-#-e git://github.com/ResearchObject/ro-crate-py.git#egg=rocrate
 datetime
 pytest
 uuid
 aiofiles
 pyshacl
 unidiff
-importLib
+#importLib
 SPARQLWrapper
 pyshacl
+python-dotenv
+numpy
 #py-vocab-search
 #-e git+ssh://gitlab.vliz.be/datac/openscience/py-vocab-search@master#egg=py-vocab-search
-python-dotenv
+#-e git://github.com/ResearchObject/ro-crate-py.git#egg=rocrate
