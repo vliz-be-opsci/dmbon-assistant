@@ -1,4 +1,5 @@
 #space model here
+import shutil
 from .profile import Profile
 from .location import Locations
 from .rocrategit import RoCrateGitBase
@@ -26,20 +27,30 @@ class Space(RoCrateGitBase):
         :type workspace_path: Path
         """  
         self.name = name
-        self.storage_path = storage_path
+        self.storage_path = os.path.join(storage_path, name)
         self.ro_profile = ro_profile
         self.remote_url = remote_url #TODO: what todo with the the optionality of the property
         if uuid is None:
             self.uuid = uuidmake.uuid4().hex
-            #TODO: get all the seed_dependencies from the given profile uuid
-            self.seed_dependencies = Profile.load(uuid = self.ro_profile).seed_dependencies
-            self.profile_repo_url = Profile.load(uuid = self.ro_profile).repo_url
-            print("main repo_url     that will be used for the profile: ",str(self.profile_repo_url))
-            print("seed dependencies that will be used for the profile: ",str(self.seed_dependencies.keys()))
-            #TODO: copy all the data of the seed dependencies to the location of the workspace folder for the space
-            #TODO: what to do if there are files with the same name?
-            #TODO: copy all the template data for the space into the given storage_path for the space
+            #check if remote url was  given, if yes then only init the repo and not copy files 
+            if remote_url is None: 
+                self.init_no_url(location=self.storage_path)
+                #TODO: get all the seed_dependencies from the given profile uuid
+                self.seed_dependencies = Profile.load(uuid = self.ro_profile).seed_dependencies
+                self.profile_repo_url = Profile.load(uuid = self.ro_profile).repo_url
+                repos_to_copy_over = []
+                repos_to_copy_over.append(self.profile_repo_url)
+                for seed_repo in self.seed_dependencies.keys():
+                    repos_to_copy_over.append(seed_repo)
+                #make the folder where the workspace will reside
+                self.workspace_path = os.path.join(os.getcwd(),'app','webtop-work-space' ,'spaces' ,self.uuid)
+                os.mkdir(self.workspace_path)
+                #copy over all the files from the repos
+                for repo in repos_to_copy_over:
+                    self._copy_files_to_workspace(repo_url=repo)
             #TODO: add the new metadata to the spaces.json file
+            self.write()
+            
         self.workspace_path = workspace_path #TODO: when to instantiate the workspace_path
             
     def as_dict(self):
@@ -90,6 +101,51 @@ class Space(RoCrateGitBase):
             json.dump(spaces_dict, json_file)
           
     def location(self):
-        return Locations().get_space_location_by_name(self.name)  
-
+        return Locations().get_space_location_by_name(self.name) 
     
+    def _copy_files_to_workspace(self, repo_url):
+        """copy all the files from a given repo url to the workspace folder"""
+        #convert repo url to folder of the repo 
+        repo_location = Locations().get_repo_location_by_url(repo_url)
+        #init the workspacvemanager
+        workspace_manager = WorkSpaceManager(workspace_path=self.workspace_path)
+        # go over each file in the given folder and check if its not part of the .git folder -> copy over to the given self.storage_path
+        for subdir, dirs, files in os.walk(repo_location):
+            for file in files:
+                filepath = subdir + os.sep + file
+                if ".git" not in filepath:
+                    filetest = False
+                    #copy over the files to the workspace folder with the path structure intact relative to the seed repo location
+                    relative_path = filepath.split(file)[0].split(repo_location)[-1].replace(os.path.sep, "")
+                    #do all the workspâce tests here, if all give back false then copy the file over to the space folder
+                    filetest = workspace_manager.check_write_constraints(filepath=filepath)
+                    if filetest == False:
+                        if relative_path != "": 
+                            fileout  = os.path.join(self.storage_path,relative_path,file)
+                            if not os.path.exists(os.path.join(self.storage_path,relative_path)):
+                                os.makedirs(os.path.join(self.storage_path,relative_path))
+                        else: fileout  = os.path.join(self.storage_path,file)
+                        shutil.copyfile(filepath,fileout)
+                            
+class WorkSpaceManager():
+    """Class to manage all the functions that will handle the copying of certain data to be put into the workspaces"""
+    
+    def __init__(self, workspace_path):
+        self.workspace_path = workspace_path
+    
+    def check_write_constraints(self,filepath):
+        if filepath.endswith(".ttl"):
+            #check if combined_file_name is already present in the workspace folder, if not make it , if yes then append to the file
+            fileout  = os.path.join(self.workspace_path,"all_constraints.ttl")
+            #open the file and get the data from it
+            #open the toappend file in a mode and append file data to it
+            f1 = open(filepath, 'r')
+            f2 = open(fileout, 'a+')
+            f2.write(f1.read())
+            f1.seek(0)
+            f1.close()
+            f2.seek(0)
+            f2.close()
+            return True
+        else:
+            return False

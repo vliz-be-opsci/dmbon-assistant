@@ -3,6 +3,9 @@ from .rocrategit import RoCrateGitBase
 from .location import Locations
 import os, json
 import uuid as uuidmake
+import logging
+
+log=logging.getLogger(__name__)
 
 #constants
 SEED_DEPENDENCY_MARKER_URI = "https://vliz.be/opsci/ns/dmbon/seed_crate" #TODO actual namespace and member properties tbd
@@ -37,7 +40,7 @@ class Profile(RoCrateGitBase):
             #function to download all the initial repo
             self.init(repo_url= self.repo_url)
             self.seed_dependencies = Profile.detect_dependencies(self)
-            print("all seed dependencies: ",self.seed_dependencies)
+            log.debug(f"all seed dependencies: {self.seed_dependencies}")
             self.write()
             #self.location_init_repo = self._download_repo(repo_url = self.repo_url)
             #self.get_rocrate_metadata_git_urls(rocrate_metadata_location= os.path.join(self.location_init_repo,"ro-crate-metadata.json"))
@@ -64,8 +67,7 @@ class Profile(RoCrateGitBase):
         # for sc in seed_creates  make SeedCrate(sc.repo_uri == sc.id?) .... sc.update_content
         for sc in seed_crates: 
             #for now the sc is assumed to be the git repo url and thus nothing happens here yet
-            print("seedcrate url: ",sc)
-            
+            log.debug(f"seedcrate url: {sc}")
         return seed_crates
       
     @staticmethod
@@ -100,7 +102,7 @@ class Profile(RoCrateGitBase):
     @staticmethod
     def _write_profiles(profiles_dict: dict):
         with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'profiles.json'), 'w') as json_file:
-            print("towritedict: ",profiles_dict)
+            log.debug(f"towritedict: {profiles_dict}")
             json.dump(profiles_dict, json_file)
     
 class SeedCrate(RoCrateGitBase):

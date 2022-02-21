@@ -1,0 +1,36 @@
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+schema:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass schema:File ;
+    sh:property [
+        sh:path schema:funny numbers part 2 ;
+        sh:in ( "4" "2" "40" "6") ;
+        sh:minCount 1 ;
+    ] .
+
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+schema:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass schema:File ;
+    sh:property [
+        sh:path schema:Something ;
+        sh:datatype xsd:string ;
+        sh:name "just something" ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:funny numbers ;
+        sh:in ( "42" "21" "420" "69") ;
+        sh:minCount 1 ;
+    ] .
+

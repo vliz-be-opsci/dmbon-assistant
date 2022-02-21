@@ -1,6 +1,7 @@
 import git, os, json
 from abc import abstractmethod
 from .location import Locations
+from rocrate.rocrate import ROCrate
 
 class GitRepoCache():
     
@@ -27,6 +28,19 @@ class GitRepoCache():
         except Exception as e:
             return e
 
+    @staticmethod
+    def init_repo(location):
+        currentwd = os.getcwd()
+        os.mkdir((location))
+        os.chdir((location))
+        repo = git.Repo.init(os.path.join(location))
+        #change current wd to init the rocrate
+        crate = ROCrate() 
+        crate.write_crate((location))
+        os.chdir(currentwd)
+        repo.git.add(all=True)
+        repo.index.commit("initial commit")
+        repo.create_head('master')
 
 class RoCrateGitBase():
     
@@ -72,3 +86,6 @@ class RoCrateGitBase():
 
     def init(self,repo_url):
         GitRepoCache().clone_content(self.location(), repo_url)
+        
+    def init_no_url(self, location):
+        GitRepoCache().init_repo(location = location)
