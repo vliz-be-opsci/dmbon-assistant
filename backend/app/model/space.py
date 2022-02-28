@@ -3,9 +3,10 @@ import shutil
 from .profile import Profile
 from .location import Locations
 from .rocrategit import RoCrateGitBase
-import os, json
+import os, json, stat
 import uuid as uuidmake
-
+import logging
+log=logging.getLogger(__name__)
 class Space(RoCrateGitBase):
     """ Class to represent a selectable profile for data spaces.
     This class tracks and manages/caches incomming profile data 
@@ -33,25 +34,30 @@ class Space(RoCrateGitBase):
         if uuid is None:
             self.uuid = uuidmake.uuid4().hex
             #check if remote url was  given, if yes then only init the repo and not copy files 
-            if remote_url is None: 
-                self.init_no_url(location=self.storage_path)
-                #TODO: get all the seed_dependencies from the given profile uuid
-                self.seed_dependencies = Profile.load(uuid = self.ro_profile).seed_dependencies
-                self.profile_repo_url = Profile.load(uuid = self.ro_profile).repo_url
-                repos_to_copy_over = []
-                repos_to_copy_over.append(self.profile_repo_url)
-                for seed_repo in self.seed_dependencies.keys():
-                    repos_to_copy_over.append(seed_repo)
-                #make the folder where the workspace will reside
-                self.workspace_path = os.path.join(os.getcwd(),'app','webtop-work-space' ,'spaces' ,self.uuid)
-                os.mkdir(self.workspace_path)
-                #copy over all the files from the repos
-                for repo in repos_to_copy_over:
-                    self._copy_files_to_workspace(repo_url=repo)
+            log.debug(remote_url)
+            if remote_url is None or remote_url == "": 
+                try:
+                    #TODO: get all the seed_dependencies from the given profile uuid
+                    self.seed_dependencies = Profile.load(uuid = self.ro_profile).seed_dependencies
+                    self.profile_repo_url = Profile.load(uuid = self.ro_profile).repo_url
+                    self.init_no_url(location=self.storage_path)
+                    repos_to_copy_over = []
+                    repos_to_copy_over.append(self.profile_repo_url)
+                    for seed_repo in self.seed_dependencies.keys():
+                        repos_to_copy_over.append(seed_repo)
+                    #make the folder where the workspace will reside
+                    self.workspace_path = Locations().get_workspace_location_by_uuid(self.uuid)
+                    os.mkdir(self.workspace_path)
+                    #copy over all the files from the repos
+                    for repo in repos_to_copy_over:
+                        self._copy_files_to_workspace(repo_url=repo)
+                except Exception as e:
+                    log.error("Error while making new space")
+                    log.exception(f"{e}")
             #TODO: add the new metadata to the spaces.json file
             self.write()
-            
-        self.workspace_path = workspace_path #TODO: when to instantiate the workspace_path
+        else:
+            self.workspace_path = workspace_path #TODO: when to instantiate the workspace_path
             
     def as_dict(self):
         """ create a dict respresentation of self that can be **expanded into the arguments to __init__() 
@@ -92,12 +98,12 @@ class Space(RoCrateGitBase):
         
     @staticmethod
     def _read_spaces():
-        with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'spaces.json')) as json_cache_file:
+        with open(Locations().join_abs_path('spaces.json'), 'r') as json_cache_file:
             return json.load(json_cache_file)
     
     @staticmethod
     def _write_spaces(spaces_dict: dict):
-        with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'spaces.json'), 'w') as json_file:
+        with open(Locations().join_abs_path('spaces.json'), 'w') as json_file:
             json.dump(spaces_dict, json_file)
           
     def location(self):

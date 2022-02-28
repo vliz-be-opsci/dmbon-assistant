@@ -16,6 +16,14 @@ from fastapi.openapi.docs import (
     get_swagger_ui_oauth2_redirect_html,
 )
 import app.ro_crate_reader_functions as ro_read
+import logging
+log=logging.getLogger(__name__)
+#all diff subroutes
+from .content import router as content_router
+from .git import router as git_router
+from .annotation import router as annotation_router
+from app.model.location import Locations
+from app.model.profile import Profile
 
 router = APIRouter(
     prefix="",
@@ -59,19 +67,8 @@ class DeleteContentModel(BaseModel):
 
 ### define helper functions for the api ###
 
-#TODO: function that reads into the roprofile rocrate metadata and finds the conforms to part ;
-#  1: gets the shacl or other constraint files.
-#  2: reciprocly go through all rocrate conform to untill all contraints are gathered. 
-#  3: combines all the contraints into 1 contraint file and return this in a folder that is a sibling of the project folder.
-
-#TODO: function that searches for the typechanger for mimetypes when adding new files to the rocrate , be it either from url or from local system
-
-#TODO: figure out how to get the mimetype of url resources added (maybe through name?)
-
-#TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
-
 def check_space_name(spacename):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if spacename == space:
@@ -112,39 +109,55 @@ async def check_path_availability(tocheckpath,space_id):
 
 @router.get('/')
 def get_all_profiles_info():
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+") as file:
+    log.info(f"profile get all begin")
+    with open(Locations().join_abs_path('profiles.json'), "r+") as file:
         data = json.load(file)
         return data
 
 @router.get('/{profile_id}/')
 def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+") as file:
+    log.info(f"profile get begin")
+    with open(Locations().join_abs_path('profiles.json'), "r+") as file:
         data = json.load(file)
         try:
             toreturn = data[profile_id]
             return toreturn
         except Exception as e:
+            log.error(f"profile get profile by id error")
+            log.exception(f"{e}")
             raise HTTPException(status_code=404, detail="profile not found")
 
 @router.delete('/{profile_id}/', status_code=202)
 def delete_profile(profile_id: str = Path(None,description="profile_id name")):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json")) as data_file:
+    log.info(f"profile delete begin")
+    with open(Locations().join_abs_path('profiles.json')) as data_file:
             data = json.load(data_file)
             try:
                 del data[profile_id]
             except Exception as e:
-                raise HTTPException(status_code=500, detail="Data delete failed")
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), 'w') as data_file:
+                log.error(f"profile delete profile by id error")
+                log.exception(f"{e}")
+                raise HTTPException(status_code=404, detail=f"profile {profile_id} was not found in profiles")
+    with open(Locations().join_abs_path('profiles.json'), 'w') as data_file:
         data = json.dump(data, data_file)    
         return {'message':'successfully deleted profile'}
 
 @router.post('/', status_code=201)
 def add_profile(*,item: ProfileModel):
+    log.info(f"profile add begin")
     if item.logo != None or item.description != None  or item.url_ro_profile != None or item.name != None:
         #add check for the url of the profile:
         try:
-            tocheckrocrate = ro_read.MakeNewProfile(profile_id=item.name, logo=item.logo ,description= item.description, repo_url=item.url_ro_profile)
+            #tocheckrocrate = ro_read.MakeNewProfile(profile_id=item.name, logo=item.logo ,description= item.description, repo_url=item.url_ro_profile)
+            Profile(
+                repo_url = item.url_ro_profile,
+                name = item.name,
+                description = item.description,
+                logo_url = item.logo,
+            )
         except Exception as e:
+            log.error(f"profile make profile error")
+            log.exception(f"{e}")
             raise HTTPException(status_code=500, detail="error : {}".format(e))
         return {'Message':'Profile added'}
     else:
@@ -153,16 +166,25 @@ def add_profile(*,item: ProfileModel):
 
 @router.put('/{profile_id}/', status_code=202)
 def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "r+")as file:
+    log.info(f"profile update begin")
+    with open(Locations().join_abs_path('profiles.json'), "r+")as file:
         data = json.load(file)
     for profile in data.keys():
         if profile_id == profile:
-            if item.logo != None or item.description != None or item.url_ro_profile != None:
-                data[profile_id]= {'logo':item.logo,'description':item.description,'url_ro_profile':item.url_ro_profile} 
-                with open(os.path.join(os.getcwd(),"app","webtop-work-space","profiles.json"), "w") as file:
-                    json.dump(data, file)  
-                    return {'Data':'Update successfull'} 
-            else:
+            try:
+                if item.logo != None or item.description != None or item.url_ro_profile != None:
+                    data[profile_id].update({'logo_url':item.logo,'description':item.description,'repo_url':item.url_ro_profile})
+                    with open(Locations().join_abs_path('profiles.json'), "w") as file:
+                        json.dump(data, file)  
+                        return {'Data':'Update successfull'} 
+                else:
+                    log.info(f"profile update fail")
+                    log.info(f"supplied body must have following keys: {format(keys)}")
+                    keys = dict(item).keys()
+                    raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
+            except Exception as e:
+                log.error(f"profile update profile error")
+                log.exception(f"{e}")
                 keys = dict(item).keys()
                 raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
     raise HTTPException(status_code=404, detail="profile not found")

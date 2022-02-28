@@ -96,12 +96,12 @@ class Profile(RoCrateGitBase):
     
     @staticmethod
     def _read_profiles():
-        with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'profiles.json')) as json_cache_file:
+        with open(Locations().join_abs_path('profiles.json'), 'r') as json_cache_file:
             return json.load(json_cache_file)
     
     @staticmethod
     def _write_profiles(profiles_dict: dict):
-        with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'profiles.json'), 'w') as json_file:
+        with open(Locations().join_abs_path('profiles.json'), 'w') as json_file:
             log.debug(f"towritedict: {profiles_dict}")
             json.dump(profiles_dict, json_file)
     

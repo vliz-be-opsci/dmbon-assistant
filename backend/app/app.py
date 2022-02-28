@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from typing import List, Optional, Set
 from pydantic import BaseModel, Field
+import logging
+import logging.config
+import yaml
+from dotenv import load_dotenv
+log = logging.getLogger('app')
 import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess, stat
 from importlib import import_module
 from datetime import datetime
@@ -23,6 +28,13 @@ from .routers.APIV1.router import router as apiv1_router
 from .routers.nonseg.router import router as non_segmented_router
 
 #app.include_router(profiles.router)
+
+#Import the locations and set locations to the root of the tbu cache
+log.info(f"setting up Locations()")
+from app.model.location import Locations
+locs = Locations(root=os.path.join(os.getcwd(),"app","webtop-work-space"))  
+log.debug(f"locations root == {locs}")
+
 ### Custom API look ###
 
 app = FastAPI(docs_url=None, redoc_url=None)
@@ -44,6 +56,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def enable_test_logging():
+    load_dotenv()
+    if 'PYTEST_LOGCONF' in os.environ:
+        logconf = os.environ['PYTEST_LOGCONF']
+        with open(logconf, 'r') as yml_logconf:
+            logging.config.dictConfig(yaml.load(yml_logconf, Loader=yaml.SafeLoader))
+        log.info(f"Logging enabled according to config in {logconf}")
+        print(logconf)
+        Locations(root=os.path.join(os.getcwd(),"app","webtop-work-space"))  
+        
+enable_test_logging()
 
 def custom_openapi():
     if app.openapi_schema:

@@ -2,6 +2,17 @@ import git, os, json
 from abc import abstractmethod
 from .location import Locations
 from rocrate.rocrate import ROCrate
+import logging
+import stat
+import shutil
+from subprocess import call
+
+log=logging.getLogger(__name__)
+
+def on_rm_error(func, path, exc_info):
+    #from: https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
+    os.chmod(path, stat.S_IWRITE)
+    os.unlink(path)
 
 class GitRepoCache():
     
@@ -16,7 +27,12 @@ class GitRepoCache():
         #  clone repo_url to location
         #  convert the repo url to a ssh url
         ssh_url = GitRepoCache.repo_url_to_git_ssh_url(repo_url=repo_url)
-        git.Repo.clone_from(ssh_url, location)
+        try:
+            git.Repo.clone_from(ssh_url, location)
+        except:
+            log.info(f"deleting existing repo on location {location} for repo :{ssh_url}")
+            shutil.rmtree(location, onerror=on_rm_error)
+            git.Repo.clone_from(ssh_url, location)         
     
     @staticmethod
     def update_content(location):

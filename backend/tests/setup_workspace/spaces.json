@@ -1,0 +1,10 @@
+{
+    "01234567": {
+        "name": "test_crate",
+        "storage_path": "C:\\Users\\cedric\\Desktop\\no importante\\repo_test_newcrate",
+        "ro_profile": "0123456",
+        "uuid": "0123456789",
+        "remote_url": "",
+        "workspace_path": "C:\\Users\\cedric\\Documents\\GitHub\\rocrate-maker-fast-api\\backend\\app\\tests\\tmp_workspace\\spaces\\0123456789"
+    }
+}
