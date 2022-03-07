@@ -17,6 +17,9 @@ from fastapi.openapi.docs import (
 )
 import app.shacl_helper as shclh
 
+from app.model.location import Locations
+from app.model.space import Space
+
 router = APIRouter(
     prefix="/annotation",
     tags=["Annotation"],
@@ -116,6 +119,9 @@ async def check_path_availability(tocheckpath,space_id):
 
 @router.get('/', status_code=200)
 def get_all_resources_annotation(*,space_id: str = Path(None,description="space_id name")):
+    
+    #try it the new way
+    
     with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
         try:

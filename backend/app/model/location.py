@@ -37,11 +37,6 @@ class Locations():
         # is repo url is git ssh or full html url and then convert
         return self.join_abs_path("spaces",space_uuid)
     
-    def get_space_repo_location_by_name(self, repo_name):
-        # extends name into actual path where to store the space content
-        # does locations know about the paths in the profiles.json?
-        pass
-    
     def get_repo_location_by_url(self, repo_url):
         # converts repo_url into path where to store it used for profiles and seed_crates
         # is repo url is git ssh or full html url and then convert

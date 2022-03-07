@@ -83,6 +83,71 @@ class RoCrateGitBase():
         '''
         pass
     
+    def get_predicates_all(self):
+        """ get predicates from all ids
+        """
+        md = self._read_metadata()
+        all_files = []
+        for dictionaries in md["@graph"]:
+            for item, value in dictionaries.items():
+                if item == "@id":
+                    all_files.append(value)
+        log.debug(all_files)
+        #foreach file get all the attributes
+        files_attributes = {}
+        for file in all_files:
+            if file != "ro-crate-metadata.json" and file != './':
+                if "." in file:
+                    files_attributes[file]= {}
+                    clicktrough_url = os.getenv('BASE_URL_SERVER') + 'apiv1/' + 'spaces/' + self.uuid + '/annotation/file/' + file
+                    files_attributes[file]['url_file_metadata'] = clicktrough_url
+                    for dictionaries in md["@graph"]:
+                        for item, value in dictionaries.items():
+                            if item == "@id" and value==file:
+                                for item_save, value_save in dictionaries.items():
+                                    files_attributes[file][item_save] = value_save
+        log.debug(f'All predicates from all files from project : {files_attributes}')
+        return {"data":files_attributes}
+    
+    
+    def get_predicates_by_id(self,id=str):
+        """ get predicates from a given id
+        :param id: str of the id to get all the predicates of in the ro-crate-metadata.json
+        :type  id: str
+        """
+        pass
+    
+    def add_predicates_all(self,toadd_dict=dict):
+        """ add predicates to all ids
+        :param toadd_dict: dictionary of all the predicates and value to add to the ro-crate-metadata.json
+        :type  toadd_dict: dict
+        """
+        
+        pass
+    
+    def delete_predicates_all(self,todelete_dict=dict):
+        """ delete predicates from all ids 
+        :param todelete_dict: dictionary of all the predicates and value to delete from the ro-crate-metadata.json
+        :type  todelete_dict: dict
+        """
+        pass
+    
+    def delete_predicates_by_id(self,todelete_dict=dict):
+        """ delete predicates to given ids by giving a dictionary of predicates to delete 
+        :param todelete_dict: dictionary of all the ids with in them a dictionary of all the predicates and value to delete from the ro-crate-metadata.json
+        :type  todelete_dict: dict
+        :raises KeyError: the supplied key was not found in the ro-crate-metadata.json file
+        """
+        pass
+    
+    def add_predicates_by_id(self,toadd_dict=dict):
+        """ add predicates to given ids by giving a dictionary of predicates to add to what id
+        :param toadd_dict: dictionary of all the ids with in them a dictionary of all the predicates and value to add to the metadata.json
+        :type  toadd_dict: dict
+        :raises KeyError: the supplied key was not found in the ro-crate-metadata.json file
+        """
+        pass
+    
     def _read_metadata(self):
         # use self.location() to extend towards ./ro-crate-metadata.json
         metadata_location = os.path.join(Locations().get_repo_location_by_url(self.repo_url),'ro-crate-metadata.json') 
@@ -100,8 +165,8 @@ class RoCrateGitBase():
     def sync(self):
         GitRepoCache().update_content(self.location())
 
-    def init(self,repo_url):
+    def clone_repo(self,repo_url):
         GitRepoCache().clone_content(self.location(), repo_url)
         
-    def init_no_url(self, location):
-        GitRepoCache().init_repo(location = location)
+    def make_repo(self):
+        GitRepoCache().init_repo(self.location())

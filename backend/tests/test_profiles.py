@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-import os, tempfile, sys, shutil
+import os, tempfile, sys, shutil, git
 import stat, pytest
 from subprocess import call
 from util4tests import log, run_single_test
@@ -37,7 +37,9 @@ def root_folder():
 
 def test_check_profile(root_folder):
     tottest = Profile.load(uuid = '0123456') #TODO: better indications of where to have this 
-    print(tottest.seed_dependencies)
+    log.debug(f"totest seedcrates: {tottest.seed_dependencies}")
+    log.debug(f"totest name: {tottest.name}")
+    assert tottest is not None
     #TODO : similar checks matching data in the setup_workspace/profiles.json
 
 #test to see if a profile can be correctly made
@@ -45,14 +47,27 @@ def test_make_profile_success(root_folder):
     """ test to see if a profile can be correctly made
     """
     log.debug(f"Locations={Locations()}")
-    Profile(repo_url = "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", #TODO get better git test repos and document their existence, and where to put code
+    madeprofile = Profile(repo_url = "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", #TODO get better git test repos and document their existence, and where to put code
             name = "test_automated_tests",
             logo_url="https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
             description= "test new method object oriented from test_apiv1.py")
     #TODO: did repos in the profile get checked out
-    #TODO: is the content of the profile in the repo
-    #TODO: check if folders of profile repos are .git repos
-    #TODO: check file .git/config and verify if git remote origin matches repo url git remote with gitpyhon
+    repo = git.Repo(Locations().get_repo_location_by_url(repo_url="https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git"))
+    log.debug(repo)
+    assert repo is not None
+    
+    # try to load in space 
+    loaded_profile = Profile.load(uuid=madeprofile.uuid)
+    assert loaded_profile is not None
+    log.debug(f"loaded profile info : {loaded_profile}")
+    assert loaded_profile == madeprofile
+    
+#test with the api to see if a space can be made
+def test_make_profile_api(root_folder):
+    os.environ["DMBON_FAST_API_ROOT_WORKSPACE"] = os.path.join("tests","tmp_workspace")
+    #setup server with sh command?
+    
+    
 
 if __name__ == "__main__":
     run_single_test(__file__)

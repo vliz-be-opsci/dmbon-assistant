@@ -31,6 +31,7 @@ def clean_root(root_folder):
 @pytest.fixture  
 def root_folder():
     _root_folder = os.path.join(os.getcwd(),'tests','tmp_workspace')  
+    os.environ['DMBON_FAST_API_ROOT_WORKSPACE'] = str(_root_folder)
     clean_root(_root_folder)
     Locations(root=_root_folder)  
     return _root_folder
@@ -39,64 +40,63 @@ def root_folder():
 def test_make_space_success(root_folder):
     """ test to see if a space can be correctly made
     """
+    test_space_name = "iets_nieuws"
+    
     log.debug(f"Locations={Locations().root}")
     addedspace = Space(
-        name="test_space_project",
-        storage_path=Locations().root,
+        storage_path=Locations().join_abs_path(test_space_name),
         ro_profile="0123456",
     )
     log.info(f"space added info : {addedspace}")
     #check if addespace exists
-    assert(addedspace != None)
+    assert addedspace is not None , "space should exist"
     
     #check if space is indeed in the right location
-    space_path_exists = Locations().join_abs_path("test_space_project")
+    space_path_exists = Locations().join_abs_path(test_space_name)
     log.debug(f"checking if path exists space: {space_path_exists}")
-    assert(os.path.exists(space_path_exists))
+    assert os.path.exists(space_path_exists)
     
     #check if space is added to spaces.json
     with open(Locations().join_abs_path("spaces.json"),'r') as metaf:
         data = json.load(metaf)
-        foundspace = False
-        for spaceid, valuespace in data.items():
-            if valuespace["name"] == "test_space_project":
-                foundspace = True
-                keytocheck = spaceid
-        log.debug(f"space found in spaces.json == {foundspace}")
-        assert(foundspace == True)
+        foundspace = data[addedspace.uuid]
+        assert foundspace["storage_path"] == addedspace.storage_path
         
     # check if workspace exists
-    workspace_path_exists = Locations().join_abs_path("spaces",keytocheck)
+    workspace_path_exists = Locations().join_abs_path("spaces",addedspace.uuid)
     log.debug(f"checking if path exists workspace: {workspace_path_exists}")
     assert(os.path.exists(workspace_path_exists))
     
-def test_load_space_success():
+    # try to load in space 
+    loaded_space = Space.load(uuid=addedspace.uuid)
+    assert loaded_space is not None
+    log.debug(f"loaded space info : {loaded_space}")
+    assert loaded_space == addedspace
+
+def test_load_space_success(root_folder):
     """ test to see if a space can be correctly loaded
     """
     log.debug(f"Locations={Locations().root}")
-    addedspace = Space.load(uuid='01234567')
-    log.info(f"space info : {addedspace}")
+    loadedspace = Space.load(uuid='0123456789')
+    log.info(f"space info : {loadedspace}")
     #check if space exists
-    assert(addedspace != None) 
+    assert loadedspace is not None
     #check if info about the space is correct
     
-def test_make_space_fail():
+def test_make_space_fail(root_folder):
     """ test to see if a space can be correctly failed 
     """
     log.debug(f"Locations={Locations().root}")
-    addedspace = Space(
-        name="should_not_exist",
-        storage_path=Locations().root,
-        ro_profile="01246",
-    )
     #TODO: the space seems to be made before the non existing profile error comes up
-    log.info(f"space added info : {addedspace}")
-    #check if addespace exists
-    
+    with pytest.raises(KeyError) as ke:
+        addedspace = Space(
+            storage_path=Locations().join_abs_path("shouldnt_exist"),
+            ro_profile="01246"
+            )
     #check if space folder exists
     space_path_exists = Locations().join_abs_path("should_not_exist")
     log.debug(f"checking if path exists space: {space_path_exists}")
-    assert(os.path.exists(space_path_exists) == False)
+    assert os.path.exists(space_path_exists) == False
 
 if __name__ == "__main__":
     run_single_test(__file__)

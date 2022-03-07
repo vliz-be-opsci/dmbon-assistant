@@ -32,7 +32,10 @@ from .routers.nonseg.router import router as non_segmented_router
 #Import the locations and set locations to the root of the tbu cache
 log.info(f"setting up Locations()")
 from app.model.location import Locations
-locs = Locations(root=os.path.join(os.getcwd(),"app","webtop-work-space"))  
+
+root_loc = os.environ.get("DMBON_FAST_API_ROOT_WORKSPACE",os.path.join("app","webtop-work-space"))
+root_loc = root_loc if os.path.isabs(root_loc) else os.path.join(os.getcwd(),root_loc)
+locs = Locations(root=root_loc)  
 log.debug(f"locations root == {locs}")
 
 ### Custom API look ###

@@ -30,31 +30,44 @@ class Profile(RoCrateGitBase):
         :param seed_dependencies: Optional - list of git urls identifying the
         :type seed_dependencies: set of strings
         """  
+        self.uuid = uuid
         self.name = name
         self.repo_url = repo_url
-        self.logo = logo_url
+        self.logo_url = logo_url
         self.description = description
-        self.seed_dependencies = SeedCrate.load_all(seed_dependencies) 
         if uuid is None:
             self.uuid = uuidmake.uuid4().hex
             #function to download all the initial repo
-            self.init(repo_url= self.repo_url)
-            self.seed_dependencies = Profile.detect_dependencies(self)
-            log.debug(f"all seed dependencies: {self.seed_dependencies}")
-            self.write()
+            self.clone_repo(repo_url= self.repo_url)
+            seed_dependencies = Profile.detect_dependencies(self)
+            log.debug(f"all seed dependencies for to make profile: {seed_dependencies}")
+            
             #self.location_init_repo = self._download_repo(repo_url = self.repo_url)
             #self.get_rocrate_metadata_git_urls(rocrate_metadata_location= os.path.join(self.location_init_repo,"ro-crate-metadata.json"))
-     
+        self.seed_dependencies = SeedCrate.load_all(seed_dependencies) 
+        if uuid is None:
+            self.write()
+    
+    def __str__(self):
+        return f"Profile(uuid = {self.uuid})"
+    
+    def __hash__(self) -> int:
+        return self.uuid.__hash__()
+    
+    def __eq__(self, __o: object) -> bool:
+        #return self.uuid.__eq__(__o.uuid)
+        return all([self.__getattribute__(attr).__eq__(__o.__getattribute__(attr)) for attr in ["repo_url","logo_url","description","uuid","seed_dependencies"]])
+            
     def as_dict(self):
         """ create a dict respresentation of self that can be **expanded into the arguments to __init__() 
             this duplicates as the dict entry for profiles.json 
         """
         return dict(name=self.name,
                     repo_url=self.repo_url,
-                    logo_url=self.logo,
+                    logo_url=self.logo_url,
                     description=self.description,
                     uuid= self.uuid,
-                    seed_dependencies= self.seed_dependencies
+                    seed_dependencies= list(self.seed_dependencies.keys())
                 )
 
     def location(self):
@@ -110,7 +123,7 @@ class SeedCrate(RoCrateGitBase):
         self.repo_url =repo_url
         self._location = Locations().get_repo_location_by_url(repo_url)
         if os.path.exists(self._location) == False:
-            self.init(repo_url= self.repo_url)
+            self.clone_repo(repo_url= self.repo_url)
         # check if the location exists, if not call GitRepoCache.clone_content(location(), repo_url)
 
     def location(self):
@@ -122,9 +135,10 @@ class SeedCrate(RoCrateGitBase):
         #TODO: have exception for NOneType input
         try:
             seeds_dict = {url: SeedCrate(url) for url in set_urls}
+            log.debug(f"All seedcrate urls : {set_urls}")
             return seeds_dict
         except:
-            return([])
+            return({})
         
 
 ### test area ###
