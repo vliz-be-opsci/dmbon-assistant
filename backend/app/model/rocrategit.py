@@ -6,6 +6,7 @@ import logging
 import stat
 import shutil
 from subprocess import call
+import app.shacl_helper as shclh
 
 log=logging.getLogger(__name__)
 
@@ -86,7 +87,8 @@ class RoCrateGitBase():
     def get_predicates_all(self):
         """ get predicates from all ids
         """
-        md = self._read_metadata()
+        md = self._read_metadata_datacrate()
+        log.debug(md)
         all_files = []
         for dictionaries in md["@graph"]:
             for item, value in dictionaries.items():
@@ -110,43 +112,265 @@ class RoCrateGitBase():
         return {"data":files_attributes}
     
     
-    def get_predicates_by_id(self,id=str):
+    def get_predicates_by_id(self,file_id=str):
         """ get predicates from a given id
         :param id: str of the id to get all the predicates of in the ro-crate-metadata.json
         :type  id: str
         """
-        pass
+        data = self._read_metadata_datacrate()
+        log.info(f"metadata of the space: {data}")
+        path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
+        log.info(path_shacl)
+        all_files = []
+        #implement the shacl constraint check here
+        #read in shacl file
+        f_constraints = open(path_shacl, "r")
+        f_constraints_text = f_constraints.read()
+        test = shclh.ShapesInfoGraph(path_shacl)
+        shacldata = test.full_shacl_graph_dict()
+        #convert the shacl file to have all the properties per node id
+        node_properties_dicts = []
+        for node_to_check in shacldata:
+            toaddnode = {}
+            if node_to_check["target"] is not None:
+                target = node_to_check["target"].split("/")[-1]
+                toaddnode[target] = []
+                for propname , semantic_properties in node_to_check["properties"].items():
+                    #add reciproce checking for nodes in nodes here
+                    toaddnode[target].append({propname.split('/')[-1]: semantic_properties})
+                node_properties_dicts.append(toaddnode)
+        
+        log.debug(node_properties_dicts)
+                
+        all_predicates = []
+        #get all files from the projectfile
+        for dictionaries in data["@graph"]:
+            for item, value in dictionaries.items():
+                if item == "@id" and value == file_id:
+                    for item_save, value_save in dictionaries.items():
+                        all_predicates.append(item_save)
+                        all_files.append({'predicate':item_save,'value':value_save})
+        
+        if len(all_predicates) == 0:
+            return {"error":404,"detail":"Resource not found"}
+        
+        #get all predicates and if they are required
+        for items in all_files:
+            if items["predicate"] == "@type":
+                for node in node_properties_dicts:
+                    for nodekey, nodevalue in node.items():
+                        if nodekey == items["value"]:
+                            all_props = []
+                            all_props_shacl = []
+                            for prop in nodevalue:
+                                for propkey, propvalue in prop.items():
+                                    propmin = 0
+                                    for propattribute, propattributevalue in propvalue.items():
+                                        if propmin == 0:
+                                            if propattribute == "min" and propattributevalue is not None:
+                                                propmin = 1
+                                        if propattribute == "type" and propattributevalue is not None:
+                                            proptype = propattributevalue
+                                        if propattribute == "type" and propattributevalue is None:
+                                            proptype = 'String'
+                                        if propattribute == "values" and propattributevalue is not None:
+                                            valueprop = propattributevalue                                             
+                                    all_props.append({propkey:{'min':propmin,'value':valueprop,'typeprop':proptype}})
+                                    all_props_shacl.append({'label':propkey,'min':propmin,'value':valueprop,'typeprop':proptype})
+                                log.debug(all_props)
+        try:                              
+            present = 0
+            missing = 0
+            cond_present = 0
+            cond_missing = 0
+            for prop in all_props:
+                for propkey, propvalue in  prop.items():
+                    if propvalue['min'] == 1 and propkey not in all_predicates:
+                        missing+=1
+                    if propvalue['min'] != 1 and propkey not in all_predicates:
+                        cond_missing+=1
+                    if propvalue['min'] != 1 and propkey in all_predicates:
+                        cond_present+=1
+                    if propvalue['min'] == 1 and propkey in all_predicates:
+                        present+=1
+            
+            green_percent = ((present / len(all_props)) * 100) + ((cond_present / len(all_props)) * 100)
+            red_percent   = (missing / len(all_props)) * 100
+            orange_percent = (cond_missing / len(all_props)) * 100
+            summary_file = {'green': green_percent, 'orange': orange_percent, 'red': red_percent} 
+        except Exception as e:
+            log.error(e)
+            log.exception(e)
+            summary_file = {'green': 0, 'orange': 0, 'red': 0} 
+        return {'data':all_files, 'summary': summary_file, 'shacl_requirements': all_props_shacl, 'shacl_original': f_constraints_text}
     
-    def add_predicates_all(self,toadd_dict=dict):
+    def add_predicates_all(self,toadd_dict=list):
         """ add predicates to all ids
         :param toadd_dict: dictionary of all the predicates and value to add to the ro-crate-metadata.json
         :type  toadd_dict: dict
         """
-        
-        pass
+        #try and get the same result by using rocrate
+        myrocrate = ROCrate(self.storage_path)
+        data_entities = myrocrate.data_entities
+        for entity in data_entities:
+            log.info(f"Crate data entities: {entity._jsonld}")
+            for annotationfile in toadd_dict:
+                uri_name  = annotationfile.URI_predicate_name
+                value_uri = annotationfile.value
+                entity[uri_name] = value_uri
+        myrocrate.write(self.storage_path)
     
     def delete_predicates_all(self,todelete_dict=dict):
         """ delete predicates from all ids 
         :param todelete_dict: dictionary of all the predicates and value to delete from the ro-crate-metadata.json
         :type  todelete_dict: dict
         """
-        pass
-    
-    def delete_predicates_by_id(self,todelete_dict=dict):
+        myrocrate = ROCrate(self.storage_path)
+        data_entities = myrocrate.data_entities
+        for entity in data_entities:
+            log.info(f"Crate data entities: {entity._jsonld}")
+            for annotationfile in todelete_dict:
+                uri_name  = annotationfile.URI_predicate_name
+                entity.pop(uri_name, None)
+        myrocrate.write(self.storage_path)
+        
+    def delete_predicates_by_id(self,to_delete_predicate=str, file_id=str):
         """ delete predicates to given ids by giving a dictionary of predicates to delete 
-        :param todelete_dict: dictionary of all the ids with in them a dictionary of all the predicates and value to delete from the ro-crate-metadata.json
-        :type  todelete_dict: dict
+        :param to_delete_predicate: predicate to delete from the file metadata
+        :type  to_delete_predicate: str
+        :param file_id: id of the file to which to add the predicates to
+        :type  file_id: str
         :raises KeyError: the supplied key was not found in the ro-crate-metadata.json file
         """
-        pass
+        tocheck_folder = self.storage_path
+        todelete = False
+        #load in metadata files
+        data = self._read_metadata_datacrate()
+
+        #find id of file and delete predicate of existing 
+        for ids in data['@graph']:
+            if ids['@id'] == file_id:
+                todelete = True
+                try:
+                    ids.pop(to_delete_predicate)
+                except:
+                    return {"error":404,"detail":"Predicate not found"}
+                
+        if todelete != True:
+            return {"error":404,"detail":"File not found"}
+                            
+        #write back data to meta json file
+        self._write_metadata_datacrate(data=data)
+        return {"data":data}
     
-    def add_predicates_by_id(self,toadd_dict=dict):
+    def add_predicates_by_id(self,toadd_dict_list=list, file_id=str):
         """ add predicates to given ids by giving a dictionary of predicates to add to what id
-        :param toadd_dict: dictionary of all the ids with in them a dictionary of all the predicates and value to add to the metadata.json
-        :type  toadd_dict: dict
+        :param toadd_dict_list: list of dictionaries of all the ids with in them a dictionary of all the predicates and value to add to the metadata.json
+        :type  toadd_dict_list: list
+        :param file_id: id of the file to which to add the predicates to
+        :type  file_id: str
         :raises KeyError: the supplied key was not found in the ro-crate-metadata.json file
         """
-        pass
+        path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
+        log.info(path_shacl)
+        test = shclh.ShapesInfoGraph(path_shacl)
+        shacldata = test.full_shacl_graph_dict()
+        data = self._read_metadata_datacrate()
+        
+        myrocrate = ROCrate(self.storage_path)
+        data_entities = myrocrate.data_entities
+
+        #convert the chacl file to have all the properties per node id
+        node_properties_dicts = []
+        for node_to_check in shacldata:
+            toaddnode = {}
+            if node_to_check["target"] is not None:
+                target = node_to_check["target"].split("/")[-1]
+                toaddnode[target] = []
+                for propname , semantic_properties in node_to_check["properties"].items():
+                    #add reciproce checking for nodes in nodes here 
+                    toaddnode[target].append({propname.split('/')[-1]: semantic_properties})
+                node_properties_dicts.append(toaddnode)
+        
+        
+        all_files = []
+        all_predicates = []
+        #get all files from the projectfile
+        for dictionaries in data["@graph"]:
+            for iteme, value in dictionaries.items():
+                if iteme == "@id" and value == file_id:
+                    for item_save, value_save in dictionaries.items():
+                        all_predicates.append(item_save)
+                        all_files.append({'predicate':item_save,'value':value_save})
+        
+        if len(all_predicates) == 0:
+            return {"error":404,"detail":"Resource not found"}
+        
+        ## for each annotation given ##
+        warnings = []
+        for annotationfile in toadd_dict_list:
+            uri_name  = annotationfile.URI_predicate_name
+            value_uri = annotationfile.value
+            
+            ## check if annotation is in the shacl file ##
+            for predicates in all_files:
+                find_now = 0
+                for itemee, value in predicates.items():
+                    if itemee == 'predicate' and value == "@type":
+                        find_now = 1
+                    if itemee == "value" and find_now == 1:
+                        to_search_type = value
+            for node in node_properties_dicts:
+                for nodekey, nodevalue in node.items():
+                    if nodekey == to_search_type:
+                        all_props = []
+                        for prop in nodevalue:
+                            for propkey, propvalue in prop.items():
+                                propmin = 0
+                                for propattribute, propattributevalue in propvalue.items():
+                                    if propmin == 0:
+                                        if propattribute == "min" and propattributevalue is not None:
+                                            propmin = 1
+                                    
+                                    if propattribute == "type" and propattributevalue is not None:
+                                        proptype = propattributevalue
+                                    
+                                    if propattribute == "type" and propattributevalue is None:
+                                        proptype = 'String'
+                                    
+                                    if propattribute == "values" and propattributevalue is not None:
+                                        valueprop = propattributevalue
+                                            
+                                all_props.append({propkey:{'min':propmin,'value':valueprop,'typeprop':proptype}})
+
+            chacl_URI_list = []
+            for diff_kind_annotations in all_props:
+                for key_annotation , metadata_annotation in diff_kind_annotations.items():
+                    chacl_URI_list.append(key_annotation)
+            log.info(f"chacl_list_printed: {chacl_URI_list}")
+            for entity in data_entities:
+                log.info(f"Crate data entities: {entity._jsonld}")
+                if entity["@id"] == file_id:
+                    entity[uri_name]= value_uri
+            if uri_name not in chacl_URI_list:
+                warnings.append("non shacl defined constraint metadata has been added: "+ uri_name)
+                
+            ## implement annotation in the data is found , send warning message is annotation title not found in constraints ##
+        ## write back to metadata file and return metadata.json file 
+        myrocrate.write(self.storage_path)
+        data = self._read_metadata_datacrate()
+        return {"Data":data, "Warnings":warnings}
+        
+    
+    def _read_metadata_datacrate(self):
+        metadata_location = os.path.join(self.storage_path,'ro-crate-metadata.json') 
+        with open(metadata_location) as metadata_file:
+            return(json.load(metadata_file))
+    
+    def _write_metadata_datacrate(self,data):
+        metadata_location = os.path.join(self.storage_path,'ro-crate-metadata.json') 
+        with open(metadata_location, 'w') as metadata_file:
+            json.dump(data, metadata_file)
     
     def _read_metadata(self):
         # use self.location() to extend towards ./ro-crate-metadata.json
@@ -155,6 +379,8 @@ class RoCrateGitBase():
         with open(metadata_location) as metadata_file:
             return(json.load(metadata_file))
         # and/or us the rocrate-py stuff
+        
+    
 
     @abstractmethod
     def location(self):

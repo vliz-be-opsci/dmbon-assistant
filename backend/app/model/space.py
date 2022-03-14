@@ -12,7 +12,7 @@ class Space(RoCrateGitBase):
     This class tracks and manages/caches incomming profile data 
     retrieved from github repos.
     """
-    def __init__(self,storage_path,ro_profile,uuid=None,remote_url=None,workspace_path=None):
+    def __init__(self,storage_path,ro_profile,uuid=None,remote_url=None,workspace_path=None,name=None):
         """     
         :param storage_path: path on local disk where to store the dataset repo of the space
         :type storage_path: Path
