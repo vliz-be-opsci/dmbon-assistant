@@ -24,8 +24,7 @@ from fastapi.openapi.docs import (
 import app.ro_crate_reader_functions as ro_read
 #import shacl_helper as shclh
 
-from .routers.APIV1.router import router as apiv1_router
-from .routers.nonseg.router import router as non_segmented_router
+from .routers.APIV1.router import router 
 
 #app.include_router(profiles.router)
 
@@ -42,7 +41,7 @@ log.debug(f"locations root == {locs}")
 
 app = FastAPI(docs_url=None, redoc_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.include_router(apiv1_router, prefix = "/apiv1", tags= ['API V1'])
+app.include_router(router, prefix = "/apiv1", tags= ['API V1'])
 #app.include_router(non_segmented_router, prefix = "/nonseg_api", tags= ['API non segmented'])
 
 origins = [

@@ -1,10 +1,1 @@
-{
-    "202e126d2bd8402cb09b09f2835bdaa2": {
-        "name": "repo_test_newcrate",
-        "storage_path": "C:\\Users\\cedric\\Desktop\\no importante\\repo_test_newcrate",
-        "ro_profile": "0d972c79c8634b18b5fd13fdde8c8cb7",
-        "uuid": "202e126d2bd8402cb09b09f2835bdaa2",
-        "remote_url": "",
-        "workspace_path": "C:\\Users\\cedric\\Documents\\GitHub\\rocrate-maker-fast-api\\backend\\app\\webtop-work-space\\spaces\\202e126d2bd8402cb09b09f2835bdaa2"
-    }
-}
+{"202e126d2bd8402cb09b09f2835bdaa2": {"name": "repo_test_newcrate", "storage_path": "C:\\Users\\cedric\\Desktop\\no importante\\repo_test_newcrate", "ro_profile": "0d972c79c8634b18b5fd13fdde8c8cb7", "uuid": "202e126d2bd8402cb09b09f2835bdaa2", "remote_url": "", "workspace_path": "C:\\Users\\cedric\\Documents\\GitHub\\rocrate-maker-fast-api\\backend\\app\\webtop-work-space\\spaces\\202e126d2bd8402cb09b09f2835bdaa2"}, "64e266dfae2b4f34abf0de11ec077e99": {"storage_path": "C:/Users/cedricd/Desktop/test_rocrate_api\\test_rocrate_vliz", "ro_profile": "233ec883a63a4cf8965fb7fab08fe7c5", "uuid": "64e266dfae2b4f34abf0de11ec077e99", "remote_url": "", "workspace_path": "C:\\Users\\cedricd\\Documents\\GitHub\\rocrate-maker-fast-api\\backend\\app\\webtop-work-space\\spaces\\64e266dfae2b4f34abf0de11ec077e99"}}

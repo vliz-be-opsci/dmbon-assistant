@@ -193,9 +193,7 @@ function SpaceSpecificPage() {
           </Modal>
       </div>
     )
-  }
-
-    
+  }  
 }
 
 export default SpaceSpecificPage

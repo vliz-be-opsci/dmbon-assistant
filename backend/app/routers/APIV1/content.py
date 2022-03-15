@@ -17,6 +17,12 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
+import logging
+log=logging.getLogger(__name__)
+import app.shacl_helper as shclh
+
+from app.model.location import Locations
+from app.model.space import Space
 
 router = APIRouter(
     prefix="/content",
@@ -74,7 +80,7 @@ class DeleteContentModel(BaseModel):
 #TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
 def check_space_name(spacename):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+")as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+")as file:
         data = json.load(file)
     for space, info in data.items():
         if spacename == space:
@@ -115,11 +121,10 @@ async def check_path_availability(tocheckpath,space_id):
 
 @router.get('/')
 def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
-            toreturn = data[space_id]
-            space_folder = os.sep.join((data[space_id]['storage_path'],'repo'))
+            space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     toreturn = []
@@ -131,21 +136,15 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
 
 @router.post('/', status_code=202)
 async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
-
-    try:
-        toreturn = data[space_id] 
-    except Exception as e:
-        raise HTTPException(status_code=404, detail="Space not found")
-
-    if path_folder == None:
         try:
-            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'repo'))) 
-        except:
-            raise HTTPException(status_code=400, detail="Directory could not be made")
-    else:
-        space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'repo')), path_folder) 
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+
+    if path_folder != None:
+        space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'])), path_folder) 
         try:
             pads(space_folder).mkdir(parents=True, exist_ok=True)
         except:
@@ -192,10 +191,10 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
 
 @router.delete('/', status_code=202)
 def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
-            space_folder = os.sep.join((data[space_id]['storage_path'],'repo'))
+            space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
         
@@ -240,12 +239,12 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
 
 @router.get('/{path_folder:path}')
 def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
             toreturn = data[space_id]
             allpaths = path_folder
-            space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'],'repo')), path_folder) 
+            space_folder = os.path.join(data[space_id]['storage_path'], path_folder) 
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     toreturn = []

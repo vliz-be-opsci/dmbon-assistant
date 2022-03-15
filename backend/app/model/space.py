@@ -58,14 +58,15 @@ class Space(RoCrateGitBase):
         return self._name       
     
     def __str__(self):
-        return f"Space(uuid = {self.uuid})"
+        return f"Space(uuid = {self.uuid})" 
     
     def __hash__(self) -> int:
         return self.uuid.__hash__()
     
+    identity_props = ["storage_path","uuid","remote_url","ro_profile"]
+    
     def __eq__(self, __o: object) -> bool:
-        #return self.uuid.__eq__(__o.uuid)
-        return all([self.__getattribute__(attr).__eq__(__o.__getattribute__(attr)) for attr in ["storage_path","uuid","remote_url","ro_profile"]])
+        return all([self.__getattribute__(attr).__eq__(__o.__getattribute__(attr)) for attr in Space.identity_props ])
      
     def as_dict(self):
         """ create a dict respresentation of self that can be **expanded into the arguments to __init__() 

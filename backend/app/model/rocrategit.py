@@ -47,9 +47,13 @@ class GitRepoCache():
 
     @staticmethod
     def init_repo(location):
-        currentwd = os.getcwd()
-        os.mkdir((location))
-        os.chdir((location))
+        currentwd = os.getcwd()  
+        try:
+            os.makedirs((location))
+            os.chdir((location))
+        except Exception as e:
+            log.info(f"exception occured :{e}")
+            log.exception(e)
         repo = git.Repo.init(os.path.join(location))
         #change current wd to init the rocrate
         crate = ROCrate() 
@@ -101,6 +105,9 @@ class RoCrateGitBase():
             if file != "ro-crate-metadata.json" and file != './':
                 if "." in file:
                     files_attributes[file]= {}
+                    #TODO use uri templates and rename /file/ to /resource/ 
+                    # urit = "os.getenv('BASE_URL_SERVER') + 'apiv1/' + 'spaces/{uuid}/annotation/resource/{rid}'"
+                    # uritemplates(urit).expand(dict(uuid=self.uuid, rid=file))
                     clicktrough_url = os.getenv('BASE_URL_SERVER') + 'apiv1/' + 'spaces/' + self.uuid + '/annotation/file/' + file
                     files_attributes[file]['url_file_metadata'] = clicktrough_url
                     for dictionaries in md["@graph"]:
@@ -154,6 +161,8 @@ class RoCrateGitBase():
         if len(all_predicates) == 0:
             return {"error":404,"detail":"Resource not found"}
         
+        log.info(all_files)
+        all_props = []
         #get all predicates and if they are required
         for items in all_files:
             if items["predicate"] == "@type":

@@ -343,10 +343,10 @@ async def add_space(*,item: SpaceModel):
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
             if response.status == 200:
                 try:
-                    Space(  name=item.name,
-                            storage_path=item.storage_path,
-                            ro_profile=item.RO_profile,
-                            remote_url=item.remote_url
+                    Space(
+                        storage_path=os.path.join(item.storage_path,item.name),
+                        ro_profile=item.RO_profile,
+                        remote_url=item.remote_url
                     )
                 except Exception as e:
                     log.error(f"Error wile making space : {e}")

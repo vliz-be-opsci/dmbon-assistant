@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 import os, tempfile, sys, shutil, git
 import stat, pytest
 from subprocess import call
-from util4tests import log, run_single_test
+from util4tests import log, run_single_test, workspace_folder
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -22,6 +22,7 @@ def clean_root(root_folder):
     log.debug("calling in setup")
     try:
         shutil.rmtree(root_folder, onerror=on_rm_error)
+        #os.makedirs(root_folder, exist_ok=True)
         shutil.copytree(os.path.join(os.getcwd(),"tests","setup_workspace"),root_folder)
         log.debug("setup completed")
     except Exception as e:
@@ -30,7 +31,7 @@ def clean_root(root_folder):
         
 @pytest.fixture  
 def root_folder():
-    _root_folder = os.path.join(os.getcwd(),'tests','tmp_workspace')  
+    _root_folder = workspace_folder
     clean_root(_root_folder)
     Locations(root=_root_folder)  
     return _root_folder

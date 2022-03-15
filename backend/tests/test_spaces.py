@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 import os, tempfile, sys, shutil, json
 import stat, pytest
 from subprocess import call
-from util4tests import log, run_single_test
+from util4tests import log, run_single_test, workspace_folder
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -30,7 +30,7 @@ def clean_root(root_folder):
         
 @pytest.fixture  
 def root_folder():
-    _root_folder = os.path.join(os.getcwd(),'tests','tmp_workspace')  
+    _root_folder = workspace_folder
     os.environ['DMBON_FAST_API_ROOT_WORKSPACE'] = str(_root_folder)
     clean_root(_root_folder)
     Locations(root=_root_folder)  
@@ -70,9 +70,8 @@ def test_make_space_success(root_folder):
     # try to load in space 
     loaded_space = Space.load(uuid=addedspace.uuid)
     assert loaded_space is not None
-    log.debug(f"loaded space info : {loaded_space}")
     assert loaded_space == addedspace
-
+    
 def test_load_space_success(root_folder):
     """ test to see if a space can be correctly loaded
     """

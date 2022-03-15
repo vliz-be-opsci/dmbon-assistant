@@ -54,9 +54,10 @@ class Profile(RoCrateGitBase):
     def __hash__(self) -> int:
         return self.uuid.__hash__()
     
+    identity_props = ["repo_url","logo_url","description","uuid","seed_dependencies"]
+    
     def __eq__(self, __o: object) -> bool:
-        #return self.uuid.__eq__(__o.uuid)
-        return all([self.__getattribute__(attr).__eq__(__o.__getattribute__(attr)) for attr in ["repo_url","logo_url","description","uuid","seed_dependencies"]])
+        return all([self.__getattribute__(attr).__eq__(__o.__getattribute__(attr)) for attr in Profile.identity_props ])
             
     def as_dict(self):
         """ create a dict respresentation of self that can be **expanded into the arguments to __init__() 
@@ -67,7 +68,7 @@ class Profile(RoCrateGitBase):
                     logo_url=self.logo_url,
                     description=self.description,
                     uuid= self.uuid,
-                    seed_dependencies= list(self.seed_dependencies.keys())
+                    seed_dependencies= list(self.seed_dependencies.keys()) #todo use set instead of list
                 )
 
     def location(self):
@@ -125,6 +126,14 @@ class SeedCrate(RoCrateGitBase):
         if os.path.exists(self._location) == False:
             self.clone_repo(repo_url= self.repo_url)
         # check if the location exists, if not call GitRepoCache.clone_content(location(), repo_url)
+        
+    def __hash__(self) -> int:
+        return self.repo_url.__hash__()
+    
+    identity_props = ["repo_url"]
+    
+    def __eq__(self, __o: object) -> bool:
+        return all([self.__getattribute__(attr).__eq__(__o.__getattribute__(attr)) for attr in SeedCrate.identity_props])
 
     def location(self):
       return self._location
