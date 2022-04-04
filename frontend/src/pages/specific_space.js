@@ -4,7 +4,7 @@ import axios from 'axios';
 import {useParams} from 'react-router-dom';
 import FilesView from './../components/files_view';
 import ReactLoading from 'react-loading';
-import {Button, Modal} from 'react-bootstrap';
+import {Button, Modal, Popover, OverlayTrigger} from 'react-bootstrap';
 import {FaTools, FaUpload, FaEdit, FaTrashAlt} from 'react-icons/fa';
 
 import $ from 'jquery';
@@ -128,6 +128,13 @@ function SpaceSpecificPage() {
       })
   }
 
+  const OpenBrowserSpace = async () => {
+    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content/openexplorer`)
+      .then(res => {
+        console.log(res)
+      })
+  }
+
   const fixCrate = async () => {
     axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/fixcrate`)
       .then(res => {
@@ -136,6 +143,15 @@ function SpaceSpecificPage() {
         setLoading(false);
       })
   }
+
+  const popoverfixcrate = (
+    <Popover id="popover-open">
+        <Popover.Header as="h3">Fix Crate</Popover.Header>
+        <Popover.Body>
+        Click this to fix metadata issues from files that have been added to the crate from the browser.
+        </Popover.Body>
+    </Popover>
+  );
 
   useEffect(() => {
     fetchSpaces();
@@ -166,7 +182,9 @@ function SpaceSpecificPage() {
           <hr/>
             <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-success" ><FaUpload size="1.5em"/></button>
             <button onClick={() => updateMessage("annotate")} id="annotate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaEdit size="1.5em"/></button>
-            <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaTools size="1.5em"/></button>
+            <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverfixcrate}>
+              <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaTools size="1.5em"/></button>
+            </OverlayTrigger>
             <button onClick={() => updateMessage("delete")} id="delete_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-danger"><FaTrashAlt size="1.5em"/></button>
           <div>
           <FilesView key={countRef.current} listfiles= {spaceList} />
@@ -174,7 +192,7 @@ function SpaceSpecificPage() {
           <div>Number of changes to page: {countRef.current}</div>
           <Modal show={show} size="lg" onHide={handleClose}>
             <Modal.Header closeButton>
-              <Modal.Title>Upload zone</Modal.Title>
+              <Modal.Title>Upload zone (not working atm)</Modal.Title>
             </Modal.Header>
             <Modal.Body>
             <div {...getRootProps({style})}>
@@ -186,6 +204,9 @@ function SpaceSpecificPage() {
             </div>
             </Modal.Body>
             <Modal.Footer>
+              <Button variant="info" onClick={() => OpenBrowserSpace()}>
+                  Open File browser to upload
+              </Button>
               <Button variant="success" onClick={() => updateMessage("upload")}>
                   Upload files
               </Button>

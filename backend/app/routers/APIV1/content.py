@@ -9,6 +9,7 @@ from datetime import datetime
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
+import subprocess
 from collections import MutableMapping
 from fastapi.staticfiles import StaticFiles
 import glob
@@ -133,6 +134,35 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
             if '.git' not in dirpath:
                 toreturn.append({"file":filen,"folder":dirpath})
     return toreturn
+
+@router.get('/file/{file_id}')
+def open_file_content_external(*,space_id: str = Path(None,description="space_id name"),file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+            #TODO: this wil only work if the file is in the root of the datacrate, find way to make it work for non root files
+            #TODO: find a way to make this work for non windows systems
+            os.startfile(os.path.join(space_folder,file_id))
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    return "file opened successfully"
+
+@router.get('/openexplorer')
+def open_file_explorer(*,space_id: str = Path(None,description="space_id name")):
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+            log.debug(space_folder)
+            formatted_space_folder = space_folder.replace("/","\\")
+            log.debug(formatted_space_folder)
+            string_command = 'explorer "' + formatted_space_folder + '"'
+            log.debug(string_command)
+            subprocess.Popen(string_command)
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    return "file-explorer opened successfully"
 
 @router.post('/', status_code=202)
 async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  

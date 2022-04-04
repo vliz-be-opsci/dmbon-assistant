@@ -49,7 +49,7 @@ class GitRepoCache():
     def init_repo(location):
         currentwd = os.getcwd()  
         try:
-            os.makedirs((location))
+            os.mkdir((location))
             os.chdir((location))
         except Exception as e:
             log.info(f"exception occured :{e}")

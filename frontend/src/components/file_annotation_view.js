@@ -1,9 +1,11 @@
 import {Table, Button, Modal} from 'react-bootstrap';
-import { FaTrashAlt, FaPencilAlt  } from 'react-icons/fa';
+import { FaTrashAlt, FaPencilAlt,   } from 'react-icons/fa';
+import { FiEdit} from 'react-icons/fi';
 import React, {useState, useEffect, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
 import ShaclForm from './form_shacl';
+import {BsPlusLg} from 'react-icons/bs';
 function FileAnnotationView(props) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -43,6 +45,7 @@ function FileAnnotationView(props) {
                     {props.listannotations.map(annotation =>
                         <tr>
                             <td>
+                                <Button variant="info" style={{margin: "1%", float:"left"}} ><FiEdit></FiEdit></Button>
                                 <Button variant="danger" style={{margin: "1%", float:"left"}} onClick= {() => deletepredicate(annotation.predicate)} id= {annotation.predicate}><FaTrashAlt></FaTrashAlt></Button>
                                 {annotation.predicate}  
                             </td>
@@ -51,6 +54,11 @@ function FileAnnotationView(props) {
                             </td>
                         </tr>
                     )}
+                    <tr>
+                        <td colspan = "2">
+                            <Button variant="success" style={{width:"100%"}}><BsPlusLg></BsPlusLg></Button>
+                        </td>
+                    </tr>
                 </tbody>
             </Table>   
             <Modal show={show} onHide={handleClose}>

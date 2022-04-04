@@ -111,17 +111,20 @@ def complete_metadata_crate(source_path_crate):
     
     
     ## add data to the fresh file ##
-      
     relation = []
     for root, dirs, files in os.walk(source_path_crate, topdown=False):   
-        for name in files:
-            if root.split(source_path_crate)[-1] == "":
-                parent_folder = ""
-                relative_path = "./"
-            else:
-                relative_path = root.split(source_path_crate)[-1]
-                parent_folder = relative_path.split(os.path.sep)[-1]
-            relation.append({'parent_folder':parent_folder,"relative_path":relative_path,"name":name})
+        if ".git" not in root:
+            log.info(f'root == {root}')
+            for name in files:
+                log.info(f'file == {name}')
+                if name != ".git":
+                    if root.split(source_path_crate)[-1] == "":
+                        parent_folder = ""
+                        relative_path = "./"
+                    else:
+                        relative_path = root.split(source_path_crate)[-1]
+                        parent_folder = relative_path.split(os.path.sep)[-1]
+                    relation.append({'parent_folder':parent_folder,"relative_path":relative_path,"name":name})
     all_ids = []
     for x in relation:
         #log.debug(x)

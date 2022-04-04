@@ -10,6 +10,7 @@ function SpacePage() {
 
 //define all constants first
   const [spaceList, setSpacesList] = useState([{}]) 
+  const [NameSelected, setNameSelect] = useState("") 
   const [profileList, setProfilesList] = useState([{}]) 
   const [profileSelected, setProfileSelect] = useState("") 
   const [storagepathSelected, setStoragepath] = useState("") 
@@ -23,14 +24,11 @@ function SpacePage() {
   //All the functions here
   function addspace(e) {
       e.preventDefault();
-      console.log(profileSelected)
-      console.log(URLSelected);
-      console.log(storagepathSelected);
-
       //put axios request here that will try and make a new space for the user
       const topost = { storage_path: storagepathSelected ,
                        RO_profile: profileSelected ,
-                       remote_url: URLSelected            
+                       remote_url: URLSelected,
+                       name: NameSelected           
                      };
       handleClose();
       setLoading(true);
@@ -73,6 +71,7 @@ function SpacePage() {
     if(event.target.name == "selectprofile"){setProfileSelect(event.target.value);}
     if(event.target.name == "selecturl"){setURLSelect(event.target.value);}
     if(event.target.name == "storagepath"){setStoragepath(event.target.value);}
+    if(event.target.name == "selectname"){setNameSelect(event.target.value);}
   }
 
   useEffect(() => {
@@ -100,6 +99,7 @@ function SpacePage() {
                   <Modal.Title>Add Space</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
+                  <Form.Group><Form.Label>Name datacrate</Form.Label><Form.Control type="text" placeholder="" name="selectname" onChange={handleChange}/></Form.Group>
                     <Form.Group><Form.Label>Profile</Form.Label><Form.Select required aria-label="Default select example" name="selectprofile" onClick={handleChange}>
                                       {profileList}
                     </Form.Select></Form.Group>
