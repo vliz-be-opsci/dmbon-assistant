@@ -7,7 +7,7 @@ import PredicateProgressbar from './predicates_progressbar';
 import { AllCheckerCheckbox, Checkbox, CheckboxGroup } from '@createnl/grouped-checkboxes';
 import {MdOpenInBrowser} from "react-icons/md";
 import axios from 'axios';
-
+import {BASE_URL_SERVER} from '../App.js';
 
 const Relative_folder = (folder) => {
     const {SpaceId} = useParams();
@@ -40,7 +40,7 @@ function FilesView(props) {
 
     const openFileExternal = async (fileID) => {
         console.log('content: '+ fileID)
-        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content/file/${fileID}`)
+        axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content/file/${fileID}`)
           .then(res => {
             console.log(res)
           }, (error) => {

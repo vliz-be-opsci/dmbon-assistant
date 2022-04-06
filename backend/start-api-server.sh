@@ -2,4 +2,4 @@
 
 python -m webbrowser http://localhost:6656/apiv1/redoc
 python -m webbrowser http://localhost:6656/apiv1/docs
-uvicorn app.app:app --reload --port 6656
+uvicorn app.app:app --reload --port 6656 --host 0.0.0.0

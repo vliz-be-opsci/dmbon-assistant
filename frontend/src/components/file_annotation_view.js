@@ -4,6 +4,7 @@ import { FiEdit} from 'react-icons/fi';
 import React, {useState, useEffect, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import ShaclForm from './form_shacl';
 import {BsPlusLg} from 'react-icons/bs';
 function FileAnnotationView(props) {
@@ -17,7 +18,7 @@ function FileAnnotationView(props) {
     }
 
     const deletepredicate_api = async (predicate) => {
-        axios.delete(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${FileId}/${predicate}`)
+        axios.delete(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${FileId}/${predicate}`)
           .then(res => {
             console.log(res.data);
           })

@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '.././css/spinner.css';
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import React, {useState, useEffect, useRef} from 'react';
 import 'react-gh-like-diff/dist/css/diff2html.min.css';
 import { ReactGhLikeDiff } from 'react-gh-like-diff';
@@ -14,7 +15,7 @@ function GitCommit() {
     const {SpaceId} = useParams();
     //get the info of the profiles
     const fetchGitDiff = async () => {
-        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status/`)
+        axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status/`)
           .then(res => {
             console.log(res.data.data)
             let arrayLength = res.data.data.length;
@@ -43,7 +44,7 @@ function GitCommit() {
         console.log(event.target.elements.git_commit_description.value);
         //do axios request to post to submit all the changes to git 
         setLoading(true);
-        axios.post(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/commit`)
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/commit`)
         .then(response => {setLoading(false);})
         .catch(error => {
         setLoading(false);

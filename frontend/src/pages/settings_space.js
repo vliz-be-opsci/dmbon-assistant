@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import {Button, Modal} from 'react-bootstrap';
 function SettingsSpacePage() {
     const [show, setShow] = useState(false);
@@ -9,7 +10,7 @@ function SettingsSpacePage() {
     const {SpaceId} = useParams();
     function deletespace(e) {
         e.preventDefault();
-        axios.delete(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}`)
+        axios.delete(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}`)
         .then(() => window.location.href = `/spaces`);
     }
     //<input directory="" webkitdirectory="" type="file" />

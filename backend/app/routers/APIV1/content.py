@@ -24,6 +24,19 @@ import app.shacl_helper as shclh
 
 from app.model.location import Locations
 from app.model.space import Space
+import platform
+
+
+def showFileExplorer(file):  # Path to file (string)
+    if platform.system() == "Windows":
+        import os
+        os.startfile(file)
+    elif platform.system() == "Darwin":
+        import subprocess
+        subprocess.call(["open", "-R", file])
+    else:
+        import subprocess
+        subprocess.Popen(["xdg-open", file])
 
 router = APIRouter(
     prefix="/content",
@@ -143,7 +156,8 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
             space_folder = data[space_id]['storage_path']
             #TODO: this wil only work if the file is in the root of the datacrate, find way to make it work for non root files
             #TODO: find a way to make this work for non windows systems
-            os.startfile(os.path.join(space_folder,file_id))
+            showFileExplorer(os.path.join(space_folder,file_id))
+            #os.startfile(os.path.join(space_folder,file_id), "open")
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     return "file opened successfully"

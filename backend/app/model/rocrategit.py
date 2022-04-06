@@ -389,8 +389,6 @@ class RoCrateGitBase():
             return(json.load(metadata_file))
         # and/or us the rocrate-py stuff
         
-    
-
     @abstractmethod
     def location(self):
         """ returns the location of this git repo based ro crate
@@ -404,4 +402,4 @@ class RoCrateGitBase():
         GitRepoCache().clone_content(self.location(), repo_url)
         
     def make_repo(self):
-        GitRepoCache().init_repo(self.location())
+        GitRepoCache().init_repo(self.location())    

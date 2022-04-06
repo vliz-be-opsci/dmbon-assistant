@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import {useDropzone} from 'react-dropzone'
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FilesView from './../components/files_view';
 import ReactLoading from 'react-loading';
@@ -82,7 +83,7 @@ function HierarchicalSpacePage() {
   ]);
 
   const fetchSpaces = async () => {
-    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content${folder_get}`)
+    axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content${folder_get}`)
       .then(res => {
         console.log(res.data)
         setSpacesList(res.data.Data)
@@ -95,7 +96,7 @@ function HierarchicalSpacePage() {
   },[]);
 
   const fixCrate = async () => {
-    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/fixcrate`)
+    axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/fixcrate`)
       .then(res => {
         console.log(res.data)
         countRef.current++;

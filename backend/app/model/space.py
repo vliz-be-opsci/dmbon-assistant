@@ -32,6 +32,8 @@ class Space(RoCrateGitBase):
             self.uuid = uuidmake.uuid4().hex
             #check if remote url was  given, if yes then only init the repo and not copy files 
             log.debug(remote_url)
+            self.workspace_path = Locations().get_workspace_location_by_uuid(self.uuid)
+            os.mkdir(self.workspace_path)
             if remote_url is None or remote_url == "": 
                 seed_dependencies = self.ro_profile.seed_dependencies
                 log.debug(seed_dependencies)
@@ -40,9 +42,17 @@ class Space(RoCrateGitBase):
                 repos_to_copy_over = []
                 for seed_repo in seed_dependencies.keys():
                     repos_to_copy_over.append(seed_repo)
-                #make the folder where the workspace will reside
-                self.workspace_path = Locations().get_workspace_location_by_uuid(self.uuid)
-                os.mkdir(self.workspace_path)
+                #copy over all the files from the repos
+                for repo in repos_to_copy_over:
+                    self._copy_files_to_workspace(repo_url=repo)
+            else:
+                seed_dependencies = self.ro_profile.seed_dependencies
+                log.debug(seed_dependencies)
+                #TODO: get all the seed_dependencies from the given profile uuid
+                self.clone_repo(self.remote_url)
+                repos_to_copy_over = []
+                for seed_repo in seed_dependencies.keys():
+                    repos_to_copy_over.append(seed_repo)
                 #copy over all the files from the repos
                 for repo in repos_to_copy_over:
                     self._copy_files_to_workspace(repo_url=repo)

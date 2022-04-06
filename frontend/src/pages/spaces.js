@@ -6,6 +6,8 @@ import {Button, Modal, Form, FloatingLabel} from 'react-bootstrap';
 import { FaPlus} from 'react-icons/fa';
 import ReactLoading from 'react-loading';
 import modal_add_space from '../components/adding_modal.js';
+import {BASE_URL_SERVER} from '../App.js';
+
 function SpacePage() {
 
 //define all constants first
@@ -32,7 +34,7 @@ function SpacePage() {
                      };
       handleClose();
       setLoading(true);
-      axios.post(process.env.REACT_APP_BASE_URL_SERVER+'apiv1/spaces/', topost)
+      axios.post(BASE_URL_SERVER+'apiv1/spaces/', topost)
           .then(response => {setLoading(false);window.location.href = `/spaces`;})
           .catch(error => {
               setLoading(false);
@@ -41,8 +43,8 @@ function SpacePage() {
   }
   
   const fetchSpaces = async () => {
-    console.log(process.env.REACT_APP_BASE_URL_SERVER);
-    axios.get(process.env.REACT_APP_BASE_URL_SERVER+'apiv1/spaces/')
+    console.log(BASE_URL_SERVER);
+    axios.get(BASE_URL_SERVER+'apiv1/spaces/')
       .then(res => {
         console.log(res.data)
         setSpacesList(res.data)
@@ -51,8 +53,8 @@ function SpacePage() {
   }
 
   const fetchProfiles = async () => {
-    console.log(process.env.REACT_APP_BASE_URL_SERVER);
-    axios.get(process.env.REACT_APP_BASE_URL_SERVER+'apiv1/profiles/')
+    console.log(BASE_URL_SERVER);
+    axios.get(BASE_URL_SERVER+'apiv1/profiles/')
       .then(res => {
         console.log(res.data)
         console.log(Object.keys(res.data));

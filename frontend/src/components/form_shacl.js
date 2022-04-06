@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '.././css/spinner.css';
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import React, {useState, useEffect, useRef} from 'react';
 import 'react-gh-like-diff/dist/css/diff2html.min.css';
 import {Form, Forms, Button} from 'react-bootstrap';
@@ -15,7 +16,7 @@ function ShaclForm() {
     //All the functions here
 
     const fetchShacl = async () => {
-        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${FileId}`)
+        axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${FileId}`)
         .then(res => {
             setShaclList(res.data.shacl_requirements)
             console.log(res.data.shacl_requirements);

@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FileAnnotationView from './../components/file_annotation_view';
 
@@ -13,7 +14,7 @@ function FileSpecificPage() {
   //All the functions here
 
   const fetchSpaces = async () => {
-    axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${FileId}`)
+    axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${FileId}`)
       .then(res => {
         console.log(res.data)
         setSpacesList(res.data.data)

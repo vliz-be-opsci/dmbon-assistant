@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import {Table} from 'react-bootstrap';
 
 function SpacesView(props) {
@@ -8,7 +9,7 @@ function SpacesView(props) {
 
     //get the info of the profiles
     const fetchProfiles = async () => {
-        axios.get(process.env.REACT_APP_BASE_URL_SERVER+'apiv1/profiles/')
+        axios.get(BASE_URL_SERVER+'apiv1/profiles/')
           .then(res => {
             console.log(res.data)
             setProfilesList(res.data)

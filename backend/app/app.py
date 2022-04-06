@@ -39,7 +39,7 @@ log.debug(f"locations root == {locs}")
 
 ### Custom API look ###
 
-app = FastAPI(docs_url=None, redoc_url=None)
+app = FastAPI(docs_url=None, redoc_url=None, )
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(router, prefix = "/apiv1", tags= ['API V1'])
 #app.include_router(non_segmented_router, prefix = "/nonseg_api", tags= ['API non segmented'])
@@ -49,6 +49,7 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:3000",
+    "http://192.168.16.168:3000"
 ]
 
 app.add_middleware(

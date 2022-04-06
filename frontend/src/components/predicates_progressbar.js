@@ -1,6 +1,7 @@
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import ReactLoading from 'react-loading';
 
@@ -18,7 +19,7 @@ function PredicateProgressbar(props) {
 
     //get the info of the profiles
     const fetchFileSummary = async () => {
-        axios.get(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${filename}`)
+        axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${filename}`)
           .then(res => {
             console.log(res.data.summary)
             setFileSummary(res.data.summary)

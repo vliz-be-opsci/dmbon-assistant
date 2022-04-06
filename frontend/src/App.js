@@ -12,8 +12,9 @@ import SettingsSpacePage from './pages/settings_space';
 import HomePage from './pages/home_page';
 import Footer from './components/footer';
 require('dotenv').config()
+var port_server = process.env.REACT_APP_PORT_BACKEND_SERVER;
+const BASE_URL_SERVER = 'http://'+window.location.hostname+':'+port_server+'/';
 function App() {
-
   return (
     <div className="App">
       <Navbar/>
@@ -35,3 +36,4 @@ function App() {
 }
 
 export default App;
+export {BASE_URL_SERVER};

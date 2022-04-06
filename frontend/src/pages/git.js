@@ -4,6 +4,7 @@ import GitCommit from '../components/git_commit.js';
 import GitHistory from '../components/git_history.js';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
+import {BASE_URL_SERVER} from '../App.js';
 
 $(document).ready(function() {
     $(".btn").click(function() {
@@ -60,7 +61,7 @@ export default class GitPage extends React.Component {
       console.log(this.state.SpaceId);
       //axios request 
       this.setLoading(true);
-        axios.post(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/push`)
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/push`)
         .then(response => {this.setLoading(false);})
         .catch(error => {
         this.setLoading(false);
@@ -71,7 +72,7 @@ export default class GitPage extends React.Component {
     getPull(){
       console.log('pulling from git repo');
       this.setLoading(true);
-        axios.post(process.env.REACT_APP_BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/pull`)
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/pull`)
         .then(response => {this.setLoading(false);window.location.href = `/spaces/${this.state.SpaceId}/all_files`;})
         .catch(error => {
         this.setLoading(false);
