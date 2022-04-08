@@ -1,0 +1,19 @@
+.input_text {
+  width: 100%;
+  border-radius: 5px;
+  height: 35px;
+  font-size: 17px;
+}
+
+.input_text:focus {
+  outline: none;
+  border: 3px solid green;
+}
+
+.input_text:hover {
+  border: 3px solid #4d90fe;
+}
+
+.input_text:active {
+  border-color: #4d90fe;
+}

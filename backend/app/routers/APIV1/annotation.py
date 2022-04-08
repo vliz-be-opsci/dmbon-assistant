@@ -194,6 +194,7 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
             raise HTTPException(status_code=404, detail="Space not found")
     try:
         space_object = Space.load(uuid=space_id)
+        log.info(file_id)
         prerreturn = space_object.get_predicates_by_id(file_id=file_id)
         log.info(f"prereturn of get predicates by id: {prerreturn}")
         if "error" in prerreturn.keys():

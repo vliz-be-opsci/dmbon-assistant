@@ -93,7 +93,7 @@ function FilesView(props) {
     },[]);
 
     return (
-        <div>
+        <div className='container'>
             <CheckboxGroup onChange={console.log} id="checkAll">
             <Table striped bordered hover>
                 <thead>

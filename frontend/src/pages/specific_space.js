@@ -4,7 +4,7 @@ import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FilesView from './../components/files_view';
-import RemoteReferenceTable from '../components/remote_reference_table.js';
+import RemoteReferenceTableAdd from '../components/remote_reference_table_modal.js';
 import ReactLoading from 'react-loading';
 import {Button, Modal, Popover, OverlayTrigger, Tab, Row, Col, Nav} from 'react-bootstrap';
 import {FaTools, FaUpload, FaEdit, FaTrashAlt} from 'react-icons/fa';
@@ -160,24 +160,23 @@ function SpaceSpecificPage() {
                   <Tab.Content>
                     <Tab.Pane eventKey="first">
                     <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoveropenfilebrowser}>
-                      <Button variant="info" onClick={() => OpenBrowserSpace()} style={{ width: "100%", height: "100px" }}>
+                      <Button variant="primary" onClick={() => OpenBrowserSpace()} style={{ width: "100%", height: "100px" }}>
                           Open File browser to upload
                       </Button>
                     </OverlayTrigger>
+                    <hr/>
+                    <Button variant="success" style={{ width: "100%"}} onClick={() => updateMessage("upload")}>
+                        Upload files
+                    </Button>
                     </Tab.Pane>
                     <Tab.Pane eventKey="second">
-                      <RemoteReferenceTable></RemoteReferenceTable>
+                      <RemoteReferenceTableAdd></RemoteReferenceTableAdd>
                     </Tab.Pane>
                   </Tab.Content>
                 </Col>
               </Row>
             </Tab.Container>
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="success" style={{ width: "100%"}} onClick={() => updateMessage("upload")}>
-                  Upload files
-              </Button>
-            </Modal.Footer>
           </Modal>
       </div>
     )

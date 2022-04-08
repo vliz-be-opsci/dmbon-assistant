@@ -6,6 +6,7 @@ import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess,
 from importlib import import_module
 from datetime import datetime
 from aiohttp import ClientSession
+import validators
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
 from collections import MutableMapping
@@ -103,6 +104,12 @@ def complete_metadata_crate(source_path_crate):
     
     log.debug(f"all metadata ids of data: {all_meta_ids_data}")
     
+    #make pre meta ids
+    all_ids_pre_new_doc = []
+    for id in datao['@graph']:
+        all_ids_pre_new_doc.append(id['@id'])
+    
+    
     ## start from fresh file with metadata template  ##
     with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'ro-crate-metadata.json')) as json_file:
         data = json.load(json_file)
@@ -189,6 +196,18 @@ def complete_metadata_crate(source_path_crate):
             #add the id to the @graph
             data['@graph'].append({'@id':i, '@type':"File"})
             #add id to ./ folder if necessary
+    
+    #add the references to the @graph
+    for i in all_ids_pre_new_doc:
+        log.info(f"meta id i: {i}")
+        valid=validators.url(i)
+        if valid:
+            log.info(f"valid url: {i}")
+            #add i to the graph
+            for id in data['@graph']:
+                if id["@id"] == './':
+                    id["hasPart"].append({'@id':i})
+            data['@graph'].append({'@id':i, '@type':"File"})  
     
     #remove duplicates
     seen_ids = []
