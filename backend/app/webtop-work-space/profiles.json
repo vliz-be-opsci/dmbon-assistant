@@ -1,1 +1,32 @@
-{"7247038cc11f48ab93e6dd59cdac8e7d": {"logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "uuid4 test descitprion", "url_ro_profile": "propare test for html string"}, "1193456ea0984c6bba1b6d4100e65cb9": {"name_profile": "Old_method_might_not_be_working_later1", "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test normal", "url_ro_profile": "https://github.com/cedricdcc/test_rocrate_repo.git"}, "TestFeb2022": {"name_profile": "Old_method_might_not_be_working_later", "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test normal of other combined profile", "url_ro_profile": "https://github.com/cedricdcc/test_other_repo.git"}, "5084a97d5b544fe0a119f704bd64d22f": {"name_profile": "test_new_method", "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test of the new method", "url_ro_profile": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "seed_dependencies": ["https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "https://github.com/cedricdcc/dmbon_test_profile_crate.git", "https://github.com/cedricdcc/dmbon_test_seed_crate.git", "https://github.com/cedricdcc/my_bon_test_crate_2.git"]}, "2fe19437c5ae4349b426c9c0aa10f77f": {"name_profile": "test_api_call", "logo": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test for the api call", "url_ro_profile": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "seed_dependencies": ["https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "https://github.com/cedricdcc/dmbon_test_profile_crate.git", "https://github.com/cedricdcc/dmbon_test_seed_crate.git", "https://github.com/cedricdcc/my_bon_test_crate_2.git"]}, "0d972c79c8634b18b5fd13fdde8c8cb7": {"name": "this_is_face_the_face_of_the_planet", "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test new method object oriented from test_apiv1.py", "uuid": "0d972c79c8634b18b5fd13fdde8c8cb7", "seed_dependencies": ["https://github.com/cedricdcc/my_bon_test_crate_2.git"]}, "8aa0b534271145819153b5133cadf382": {"name": "test_automated_tests", "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test new method object oriented from test_apiv1.py", "uuid": "8aa0b534271145819153b5133cadf382", "seed_dependencies": ["https://github.com/cedricdcc/my_bon_test_crate_2.git"]}, "e87f3ce648194a72b23ffa2925afb21f": {"name": "test_automated_tests", "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test new method object oriented from test_apiv1.py", "uuid": "e87f3ce648194a72b23ffa2925afb21f", "seed_dependencies": ["https://github.com/cedricdcc/my_bon_test_crate_2.git"]}, "b529234ddef348e79763cee57d724dc4": {"name": "test_automated_tests", "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png", "description": "test new method object oriented from test_apiv1.py", "uuid": "b529234ddef348e79763cee57d724dc4", "seed_dependencies": ["https://github.com/cedricdcc/my_bon_test_crate_2.git"]}, "233ec883a63a4cf8965fb7fab08fe7c5": {"name": "test_addition_profile", "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git", "logo_url": "yees", "description": "newdescritpioin", "uuid": "233ec883a63a4cf8965fb7fab08fe7c5", "seed_dependencies": ["https://github.com/cedricdcc/my_bon_test_crate_2.git"]}}
+{
+    "e87f3ce648194a72b23ffa2925afb21f": {
+        "name": "no good profile",
+        "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+        "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test new method object oriented from test_apiv1.py",
+        "uuid": "e87f3ce648194a72b23ffa2925afb21f",
+        "seed_dependencies": [
+            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
+        ]
+    },
+    "b529234ddef348e79763cee57d724dc4": {
+        "name": "test_nonsence_profile",
+        "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+        "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
+        "description": "test new method object oriented from test_apiv1.py",
+        "uuid": "b529234ddef348e79763cee57d724dc4",
+        "seed_dependencies": [
+            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
+        ]
+    },
+    "233ec883a63a4cf8965fb7fab08fe7c5": {
+        "name": "test_vliz_profile",
+        "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
+        "logo_url": "yees",
+        "description": "newdescritpioin",
+        "uuid": "233ec883a63a4cf8965fb7fab08fe7c5",
+        "seed_dependencies": [
+            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
+        ]
+    }
+}

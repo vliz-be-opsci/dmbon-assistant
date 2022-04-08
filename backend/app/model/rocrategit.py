@@ -138,6 +138,8 @@ class RoCrateGitBase():
         #convert the shacl file to have all the properties per node id
         node_properties_dicts = []
         for node_to_check in shacldata:
+            log.info(node_to_check)
+        for node_to_check in shacldata:
             toaddnode = {}
             if node_to_check["target"] is not None:
                 target = node_to_check["target"].split("/")[-1]

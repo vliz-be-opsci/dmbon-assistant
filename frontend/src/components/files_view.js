@@ -9,25 +9,6 @@ import {MdOpenInBrowser} from "react-icons/md";
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 
-const Relative_folder = (folder) => {
-    const {SpaceId} = useParams();
-    try {
-        console.log(folder);
-        let toreturn = folder.split(SpaceId)[1];
-        let returno = toreturn.replace('\\project','');
-        returno = returno.replaceAll('\\','/');
-        console.log(returno);
-        if(returno.length == 0){
-            const returnoo = '/'
-            return returnoo
-        }
-        console.log(returno);
-        return (returno)
-    } catch (error) {
-        return('')
-    }
-}
-
 //get the current url to know the parent
 const url = window.location.href;
 const parenturl = url.substr(0,url.lastIndexOf('/'))
@@ -36,6 +17,38 @@ function FilesView(props) {
     //get the current params from the url
     const {SpaceId} = useParams();
     const [filesselected, setFilesSelected] = useState([]);
+    const [SpaceName, setSpaceName] = useState("");
+
+    const Relative_folder = (folder) => {
+        try {
+            console.log(folder);
+            console.log(SpaceName);
+            let toreturn = folder.split(SpaceName);
+            console.log(toreturn);
+            var rest_folder = toreturn[toreturn.length-1];
+            rest_folder = rest_folder.replaceAll('\\','/');
+            console.log(rest_folder);
+            if(rest_folder.length == 0){
+                const returnoo = '/'
+                return returnoo
+            }
+            console.log(rest_folder);
+            return (rest_folder)
+        } catch (error) {
+            return('')
+        }
+    }
+
+    const fetchSpaceName = async() => {
+        axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}`)
+        .then(res => {
+            console.log(res)
+            var space_name_array = res.data.storage_path.replace('\\','/').split('/');
+            var space_name = space_name_array[space_name_array.length-1];
+            console.log(space_name);
+            setSpaceName(space_name);
+        })
+    }
 
 
     const openFileExternal = async (fileID) => {
@@ -74,6 +87,10 @@ function FilesView(props) {
             console.log(carray);
         }
     }
+
+    useEffect(() => {
+        fetchSpaceName();
+    },[]);
 
     return (
         <div>

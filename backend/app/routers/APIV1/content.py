@@ -10,6 +10,7 @@ from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
 import subprocess
+import validators
 from collections import MutableMapping
 from fastapi.staticfiles import StaticFiles
 import glob
@@ -64,7 +65,10 @@ class SpaceModel(BaseModel):
 class FileModel(BaseModel):
     name     : str = Field(None, description = "Name of the file that will be added, can be filepath")
     content  : str = Field(None, description = "Filepath that needs to be added to the space, can also be a directory or url")
-    
+
+class ReferenceModel(BaseModel):
+    URL     : str = Field(None, description = "url of the reference that needs to be added to the ROCrate.")
+
 class AnnotationModel(BaseModel):
     URI_predicate_name : str = Field(None, description = "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates.\
                                                 for more info about the allowed predicates, use TODO: insert api call for predicates here.")
@@ -73,6 +77,9 @@ class AnnotationModel(BaseModel):
 class AnnotationsModel(BaseModel):
     Annotations: List[AnnotationModel] = Field(None, description = "List of annotations to add to resource. \
                                               for more info about the allowed annotation predicates, use TODO: insert api call for predicates here.")
+
+class ListReferenceModel(BaseModel):
+    references: List[ReferenceModel] = Field(None, description = "List of references to add to the ROCrate.")
 
 class ContentModel(BaseModel):
     content: List[FileModel] = Field(None, description = "List of files that need to be added, this list can also contain directories")
@@ -233,6 +240,40 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
 
     return {'Data':'all content successfully added to space'}
 
+@router.post('/reference', status_code=202)
+async def add_new_references(*,space_id: str = Path(None,description="space_id name"), item: ListReferenceModel):  
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+        
+    datalog = []
+    crate = ROCrate(space_folder)
+    repo = git.Repo(data[space_id]['storage_path'])
+    for reference in item.references:
+        #check if given item.URL is valid
+        valid=validators.url(reference.URL)
+        if valid:
+            log.debug("add reference to the rocrate")
+            try:
+                crate.add_file(reference.URL, fetch_remote = False)
+            except Exception as e:
+                datalog.append({reference.URL:e})
+        else:
+            raise HTTPException(status_code=400, detail="Non valid URL given")
+    try:
+        crate.write_crate(space_folder)
+    except Exception as e:
+        log.error(f"crate write error :{e}")
+        log.exception(e)
+    repo.git.add(all=True)
+    if len(datalog) > 0:
+        raise HTTPException(status_code=400, detail=datalog)
+
+    return {'Data':'all content successfully added to space'}
+
 @router.delete('/', status_code=202)
 def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
@@ -288,12 +329,19 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
         try:
             toreturn = data[space_id]
             allpaths = path_folder
-            space_folder = os.path.join(data[space_id]['storage_path'], path_folder) 
+            if(path_folder == "/"):
+                space_folder = data[space_id]['storage_path']
+                log.debug(space_folder)
+            else:
+                space_folder = os.path.join(data[space_id]['storage_path'], path_folder)
+                log.debug(space_folder)
+
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     toreturn = []
     for (dirpath, dirnames, filenames) in os.walk(space_folder):
         for filen in filenames:
             if '.git' not in dirpath:
+                log.info(f"{dirpath}/{filen}")
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}

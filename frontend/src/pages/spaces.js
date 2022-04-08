@@ -26,6 +26,8 @@ function SpacePage() {
   //All the functions here
   function addspace(e) {
       e.preventDefault();
+      // change the profile name to profile uuid
+      console.log(profileSelected);
       //put axios request here that will try and make a new space for the user
       const topost = { storage_path: storagepathSelected ,
                        RO_profile: profileSelected ,
@@ -61,7 +63,8 @@ function SpacePage() {
         let reallist = [];
         for (let index = 0; index < Object.keys(res.data).length; index++) {
           const element = Object.keys(res.data)[index];
-          reallist.push(<option value={element}>{element}</option>)
+          var values = Object.values(res.data)[index];
+          reallist.push(<option value={element}>{values.name}</option>)
         }
         setProfilesList(reallist);
         countRef.current++;

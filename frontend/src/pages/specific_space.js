@@ -4,8 +4,9 @@ import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FilesView from './../components/files_view';
+import RemoteReferenceTable from '../components/remote_reference_table.js';
 import ReactLoading from 'react-loading';
-import {Button, Modal, Popover, OverlayTrigger} from 'react-bootstrap';
+import {Button, Modal, Popover, OverlayTrigger, Tab, Row, Col, Nav} from 'react-bootstrap';
 import {FaTools, FaUpload, FaEdit, FaTrashAlt} from 'react-icons/fa';
 
 import $ from 'jquery';
@@ -85,7 +86,18 @@ function SpaceSpecificPage() {
     <Popover id="popover-open">
         <Popover.Header as="h3">Fix Crate</Popover.Header>
         <Popover.Body>
-        Click this to fix metadata issues from files that have been added to the crate from the browser.
+        Click this to <b>fix metadata</b> issues from <b>files</b> that have been added to the crate from the <b>explorer</b>.
+        </Popover.Body>
+    </Popover>
+  );
+
+  const popoveropenfilebrowser = (
+    <Popover id="popover-open">
+        <Popover.Header as="h3">Open File Browser</Popover.Header>
+        <Popover.Body>
+        Click this to <b>open</b> a file <b>explorer</b> at the path of the <b>datacrate location</b>.
+         You can add files/folders here and these will be incorperated in the ROCrate.
+         Note that the File <b>explorer</b> will <b>not</b> be <b>focussed</b> on <b>automatically</b>.
         </Popover.Body>
     </Popover>
   );
@@ -129,16 +141,40 @@ function SpaceSpecificPage() {
           <div>Number of changes to page: {countRef.current}</div>
           <Modal show={show} size="lg" onHide={handleClose}>
             <Modal.Header closeButton>
-              <Modal.Title>Upload zone (not working atm)</Modal.Title>
+              <Modal.Title>Upload zone </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-            all diff upload methods here
+            <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+              <Row>
+                <Col sm={3}>
+                  <Nav variant="pills" className="flex-column">
+                    <Nav.Item>
+                      <Nav.Link eventKey="first">add local files</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link eventKey="second">add remote reference(s)</Nav.Link>
+                    </Nav.Item>
+                  </Nav>
+                </Col>
+                <Col sm={9}>
+                  <Tab.Content>
+                    <Tab.Pane eventKey="first">
+                    <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoveropenfilebrowser}>
+                      <Button variant="info" onClick={() => OpenBrowserSpace()} style={{ width: "100%", height: "100px" }}>
+                          Open File browser to upload
+                      </Button>
+                    </OverlayTrigger>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="second">
+                      <RemoteReferenceTable></RemoteReferenceTable>
+                    </Tab.Pane>
+                  </Tab.Content>
+                </Col>
+              </Row>
+            </Tab.Container>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="info" onClick={() => OpenBrowserSpace()}>
-                  Open File browser to upload
-              </Button>
-              <Button variant="success" onClick={() => updateMessage("upload")}>
+              <Button variant="success" style={{ width: "100%"}} onClick={() => updateMessage("upload")}>
                   Upload files
               </Button>
             </Modal.Footer>

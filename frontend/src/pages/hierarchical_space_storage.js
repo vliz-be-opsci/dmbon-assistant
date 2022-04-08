@@ -17,78 +17,31 @@ function HierarchicalSpacePage() {
   const url = window.location.href;
   const countRef = useRef(0);
   const {SpaceId} = useParams();
-  const folder_get = url.split(SpaceId+"/files/project")[1]
+  const folder_get = url.split(SpaceId+"/files")[1]
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [files, setFiles] = useState("");
+  console.log(url);
   console.log(folder_get);
-  const baseStyle = {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
-    borderWidth: 2,
-    borderRadius: 2,
-    borderColor: '#eeeeee',
-    borderStyle: 'dashed',
-    backgroundColor: '#fafafa',
-    color: '#bdbdbd',
-    outline: 'none',
-    transition: 'border .24s ease-in-out'
-  };
-  
-  const activeStyle = {
-    borderColor: '#2196f3'
-  };
-  
-  const acceptStyle = {
-    borderColor: '#00e676'
-  };
-  
-  const rejectStyle = {
-    borderColor: '#ff1744'
-  };
   //All the functions here
-  const onDrop = useCallback((acceptedFiles) => {
-    setFiles(acceptedFiles.map(file => (
-      <li key={file.path}>
-        {file.path} - {file.size} bytes
-      </li>) 
-    ));
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader()
-
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
-      // Do whatever you want with the file contents
-        const binaryStr = reader.result
-        console.log(binaryStr)
-      }
-      reader.readAsArrayBuffer(file)
-    })},[])
-  const {getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject} = useDropzone({onDrop})
-
-  const style = useMemo(() => ({
-    ...baseStyle,
-    ...(isDragActive ? activeStyle : {}),
-    ...(isDragAccept ? acceptStyle : {}),
-    ...(isDragReject ? rejectStyle : {})
-  }), [
-    isDragActive,
-    isDragReject,
-    isDragAccept
-  ]);
 
   const fetchSpaces = async () => {
     axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content${folder_get}`)
       .then(res => {
+        console.log("data got from response");
         console.log(res.data)
-        setSpacesList(res.data.Data)
+        if(folder_get == "/"){
+          setSpacesList(res.data)
+        }else{
+          setSpacesList(res.data.Data)
+        }
+        
         setLoading(false);
-      })
+      }, (error) => {
+        console.log(error);
+      }
+      )
   }
 
   useEffect(() => {
@@ -146,17 +99,9 @@ function HierarchicalSpacePage() {
               <Modal.Title>Upload zone</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-            <div {...getRootProps({style})}>
-              <input {...getInputProps()} />
-              <p>Drag 'n' drop some files here, or click to select files</p>
-              <hr />
-              <ul>{files}</ul>
-            </div>
+              other modal here
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
-                  No
-              </Button>
               <Button variant="success" onClick={() => updateMessage("upload")}>
                   Upload files
               </Button>
@@ -169,9 +114,6 @@ function HierarchicalSpacePage() {
 	}else{
 		window.location.href = `/spaces/${SpaceId}/all_files`;
 	}
-    
-
-    
 }
 
 export default HierarchicalSpacePage
