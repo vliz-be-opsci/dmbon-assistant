@@ -2,6 +2,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Navbar, Container, Nav, NavDropdown} from 'react-bootstrap';
 import {FaHome, FaFolderOpen, FaGitAlt, FaCog, FaFlask} from 'react-icons/fa';
+import '../css/navbar.css'
 
 function NavBar() {
     const url = window.location.href;
@@ -11,7 +12,7 @@ function NavBar() {
         if (spaceid){
             return (
                 <div className="container">
-                    <Navbar bg="light" expand="lg">
+                    <Navbar bg="light" expand="lg" className='navbar'>
                         <Container>
                             <Navbar.Brand href="/"><FaHome size="1.5em"/></Navbar.Brand>
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -32,7 +33,7 @@ function NavBar() {
         }else{
             return (
                 <div className="container">
-                    <Navbar bg="light" expand="lg">
+                    <Navbar bg="light" expand="lg" className="navbar">
                         <Container>
                             <Navbar.Brand href="/"><FaHome /> DM-BON manager</Navbar.Brand>
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -49,7 +50,7 @@ function NavBar() {
     } else {
         return (
             <div className="container">
-                <Navbar bg="light" expand="lg">
+                <Navbar bg="light" expand="lg" className="navbar">
                     <Container>
                         <Navbar.Brand href="/"><FaHome /> DM-BON manager</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />

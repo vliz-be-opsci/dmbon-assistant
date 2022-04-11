@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import $ from 'jquery';
-// import '.././css/index.css'
+import "../css/footer.css";
+import {FaGithubSquare, FaLinkedin, FaMailBulk, FaTwitterSquare, FaFacebook, FaYoutube} from 'react-icons/fa';
 
 //add jquery functionality
 $(document).ready(function() {
@@ -22,23 +23,23 @@ $(document).ready(function() {
 });
 
 var style = {
-    backgroundColor: "pink",   //#F8F8F8
+    backgroundColor: "#6cb2c5",   //#F8F8F8
     borderTop: "1px solid #E7E7E7",
     textAlign: "center",
     padding: "20px",
     position: "fixed",
     left: "0",
     bottom: "0",
-    height: "60px",
-    width: "100%",
-    display: "none"
+    height: "120px",
+    width: "68.1%",
+    display: "none",
+    marginLeft: "16%"
 }
 
 var phantom = {
   display: 'block',
   padding: '20px',
-  height: '60px',
-  width: '100%',
+  height: '80px'
 }
 
 
@@ -46,9 +47,14 @@ function Footer() {
 
     return (
         <div>
-            <div style={phantom} />
-            <div style={style} class="vanish">
-                Footer here with info about the app and vliz
+            <div style={phantom} className="phantom"/>
+            <div style={style} className="vanish socialbanner">
+                <a href="https://github.com/vliz-be-opsci/" target="_blank"><FaGithubSquare class="socialitem"/></a>
+                <a href="https://www.linkedin.com/company/vliz---flanders-marine-institute/mycompany/" target="_blank"><FaLinkedin class="socialitem"/></a>
+                <a href="mailto:opsci@vliz.be" target="_blank"><FaMailBulk class="socialitem"/></a>
+                <a href="https://twitter.com/VLIZnews" target="_blank"><FaTwitterSquare class="socialitem"/></a>
+                <a href="https://www.facebook.com/pages/Vlaams-Instituut-voor-de-Zee/455354371162277" target="_blank"><FaFacebook class="socialitem"/></a>
+                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"><FaYoutube class="socialitem"/></a>
             </div>
         </div>
     )

@@ -67,13 +67,30 @@ section {
     fill: #006582;
 }
 
-.sidebox {
+.sidebox_one {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(to right, #006582, #91cedf);
+}
+
+.sidebox_two {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: -1;
+    background: linear-gradient(to left, #006582, #91cedf);
+}
+
+.clockwise_turned {
+    transform: rotate(60deg);
+}
+
+.counterclockwise_turned {
     transform: rotate(-20deg);
-    background: linear-gradient(to right, #006582, #91cedf);
 }

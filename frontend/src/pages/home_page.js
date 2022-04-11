@@ -24,7 +24,8 @@ function HomePage() {
                     </svg>
                 </div>
             </section>
-            <div className="sidebox"></div>
+            <div className="sidebox_one counterclockwise_turned"></div>
+            <div className="sidebox_two clockwise_turned"></div>
             <section className="light">
                 <AnimationOnScroll animateIn="animate__fadeInLeft" animateOut="animate__bounceOutRight" duration="0.7">
                     <h2>TODO have a section for the user to create a new space</h2>
@@ -40,6 +41,7 @@ function HomePage() {
                 </div>
             </section>
             <div className="spacer layer1"></div>
+            
             <section className="blue">
                 <h2>TODO have a section for the user to create a new space</h2>
                 <p>Nulla ipsum. Vestibulum condimentum condimentum augue. Nunc purus risus, volutpat sagittis, lobortis at, dignissim sed, sapien. Fusce porttitor iaculis ante. Curabitur eu arcu. Morbi quam purus, tempor eget, ullamcorper feugiat, commodo ullamcorper, neque.</p>
