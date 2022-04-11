@@ -109,11 +109,14 @@ function SpaceSpecificPage() {
   const updateMessage = async (message) =>  {
     setMessage(message)
     if(message == "upload"){
-      handleClose()
+      handleClose();
+      await fixCrate();
+      window.location.href = window.location.href;
     }  
     if(message == "fixcrate"){
       setLoading(true);
-      fixCrate();
+      await fixCrate();
+      window.location.href = window.location.href;
     }
   }
 

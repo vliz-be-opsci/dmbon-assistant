@@ -81,12 +81,15 @@ function HierarchicalSpacePage() {
     console.log({Message});
     countRef.current++;
     if(message == "upload"){
-      handleClose()
+      handleClose();
+      await fixCrate();
+      window.location.href = window.location.href;
     }  
     if(message == "fixcrate"){
       alert('fixing crate chosen');
       setLoading(true);
-      fixCrate();
+      await fixCrate();
+      window.location.href =window.location.href;
     }
     if(message == "delete"){
       alert('deleting stuff: TODO');
