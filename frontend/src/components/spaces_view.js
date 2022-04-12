@@ -21,6 +21,7 @@ function SpacesView(props) {
 
     //transform spaces info 
     const spacesList = async (profiledata) => {
+        setLoading(true);
         var spacelistmetadata = [];
         console.log(Object.keys(profiledata).length);
         console.log(profiledata);
@@ -53,8 +54,8 @@ function SpacesView(props) {
             console.log(spacelistdata); 
             spacelistmetadata.push(spacelistdata);
         }
-        console.log(spacelistmetadata)
-        setSpacesListData(spacelistmetadata)
+        console.log(spacelistmetadata);
+        setSpacesListData(spacelistmetadata);
         setLoading(false);
     }
     useEffect(() => {
