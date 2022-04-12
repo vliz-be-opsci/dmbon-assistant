@@ -246,39 +246,45 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
 
 @router.post('/reference', status_code=202)
 async def add_new_references(*,space_id: str = Path(None,description="space_id name"), item: ListReferenceModel):  
-    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-        data = json.load(file)
-        try:
-            space_folder = data[space_id]['storage_path']
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-        
-    datalog = []
-    crate = ROCrate(space_folder)
-    repo = git.Repo(data[space_id]['storage_path'])
-    for reference in item.references:
-        #check if given item.URL is valid
-        valid=validators.url(reference.URL)
-        if valid:
-            log.debug("add reference to the rocrate")
-            try:
-                crate.add_file(reference.URL, fetch_remote = False)
-            except Exception as e:
-                datalog.append({reference.URL:e})
-        else:
-            raise HTTPException(status_code=400, detail="Non valid URL given")
     try:
-        crate.write_crate(space_folder)
-    except Exception as e:
-        log.error(f"crate write error :{e}")
-        log.exception(e)
         
-    repo.git.add(all=True)
-    if len(datalog) > 0:
-        raise HTTPException(status_code=400, detail=datalog)
+        with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+            data = json.load(file)
+            try:
+                space_folder = data[space_id]['storage_path']
+            except Exception as e:
+                raise HTTPException(status_code=404, detail="Space not found")
+            
+        datalog = []
+        crate = ROCrate(space_folder)
+        repo = git.Repo(data[space_id]['storage_path'])
+        for reference in item.references:
+            #check if given item.URL is valid
+            valid=validators.url(reference.URL)
+            if valid:
+                log.debug("add reference to the rocrate")
+                try:
+                    crate.add_file(reference.URL, fetch_remote = False)
+                except Exception as e:
+                    datalog.append({reference.URL:e})
+            else:
+                raise HTTPException(status_code=400, detail="Non valid URL given")
+        try:
+            crate.write_crate(space_folder)
+        except Exception as e:
+            log.error(f"crate write error :{e}")
+            log.exception(e)
+            
+        repo.git.add(all=True)
+        if len(datalog) > 0:
+            raise HTTPException(status_code=400, detail=datalog)
 
-    return {'Data':'all content successfully added to space'}
-
+        return {'Data':'all content successfully added to space'}
+    except Exception as e:
+        log.error(f"add_new_references error :{e}")
+        log.exception(e)
+        raise HTTPException(status_code=400, detail=e)
+    
 @router.delete('/', status_code=202)
 def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:

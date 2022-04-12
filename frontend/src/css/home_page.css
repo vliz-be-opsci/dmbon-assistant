@@ -1,7 +1,6 @@
 body {
     margin:0;
     font-family: "Prompt", sans-serif;
-    color: white;
 }
 
 section {
@@ -11,6 +10,7 @@ section {
     align-items: center;
     min-height: 400px;
     padding: 100px 20vw;
+    color: white;
 }
 
 .blue {

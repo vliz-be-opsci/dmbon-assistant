@@ -10,7 +10,6 @@ import HierarchicalSpacePage from './pages/hierarchical_space_storage';
 import GitPage from './pages/git';
 import SettingsSpacePage from './pages/settings_space';
 import HomePage from './pages/home_page';
-import Footer from './components/footer';
 require('dotenv').config()
 var port_server = process.env.REACT_APP_PORT_BACKEND_SERVER;
 const BASE_URL_SERVER = 'http://'+window.location.hostname+':'+port_server+'/';
@@ -30,7 +29,7 @@ function App() {
           <Route path='/spaces/:SpaceId/all_files/:FileId' element={<FileSpecificPage/>} />
         </Routes>
       </div>
-      <Footer />
+      
     </div>
   );
 }

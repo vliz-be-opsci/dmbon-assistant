@@ -7,7 +7,8 @@ import FilesView from './../components/files_view';
 import RemoteReferenceTableAdd from '../components/remote_reference_table_modal.js';
 import ReactLoading from 'react-loading';
 import {Button, Modal, Popover, OverlayTrigger, Tab, Row, Col, Nav} from 'react-bootstrap';
-import {FaTools, FaUpload, FaEdit, FaTrashAlt} from 'react-icons/fa';
+import {FaUpload, FaEdit, FaTrashAlt, FaBandAid} from 'react-icons/fa';
+import {BsFillPlusSquareFill, BsCloudPlusFill, BsFilePlusFill} from 'react-icons/bs';
 
 import $ from 'jquery';
 
@@ -102,6 +103,11 @@ function SpaceSpecificPage() {
     </Popover>
   );
 
+  /*
+  see the space and folder location of the crate
+  <h5 className="card text-white bg-dark">Specific Space : {SpaceId}</h5>
+  <h5 className="card text-black bg-warning">location space: {spaceList[0].folder}</h5>
+  */
   useEffect(() => {
     fetchSpaces();
   },[Message]);
@@ -129,13 +135,12 @@ function SpaceSpecificPage() {
   }else{
     return (
       <div>
-          <h5 className="card text-white bg-dark">Specific Space : {SpaceId}</h5>
-          <h5 className="card text-black bg-warning">location space: {spaceList[0].folder}</h5>
+
           <hr/>
-            <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-success" ><FaUpload size="1.5em"/></button>
+            <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-success" ><BsFillPlusSquareFill size="1.5em"/></button>
             <button onClick={() => updateMessage("annotate")} id="annotate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaEdit size="1.5em"/></button>
             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverfixcrate}>
-              <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaTools size="1.5em"/></button>
+              <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaBandAid size="1.5em"/></button>
             </OverlayTrigger>
             <button onClick={() => updateMessage("delete")} id="delete_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-danger"><FaTrashAlt size="1.5em"/></button>
           <div>
@@ -152,10 +157,10 @@ function SpaceSpecificPage() {
                 <Col sm={3}>
                   <Nav variant="pills" className="flex-column">
                     <Nav.Item>
-                      <Nav.Link eventKey="first">add local files</Nav.Link>
+                      <Nav.Link eventKey="first" variant="dark"><BsFilePlusFill size="1.5em"/></Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="second">add remote reference(s)</Nav.Link>
+                      <Nav.Link eventKey="second" variant="dark"><BsCloudPlusFill size="1.5em"/></Nav.Link>
                     </Nav.Item>
                   </Nav>
                 </Col>

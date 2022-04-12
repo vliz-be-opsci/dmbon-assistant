@@ -31,9 +31,8 @@ var style = {
     left: "0",
     bottom: "0",
     height: "120px",
-    width: "68.1%",
-    display: "none",
-    marginLeft: "16%"
+    width: "100%",
+    display: "none"
 }
 
 var phantom = {

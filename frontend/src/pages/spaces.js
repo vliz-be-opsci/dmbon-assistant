@@ -18,7 +18,7 @@ function SpacePage() {
   const [storagepathSelected, setStoragepath] = useState("") 
   const [URLSelected, setURLSelect] = useState("") 
   const [show, setShow] = useState(false);
-  const [Loading, setLoading] = useState(false) 
+  const [Loading, setLoading] = useState(true); 
   const countRef = useRef(0);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -68,6 +68,7 @@ function SpacePage() {
         }
         setProfilesList(reallist);
         countRef.current++;
+        setLoading(false);
       })
   }
 
@@ -93,7 +94,7 @@ function SpacePage() {
       }else{
         return (
           <div>
-              <h5 className="card text-white bg-dark">All spaces</h5>
+              <p></p>
               <Button variant="danger" onClick={handleShow} style={{width: '100%', marginBottom:'1%'}}><FaPlus></FaPlus> Add Space <FaPlus></FaPlus></Button>
               <div>
               <SpacesView listspace= {spaceList} />

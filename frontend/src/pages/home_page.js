@@ -1,6 +1,7 @@
 import '../css/home_page.css';
 import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
+import Footer from '../components/footer';
 function HomePage() {
 
 //define all constants first
@@ -9,9 +10,8 @@ function HomePage() {
     return (
         <div>
             <section className="blue">
-                <h2>TODO have a section for the user to create a new space</h2>
+                <h2>DM-BON Assistant</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                
             </section>
             <section className="dark">
                 <h2>TODO have a section for the user to create a new space</h2>
@@ -46,6 +46,7 @@ function HomePage() {
                 <h2>TODO have a section for the user to create a new space</h2>
                 <p>Nulla ipsum. Vestibulum condimentum condimentum augue. Nunc purus risus, volutpat sagittis, lobortis at, dignissim sed, sapien. Fusce porttitor iaculis ante. Curabitur eu arcu. Morbi quam purus, tempor eget, ullamcorper feugiat, commodo ullamcorper, neque.</p>
             </section>
+            <Footer />
         </div>
     )
 }
