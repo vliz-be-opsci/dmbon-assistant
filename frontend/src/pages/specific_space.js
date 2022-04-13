@@ -146,7 +146,6 @@ function SpaceSpecificPage() {
           <div>
           <FilesView key={countRef.current} listfiles= {spaceList} />
           </div>
-          <div>Number of changes to page: {countRef.current}</div>
           <Modal show={show} size="lg" onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Upload zone </Modal.Title>

@@ -1,7 +1,7 @@
 
 import {useParams} from 'react-router-dom';
 import React, {useState, useEffect} from 'react';
-import {Table, Button, OverlayTrigger, Popover} from 'react-bootstrap';
+import {OverlayTrigger, Popover} from 'react-bootstrap';
 import { FaArrowLeft } from "react-icons/fa";
 import PredicateProgressbar from './predicates_progressbar';
 import { AllCheckerCheckbox, Checkbox, CheckboxGroup } from '@createnl/grouped-checkboxes';
@@ -38,6 +38,42 @@ function FilesView(props) {
             return('')
         }
     }
+
+    const searchTable = async(value_input) => {
+        // Declare variables
+        var input, filter, table, tr, td, i, y, txtValue;
+        input = value_input
+        filter = input.toUpperCase();
+        table = document.getElementById("files_table");
+        tr = table.getElementsByTagName("tr");
+      
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 2; i < tr.length; i++) {
+          var is_visible = false;
+          for (y = 0; y < tr[i].getElementsByTagName("td").length; y++) {
+            td = tr[i].getElementsByTagName("td")[y];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                /* if input is empty, show all rows */
+                if (input.length == 0) {
+                    tr[i].style.display = "";
+                    is_visible = true;
+                }
+
+                /* if input is not empty, show only rows that match the search query */
+                else if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    is_visible = true;
+                } 
+              }
+          }   
+          if(is_visible){
+            tr[i].style.display = "";
+          }
+          else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
 
     const fetchSpaceName = async() => {
         axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}`)
@@ -94,8 +130,9 @@ function FilesView(props) {
 
     return (
         <div className='container'>
+            <input type="text" id="searchtable" onChange={(e) => searchTable(e.target.value)} placeholder="Search in Table.."></input>
             <CheckboxGroup onChange={console.log} id="checkAll">
-            <Table striped bordered hover>
+            <table id="files_table" className='table-sort table_vliz'>
                 <thead>
                     <tr>
                         <th><AllCheckerCheckbox /></th>
@@ -116,7 +153,7 @@ function FilesView(props) {
                             <td><Checkbox value={file.file} onChange={(e) => setfileinarray(file.file,e.target.checked)}/></td>
                             <td variant="info">
                                 <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popoveropenexternal}>
-                                    <Button onClick={() => openFileExternal(file.file)}><MdOpenInBrowser></MdOpenInBrowser></Button>
+                                    <button onClick={() => openFileExternal(file.file)}><MdOpenInBrowser></MdOpenInBrowser></button>
                                 </OverlayTrigger>
                             </td>
                             <td className="filetd">
@@ -131,7 +168,7 @@ function FilesView(props) {
                         </tr>
                     )}
                 </tbody>
-            </Table>    
+            </table>    
             </CheckboxGroup>
         </div>
     )

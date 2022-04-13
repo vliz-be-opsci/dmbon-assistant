@@ -3,9 +3,7 @@ import axios from 'axios';
 import {useParams} from 'react-router-dom';
 import SpacesView from './../components/spaces_view.js'
 import {Button, Modal, Form, FloatingLabel} from 'react-bootstrap';
-import { FaPlus} from 'react-icons/fa';
 import ReactLoading from 'react-loading';
-import modal_add_space from '../components/adding_modal.js';
 import {BASE_URL_SERVER} from '../App.js';
 
 function SpacePage() {
@@ -95,11 +93,9 @@ function SpacePage() {
         return (
           <div>
               <p></p>
-              <Button variant="danger" onClick={handleShow} style={{width: '100%', marginBottom:'1%'}}><FaPlus></FaPlus> Add Space <FaPlus></FaPlus></Button>
               <div>
               <SpacesView listspace= {spaceList} />
               </div>
-              <div>Number of changes to page: {countRef.current}</div>
               <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
                   <Modal.Title>Add Space</Modal.Title>

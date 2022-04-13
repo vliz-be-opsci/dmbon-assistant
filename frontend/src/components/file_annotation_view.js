@@ -1,4 +1,4 @@
-import {Table, Button, Modal} from 'react-bootstrap';
+import {Button, Modal} from 'react-bootstrap';
 import { FaTrashAlt, FaPencilAlt,   } from 'react-icons/fa';
 import { FiEdit} from 'react-icons/fi';
 import React, {useState, useEffect, useRef} from 'react';
@@ -35,9 +35,10 @@ function FileAnnotationView(props) {
     return (
         <div>
             <Button variant="info" style={{width: '100%', float:"left", marginBottom: '1%'} } onClick={handleShow}><FaPencilAlt color="white"></FaPencilAlt></Button>
-            <Table striped bordered hover>
+            <table className='table_vliz'>
                 <thead>
                     <tr>
+                        <th style={{minWidth: '100px', width:'150px'} }>Actions</th>
                         <th>Predicate</th>
                         <th>Value</th>
                     </tr>
@@ -46,9 +47,11 @@ function FileAnnotationView(props) {
                     {props.listannotations.map(annotation =>
                         <tr>
                             <td>
-                                <Button variant="info" style={{margin: "1%", float:"left"}} ><FiEdit></FiEdit></Button>
-                                <Button variant="danger" style={{margin: "1%", float:"left"}} onClick= {() => deletepredicate(annotation.predicate)} id= {annotation.predicate}><FaTrashAlt></FaTrashAlt></Button>
-                                {annotation.predicate}  
+                                <button style={{marginRight: '3%'} } ><FiEdit></FiEdit></button>
+                                <button style={{marginLeft: '3%'} } onClick= {() => deletepredicate(annotation.predicate)} id= {annotation.predicate}><FaTrashAlt></FaTrashAlt></button>
+                            </td>
+                            <td>
+                                {annotation.predicate}
                             </td>
                             <td>
                                 {annotation.value}
@@ -56,12 +59,12 @@ function FileAnnotationView(props) {
                         </tr>
                     )}
                     <tr>
-                        <td colspan = "2">
+                        <td colspan = "3">
                             <Button variant="success" style={{width:"100%"}}><BsPlusLg></BsPlusLg></Button>
                         </td>
                     </tr>
                 </tbody>
-            </Table>   
+            </table>   
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                 <Modal.Title>Editing Annotation</Modal.Title>
