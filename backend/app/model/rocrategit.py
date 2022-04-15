@@ -7,6 +7,10 @@ import stat
 import shutil
 from subprocess import call
 import app.shacl_helper as shclh
+from rdflib import Graph
+import json, math
+from pyshacl import validate
+from base64 import decode
 
 log=logging.getLogger(__name__)
 
@@ -128,6 +132,80 @@ class RoCrateGitBase():
         log.info(f"metadata of the space: {data}")
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
         log.info(path_shacl)
+        
+        barebones_json = {
+                "@context": 
+                    { 
+                    "schema": "http://schema.org/" , 
+                    "ex": "http://example.org/ns#"
+                    },
+                "@graph": []
+                }
+    
+        for item in data["@graph"]:
+            if item["@id"] == file_id:
+                #print(item)
+                item_dict = {}
+                item_dict["@id"] = item["@id"]
+                item_dict["@type"] = "schema:" + item["@type"]
+                for key, value in item.items():
+                    if key == "@type":
+                        continue
+                    else:
+                        item_dict["schema:" + key] = value
+                barebones_json["@graph"].append(item_dict)
+        
+        shacl_file = open(path_shacl, "rb").read()
+        sh = Graph().parse(data=shacl_file, format="turtle")
+        r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, data_graph_format="json-ld", serialize_report_graph="json-ld")
+        r_decoded = r[1].decode("utf-8")
+        
+        datag = []
+        for item in data["@graph"]:
+            if item["@id"] == file_id:
+                log.debug(f'found item with id {file_id}')
+                for key, value in item.items():
+                    dict_predicates = {}
+                    dict_predicates["predicate"] = key
+                    dict_predicates["value"] = value
+                    datag.append(dict_predicates)
+                    
+        log.debug(f"data: {datag}")
+        
+        green = 0
+        orange = 0
+        red = 0
+
+        for item in datag:
+            if item["predicate"] != "@type" and item["predicate"] != "@id":
+                green+=1
+                
+        validation_report_json  = json.loads(r_decoded)        
+
+        # check the report for the number of violations for the item 
+        for item in validation_report_json:
+            log.debug(f' validation report item: {item}')
+            try:
+                if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
+                    for key, value in item.items():
+                        if key == "http://www.w3.org/ns/shacl#focusNode":
+                            name_focusnode = value[0]["@id"].split("/")[-1]
+                if name_focusnode == file_id:
+                    for key, value in item.items():
+                        if "resultSeverity" in key == "http://www.w3.org/ns/shacl#resultSeverity":
+                            if value[0]["@id"].split("#")[-1] == "Violation":
+                                red+=1
+                            if value[0]["@id"].split("#")[-1] == "Warning":
+                                orange+=1
+            except:
+                pass
+        log.debug(f' green: {green}, orange: {orange}, red: {red}')
+        percentage_red = math.ceil((red/(red+green+orange))*100)
+        percentage_orange = math.ceil((orange/(red+green+orange))*100)
+        percentage_green = math.ceil((green/(red+green+orange))*100)
+        summary = {"green": percentage_green, "orange": percentage_orange, "red": percentage_red}
+                
+        
         all_files = []
         #implement the shacl constraint check here
         #read in shacl file
@@ -164,56 +242,8 @@ class RoCrateGitBase():
             return {"error":404,"detail":"Resource not found"}
         
         log.info(all_files)
-        all_props = []
-        #get all predicates and if they are required
-        for items in all_files:
-            if items["predicate"] == "@type":
-                for node in node_properties_dicts:
-                    for nodekey, nodevalue in node.items():
-                        if nodekey == items["value"]:
-                            all_props = []
-                            all_props_shacl = []
-                            for prop in nodevalue:
-                                for propkey, propvalue in prop.items():
-                                    propmin = 0
-                                    for propattribute, propattributevalue in propvalue.items():
-                                        if propmin == 0:
-                                            if propattribute == "min" and propattributevalue is not None:
-                                                propmin = 1
-                                        if propattribute == "type" and propattributevalue is not None:
-                                            proptype = propattributevalue
-                                        if propattribute == "type" and propattributevalue is None:
-                                            proptype = 'String'
-                                        if propattribute == "values" and propattributevalue is not None:
-                                            valueprop = propattributevalue                                             
-                                    all_props.append({propkey:{'min':propmin,'value':valueprop,'typeprop':proptype}})
-                                    all_props_shacl.append({'label':propkey,'min':propmin,'value':valueprop,'typeprop':proptype})
-                                log.debug(all_props)
-        try:                              
-            present = 0
-            missing = 0
-            cond_present = 0
-            cond_missing = 0
-            for prop in all_props:
-                for propkey, propvalue in  prop.items():
-                    if propvalue['min'] == 1 and propkey not in all_predicates:
-                        missing+=1
-                    if propvalue['min'] != 1 and propkey not in all_predicates:
-                        cond_missing+=1
-                    if propvalue['min'] != 1 and propkey in all_predicates:
-                        cond_present+=1
-                    if propvalue['min'] == 1 and propkey in all_predicates:
-                        present+=1
-            
-            green_percent = ((present / len(all_props)) * 100) + ((cond_present / len(all_props)) * 100)
-            red_percent   = (missing / len(all_props)) * 100
-            orange_percent = (cond_missing / len(all_props)) * 100
-            summary_file = {'green': green_percent, 'orange': orange_percent, 'red': red_percent} 
-        except Exception as e:
-            log.error(e)
-            log.exception(e)
-            summary_file = {'green': 0, 'orange': 0, 'red': 0} 
-        return {'data':all_files, 'summary': summary_file, 'shacl_requirements': all_props_shacl, 'shacl_original': f_constraints_text}
+        
+        return {'data':all_files, 'summary': summary, 'shacl_requirements': json.loads(r_decoded), 'shacl_original': f_constraints_text}
     
     def add_predicates_all(self,toadd_dict=list):
         """ add predicates to all ids
