@@ -52,11 +52,40 @@ function FileSpecificPage() {
             var array_name_predicate = sr[i]["http://www.w3.org/ns/shacl#resultPath"][0]["@id"].split("/");
             var predicate_name = array_name_predicate[array_name_predicate.length-1];
             console.log(predicate_name);
-            //get more info of error from sourceshape
-
+            current_node_dict["predicate_name"] = predicate_name;
+            //get more info of severity error from shacl
+            var severity_error_array = sr[i]["http://www.w3.org/ns/shacl#resultSeverity"][0]["@id"].split("#");
+            var severity_error = severity_error_array[severity_error_array.length-1];
+            console.log(severity_error);
+            current_node_dict["severity_error"] = severity_error;
+            //get sourceShape node id from the shacl file
+            var sourceShape_node = sr[i]["http://www.w3.org/ns/shacl#sourceShape"][0]["@id"];
+            console.log(sourceShape_node);
+            // loop over all nodes in shacl file and find the node that matches the sourceShape node id
+            var constraint_props = []
+            for (var j = 0; j < sr.length; j++) {
+              if(sr[j]["@id"] == sourceShape_node){
+                var toappend_constraint_prop = {}
+                //for all other keys in the node dict that are not @id , split the key string with #and take the last element of the resulting array 
+                for (var k = 0; k < Object.keys(sr[j]).length; k++) {
+                  if(Object.keys(sr[j])[k] != "@id"){
+                    var array_name_constraint_property = Object.keys(sr[j])[k].split("#");
+                    var constraint_property = array_name_constraint_property[array_name_constraint_property.length-1];
+                    //also get all the values of the keys that are not @id
+                    var value_constraint_property = sr[j][Object.keys(sr[j])[k]];
+                    toappend_constraint_prop[constraint_property] = value_constraint_property;
+                    constraint_props.push(toappend_constraint_prop);
+                  }
+                }
+              }
+            }
+            current_node_dict["constraint_props"] = constraint_props;
           }
-          manipulated_array.push(current_node_dict);
+          if(Object.keys(current_node_dict).length > 0){
+            manipulated_array.push(current_node_dict);
+          }
         }
+        console.log(manipulated_array);
         if (sr[0]["http://www.w3.org/ns/shacl#conforms"][0]["@value"] === false) {
           return (
             <>
@@ -66,6 +95,9 @@ function FileSpecificPage() {
                   {ammount_violations} predicates are still required for {FileId} to be compliant to the current project.
                 </p>
               </Alert>
+              {manipulated_array.map(violation =>
+                  <h5>{violation.predicate_name} : {violation.severity_error}</h5>
+              )}
             </>
           )
         }else{
@@ -81,7 +113,6 @@ function FileSpecificPage() {
           )
         }
       }
-      
     }
     catch (error) {
       return (<><h5>{error}</h5></>)
