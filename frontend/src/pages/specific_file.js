@@ -4,6 +4,7 @@ import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FileAnnotationView from './../components/file_annotation_view';
 import {Alert} from 'react-bootstrap';
+import AlertShaclReq from './../components/alert_shacl_requirement';
 
 function FileSpecificPage() {
 
@@ -96,7 +97,13 @@ function FileSpecificPage() {
                 </p>
               </Alert>
               {manipulated_array.map(violation =>
-                  <h5>{violation.predicate_name} : {violation.severity_error}</h5>
+                  <>
+                    <AlertShaclReq 
+                      constraint_props={violation.constraint_props}
+                      severity_error={violation.severity_error}
+                      predicate_name={violation.predicate_name}
+                    />
+                  </>
               )}
             </>
           )
@@ -131,6 +138,7 @@ function FileSpecificPage() {
             <div>
             <FileAnnotationView listannotations={spaceList}/>
             </div>
+            <br/>
         </div>
     )
 }
