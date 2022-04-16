@@ -59,6 +59,10 @@ function FileSpecificPage() {
             var severity_error = severity_error_array[severity_error_array.length-1];
             console.log(severity_error);
             current_node_dict["severity_error"] = severity_error;
+            //get the resultMessage from the shacl file 
+            var resultMessage= sr[i]["http://www.w3.org/ns/shacl#resultMessage"][0]["@value"];
+            console.log(resultMessage);
+            current_node_dict["resultMessage"] = resultMessage;
             //get sourceShape node id from the shacl file
             var sourceShape_node = sr[i]["http://www.w3.org/ns/shacl#sourceShape"][0]["@id"];
             console.log(sourceShape_node);
@@ -102,6 +106,7 @@ function FileSpecificPage() {
                       constraint_props={violation.constraint_props}
                       severity_error={violation.severity_error}
                       predicate_name={violation.predicate_name}
+                      result_message={violation.resultMessage}
                     />
                   </>
               )}

@@ -34,7 +34,6 @@ function FileAnnotationView(props) {
     };
     return (
         <div>
-            <Button variant="info" style={{width: '100%', float:"left", marginBottom: '1%'} } onClick={handleShow}><FaPencilAlt color="white"></FaPencilAlt></Button>
             <table className='table_vliz'>
                 <thead>
                     <tr>
@@ -60,7 +59,7 @@ function FileAnnotationView(props) {
                     )}
                     <tr>
                         <td colspan = "3">
-                            <Button variant="success" style={{width:"100%"}}><BsPlusLg></BsPlusLg></Button>
+                            <Button variant="success" style={{width:"100%"}} onClick={handleShow}><BsPlusLg></BsPlusLg></Button>
                         </td>
                     </tr>
                 </tbody>
