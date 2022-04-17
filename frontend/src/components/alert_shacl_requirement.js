@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import ReactLoading from 'react-loading';
-import {Alert} from 'react-bootstrap';
+import {Alert, Form, Button} from 'react-bootstrap';
+import '../css/alert_shacl_requirement.css';
 
 function AlertShaclReq(props) {
     //constants
@@ -110,6 +111,59 @@ function AlertShaclReq(props) {
                 }
             }
         }
+        console.log('in_values');
+        console.log(in_value_value);
+
+        //make submitbutton based on the violation type (warning/violation)
+        const SubmitButton = (component) => {
+            console.log(component);
+            if(component.severity == "Warning"){
+                return (
+                    <Button variant="warning" className='severitybutton' onClick={() => {
+                        setShow(false);
+                    }}>
+                        Add value
+                    </Button>
+                );
+            }
+            if(component.severity == "Violation"){
+                return (
+                    <Button variant="danger" className='severitybutton' onClick={() => {
+                        setShow(false);
+                    }}>
+                        Add value
+                    </Button>
+                );
+            }
+        }
+
+        //make const that determines if there will be a free input text or a selected list
+        if(in_value){
+            return(
+                <>
+                    <Form>
+                        <Form.Group><Form.Label>{predicate_name}</Form.Label><Form.Select aria-label="Default select example">
+                        {in_value_value.map(in_value_option =>
+                            <option>{in_value_option}</option>
+                        )}
+                        </Form.Select></Form.Group>
+                        <br></br>
+                        <SubmitButton severity={severity_error}></SubmitButton>
+                    </Form>
+                </>
+            )
+        }else{
+            return(
+                <>
+                    <Form>
+                        <Form.Group><Form.Label>{predicate_name}</Form.Label><Form.Control type="text" placeholder="Enter value" aria-label="Default select example"/></Form.Group>
+                        <br></br>
+                        <SubmitButton severity={severity_error}></SubmitButton>
+                    </Form>
+                </>
+            )
+        }
+
         //make javascript function that check for the ammount of rows in the table and return the number of rows
 
         if(in_value){return(<>{in_value_value}</>)}
