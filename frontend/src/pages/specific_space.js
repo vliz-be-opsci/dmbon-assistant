@@ -137,12 +137,12 @@ function SpaceSpecificPage() {
       <div>
 
           <hr/>
-            <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-success" ><BsFillPlusSquareFill size="1.5em"/></button>
-            <button onClick={() => updateMessage("annotate")} id="annotate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaEdit size="1.5em"/></button>
+            <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz" ><BsFillPlusSquareFill size="1.5em"/></button>
+            <button onClick={() => updateMessage("annotate")} id="annotate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaEdit size="1.5em"/></button>
             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverfixcrate}>
-              <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-primary"><FaBandAid size="1.5em"/></button>
+              <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaBandAid size="1.5em"/></button>
             </OverlayTrigger>
-            <button onClick={() => updateMessage("delete")} id="delete_btn" type="button" style={{width:"23%",margin:"1%"}} class="btn btn-danger"><FaTrashAlt size="1.5em"/></button>
+            <button onClick={() => updateMessage("delete")} id="delete_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaTrashAlt size="1.5em"/></button>
           <div>
           <FilesView key={countRef.current} listfiles= {spaceList} />
           </div>

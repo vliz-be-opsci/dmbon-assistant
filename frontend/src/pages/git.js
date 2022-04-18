@@ -109,10 +109,10 @@ export default class GitPage extends React.Component {
             <div>
                 <div>
                   <hr />
-                  <button onClick={() => this.updateMessage("commit")} id="commit_btn" type="button" style={{width:"23%",margin:"10px"}} class="btn btn-success" >Commit</button>
-                  <button onClick={() => this.sendPush()} id="push_btn" type="button" style={{width:"23%",margin:"10px"}} class="btn btn-primary">Push</button>
-                  <button onClick={() => this.getPull()} id="pull_btn" type="button" style={{width:"23%",margin:"10px"}} class="btn btn-primary">Pull</button>
-                  <button onClick={() => this.updateMessage("history")} id="history_btn" type="button" style={{width:"23%",margin:"10px"}} class="btn btn-primary">History</button>
+                  <button onClick={() => this.updateMessage("commit")} id="commit_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz" >Commit</button>
+                  <button onClick={() => this.sendPush()} id="push_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Push</button>
+                  <button onClick={() => this.getPull()} id="pull_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Pull</button>
+                  <button onClick={() => this.updateMessage("history")} id="history_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">History</button>
                   <hr />
                   {todisplay}
               </div>
