@@ -2,6 +2,9 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import ReactLoading from 'react-loading';
 import {Alert, Form, Button} from 'react-bootstrap';
+import axios from 'axios';
+import {BASE_URL_SERVER} from '../App.js';
+import $ from 'jquery';
 import '../css/alert_shacl_requirement.css';
 
 function AlertShaclReq(props) {
@@ -10,11 +13,44 @@ function AlertShaclReq(props) {
     const [Loading, setLoading] = useState(false) 
     const [Error, setError] = useState(true) 
     const [show, setShow] = useState(true);
+    const [valueInput, setValueInput] = useState(''); 
     const predicate_name = props.predicate_name;
     const severity_error = props.severity_error;
     const constraint_props = props.constraint_props;
     const result_message = props.result_message;
     //functions
+
+    //function that changes the value of the input
+    const handleChange = (event) => {
+        setValueInput(event.target.value);
+        console.log(valueInput);
+    }
+
+
+    //function that perform a axios post request to add predicate to the file
+    const addPredicate = async () => {
+        //setLoading(true);
+        setError(false);
+        console.log(valueInput);
+        try{
+            await axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${props.FileId}`, {
+                "Annotations": [
+                    {
+                        "URI_predicate_name": predicate_name,
+                        "value": valueInput
+                    }
+                ]
+            });
+            setLoading(false);
+            setError(false);
+        }catch(error){
+            setLoading(false);
+            setError(true);
+        }
+        setShow(false);
+        window.location.reload();
+    }
+
 
     function Alertlogsprops(props) {
         var shacl_requirements = props.shacl_requirements;
@@ -111,30 +147,29 @@ function AlertShaclReq(props) {
                 }
             }
         }
-        console.log('in_values');
-        console.log(in_value_value);
 
         //make submitbutton based on the violation type (warning/violation)
         const SubmitButton = (component) => {
             console.log(component);
             if(component.severity == "Warning"){
                 return (
-                    <Button variant="warning" className='severitybutton' onClick={() => {
-                        setShow(false);
-                    }}>
+                    <Button variant="warning" className='severitybutton' onClick={() => addPredicate()}>
                         Add value
                     </Button>
                 );
             }
             if(component.severity == "Violation"){
                 return (
-                    <Button variant="danger" className='severitybutton' onClick={() => {
-                        setShow(false);
-                    }}>
-                        Add value
+                    <Button variant="danger" className='severitybutton' onClick={() => addPredicate()}>
+                        Edit value
                     </Button>
                 );
             }
+            return (
+                <Button variant="info" className='severitybutton' onClick={() => addPredicate()}>
+                    Edit value
+                </Button>
+            );
         }
 
         //make const that determines if there will be a free input text or a selected list
@@ -142,13 +177,14 @@ function AlertShaclReq(props) {
             return(
                 <>
                     <Form>
-                        <Form.Group><Form.Label>{predicate_name}</Form.Label><Form.Select aria-label="Default select example">
-                        {in_value_value.map(in_value_option =>
-                            <option>{in_value_option}</option>
-                        )}
+                        <Form.Group><Form.Select onChange={(e) => handleChange(e)} aria-label="Default select example">
+                            <option>Select option</option> 
+                            {in_value_value.map(in_value_option =>
+                                <option>{in_value_option}</option>
+                            )}
                         </Form.Select></Form.Group>
                         <br></br>
-                        <SubmitButton severity={severity_error}></SubmitButton>
+                        <SubmitButton severity={severity_error} ></SubmitButton>
                     </Form>
                 </>
             )
@@ -156,9 +192,9 @@ function AlertShaclReq(props) {
             return(
                 <>
                     <Form>
-                        <Form.Group><Form.Label>{predicate_name}</Form.Label><Form.Control type="text" placeholder="Enter value" aria-label="Default select example"/></Form.Group>
+                        <Form.Group><Form.Control type="text" onChange={(e) => handleChange(e)} placeholder="Enter value" aria-label="Default select example"/></Form.Group>
                         <br></br>
-                        <SubmitButton severity={severity_error}></SubmitButton>
+                        <SubmitButton severity={severity_error} onClick={() => addPredicate()}></SubmitButton>
                     </Form>
                 </>
             )
@@ -185,7 +221,7 @@ function AlertShaclReq(props) {
                         <Alert variant="danger" onClose={() => setShow(false)} dismissible>
                             <Alert.Heading>{predicate_name}</Alert.Heading>
                             <p>{result_message}</p>
-                            <Alertlogsprops shacl_requirements={constraint_props}></Alertlogsprops>
+                            {Alertlogsprops({shacl_requirements: constraint_props})}
                         </Alert>
                     </>
                 )
@@ -196,7 +232,7 @@ function AlertShaclReq(props) {
                         <Alert variant="warning" onClose={() => setShow(false)} dismissible>
                             <Alert.Heading>{predicate_name}</Alert.Heading>
                             <p>{result_message}</p>
-                            <Alertlogsprops shacl_requirements={constraint_props}></Alertlogsprops>
+                            {Alertlogsprops({shacl_requirements: constraint_props})}
                         </Alert>
                     </>
                 )
@@ -204,7 +240,11 @@ function AlertShaclReq(props) {
             else{
                 return(
                     <>
-                        <Alert variant="info"><h1>{predicate_name}</h1></Alert>
+                        <Alert variant="info" onClose={() => setShow(false)} dismissible>
+                            <Alert.Heading>{predicate_name}</Alert.Heading>
+                            <p>{result_message}</p>
+                            {Alertlogsprops({shacl_requirements: constraint_props})}
+                        </Alert>
                     </>
                 )
             }

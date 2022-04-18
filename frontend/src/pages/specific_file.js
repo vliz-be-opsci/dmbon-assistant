@@ -107,6 +107,7 @@ function FileSpecificPage() {
                       severity_error={violation.severity_error}
                       predicate_name={violation.predicate_name}
                       result_message={violation.resultMessage}
+                      FileId={FileId}
                     />
                   </>
               )}

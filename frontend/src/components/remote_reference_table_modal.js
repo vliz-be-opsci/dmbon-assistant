@@ -4,7 +4,6 @@ import React, {useState, useEffect} from 'react';
 import {Table, Button, OverlayTrigger, Popover, Form} from 'react-bootstrap';
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
-import jQuery from 'jquery';
 import $ from 'jquery';
 import "../css/remote_reference_table_modal.css";
 
