@@ -3,7 +3,7 @@ import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FileAnnotationView from './../components/file_annotation_view';
-import {Alert} from 'react-bootstrap';
+import {Alert, Button} from 'react-bootstrap';
 import AlertShaclReq from './../components/alert_shacl_requirement';
 
 function FileSpecificPage() {
@@ -12,6 +12,8 @@ function FileSpecificPage() {
   const [spaceList, setSpacesList] = useState([]) 
   const {SpaceId} = useParams();
   const {FileId}  = useParams();
+  const [show, setShow] = useState(false);
+  const [showAlert, setShowAlert] = useState(true);
   const [shaclRequirements, setShaclRequirements] = useState([]);
   //All the functions here
 
@@ -23,6 +25,24 @@ function FileSpecificPage() {
         console.log(res.data.shacl_requirements);
         setShaclRequirements(res.data.shacl_requirements);
       })
+  }
+
+  function ButtonShow() {
+    if(show){
+      return (
+        <Button  style={{width: '100%'}} variant="danger" onClick={() => setShow(false)}>
+          Hide errors
+        </Button>
+      )
+    }
+    else{
+      return (
+        <Button style={{width: '100%'}} variant="danger" onClick={() => setShow(true)}>
+          Show errors
+        </Button>
+      )
+    }
+
   }
 
   //have custom component Alertlogs here that displayers alert when red.data.sjacl_requirements[0]["http://www.w3.org/ns/shacl#conforms"][0]["@value"] == false
@@ -91,40 +111,47 @@ function FileSpecificPage() {
           }
         }
         console.log(manipulated_array);
-        if (sr[0]["http://www.w3.org/ns/shacl#conforms"][0]["@value"] === false) {
-          return (
-            <>
-              <Alert variant="danger">
-                <Alert.Heading>Requirements not met</Alert.Heading>  
-                <p>
-                  {ammount_violations} predicates are still required for {FileId} to be compliant to the current project.
-                </p>
-              </Alert>
-              {manipulated_array.map(violation =>
-                  <>
-                    <AlertShaclReq 
-                      constraint_props={violation.constraint_props}
-                      severity_error={violation.severity_error}
-                      predicate_name={violation.predicate_name}
-                      result_message={violation.resultMessage}
-                      FileId={FileId}
-                    />
-                  </>
-              )}
-            </>
-          )
+        if(showAlert){
+          if (sr[0]["http://www.w3.org/ns/shacl#conforms"][0]["@value"] === false) {
+            return (
+              <>
+                <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                  <Alert.Heading>Requirements not met</Alert.Heading>  
+                  <p>
+                    <b>{ammount_violations} errors  have to be fixed for {FileId} to be compliant to the current project. </b>
+                  </p>
+                  {ButtonShow()}
+                </Alert>
+                {manipulated_array.map(violation =>
+                    <>
+                      <AlertShaclReq 
+                        constraint_props={violation.constraint_props}
+                        severity_error={violation.severity_error}
+                        predicate_name={violation.predicate_name}
+                        result_message={violation.resultMessage}
+                        show_alert={show}
+                        FileId={FileId}
+                      />
+                    </>
+                )}
+              </>
+            )
+          }else{
+            return (
+              <>
+                <Alert variant="success" onClose={() => setShowAlert(false)} dismissible >
+                  <Alert.Heading>Requirements met</Alert.Heading>  
+                  <p>
+                    {FileId} is compliant to the current project.
+                  </p>
+                </Alert>
+              </>
+            )
+          }
         }else{
-          return (
-            <>
-              <Alert variant="success">
-                <Alert.Heading>Requirements met</Alert.Heading>  
-                <p>
-                  {FileId} is compliant to the current project.
-                </p>
-              </Alert>
-            </>
-          )
+          return(<></>)
         }
+        
       }
     }
     catch (error) {

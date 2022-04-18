@@ -12,7 +12,7 @@ function AlertShaclReq(props) {
     const {SpaceId} = useParams();
     const [Loading, setLoading] = useState(false) 
     const [Error, setError] = useState(true) 
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(props.show_alert);
     const [valueInput, setValueInput] = useState(''); 
     const predicate_name = props.predicate_name;
     const severity_error = props.severity_error;
@@ -26,6 +26,7 @@ function AlertShaclReq(props) {
         console.log(valueInput);
     }
 
+    
 
     //function that perform a axios post request to add predicate to the file
     const addPredicate = async () => {
