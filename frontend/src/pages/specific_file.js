@@ -12,7 +12,7 @@ function FileSpecificPage() {
   const [spaceList, setSpacesList] = useState([]) 
   const {SpaceId} = useParams();
   const {FileId}  = useParams();
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [showAlert, setShowAlert] = useState(true);
   const [shaclRequirements, setShaclRequirements] = useState([]);
   //All the functions here

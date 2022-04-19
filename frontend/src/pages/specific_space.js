@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
-import {useDropzone} from 'react-dropzone'
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
@@ -7,9 +6,8 @@ import FilesView from './../components/files_view';
 import RemoteReferenceTableAdd from '../components/remote_reference_table_modal.js';
 import ReactLoading from 'react-loading';
 import {Button, Modal, Popover, OverlayTrigger, Tab, Row, Col, Nav} from 'react-bootstrap';
-import {FaUpload, FaEdit, FaTrashAlt, FaBandAid} from 'react-icons/fa';
+import {FaEdit, FaTrashAlt, FaBandAid} from 'react-icons/fa';
 import {BsFillPlusSquareFill, BsCloudPlusFill, BsFilePlusFill} from 'react-icons/bs';
-
 import $ from 'jquery';
 
 function SpaceSpecificPage() {
@@ -17,7 +15,6 @@ function SpaceSpecificPage() {
   //define all constants first
   const [spaceList, setSpacesList] = useState([{}]) 
   const countRef = useRef(0);
-  const [files, setFiles] = useState("");
   const {SpaceId} = useParams();
   const [Message, setMessage] = useState("");
   const [Loading, setLoading] = useState(true);
@@ -129,7 +126,7 @@ function SpaceSpecificPage() {
   if (Loading){
     return (
       <div class="busy">
-        <ReactLoading type='bars' color='#666' height={'20vw'} width={'20vw'} />
+        <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
       </div>
     )
   }else{

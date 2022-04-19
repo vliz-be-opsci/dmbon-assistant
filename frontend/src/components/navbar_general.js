@@ -142,7 +142,7 @@ function NavBar() {
                             <Nav className="me-auto">
                                 <Nav.Link href="/" ><p className='bluebar_button'>Profiles</p></Nav.Link>
                                 <Dropdown title="Settings" id="basic-nav-dropdown">
-                                <Dropdown.Toggle className='bluebar_dropdown'>settings</Dropdown.Toggle>
+                                <Dropdown.Toggle id='bluebar_dropdown'>settings</Dropdown.Toggle>
                                     <Dropdown.Menu className="bluebar darkborder">
                                         <Dropdown.Item href="#action/3.1" className='bluebar_button'>Action</Dropdown.Item>
                                         <Dropdown.Item href="#action/3.2" className='bluebar_button'>Another action</Dropdown.Item>
@@ -171,7 +171,7 @@ function NavBar() {
                             <Nav.Link href="/"><p className='bluebar_button'>Profiles</p></Nav.Link>
                             <Nav.Link href="/spaces"><p className='bluebar_button'>Spaces</p></Nav.Link>
                             <Dropdown title="Settings" id="basic-nav-dropdown">
-                            <Dropdown.Toggle className='bluebar_dropdown'>settings</Dropdown.Toggle>
+                            <Dropdown.Toggle id='bluebar_dropdown'>settings</Dropdown.Toggle>
                                 <Dropdown.Menu className="bluebar darkborder">
                                     <Dropdown.Item href="#action/3.1" className='bluebar_button'>Action</Dropdown.Item>
                                     <Dropdown.Item href="#action/3.2" className='bluebar_button'>Another action</Dropdown.Item>

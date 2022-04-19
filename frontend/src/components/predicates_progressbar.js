@@ -39,7 +39,7 @@ function PredicateProgressbar(props) {
     if(Loading){
         return(
             <div>
-                <ReactLoading type='bars' color='blue' height={'3vw'} width={'3vw'} />
+                <ReactLoading type='bars' color='#006582' height={'3vw'} width={'3vw'} />
             </div>
         )
     }else{

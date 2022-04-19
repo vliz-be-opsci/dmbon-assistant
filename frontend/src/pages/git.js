@@ -98,7 +98,7 @@ export default class GitPage extends React.Component {
         return(
         <div class="busy">
             <p>View differences: 
-            <ReactLoading type='bars' color='#666' height={'20vw'} width={'20vw'} />
+            <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
             </p>
         </div>
         )

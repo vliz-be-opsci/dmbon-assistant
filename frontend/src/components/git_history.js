@@ -38,7 +38,7 @@ function GitHistory() {
     if(Loading){
         return(
             <div class="busy">
-                <ReactLoading type='bars' color='blue' height={'20vw'} width={'20vw'} />
+                <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
             </div>
         )
     }else{

@@ -1,13 +1,14 @@
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
-import {useDropzone} from 'react-dropzone'
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FilesView from './../components/files_view';
 import ReactLoading from 'react-loading';
 import {Button, Modal, Tab, Row, Nav, OverlayTrigger, Col, Popover} from 'react-bootstrap';
-import {FaTools, FaUpload, FaEdit, FaTrashAlt} from 'react-icons/fa';
+import {FaEdit, FaTrashAlt, FaBandAid} from 'react-icons/fa';
+import {BsFillPlusSquareFill, BsCloudPlusFill, BsFilePlusFill} from 'react-icons/bs';
 import RemoteReferenceTableAdd from '../components/remote_reference_table_modal.js';
+import $ from 'jquery';
 
 function HierarchicalSpacePage() {
 
@@ -22,10 +23,40 @@ function HierarchicalSpacePage() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [files, setFiles] = useState("");
   console.log(url);
   console.log(folder_get);
   //All the functions here
+  // axios function to delete specifix file from rocrate space
+  const deleteFileRocrate = async (todelete) => {
+    console.log('todelete content: '+ todelete)
+    axios.delete(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content/`,{
+      data:{"content": todelete}
+    })
+      .then(res => {
+        console.log(res.data)
+
+      }, (error) => {
+        console.log(error);
+      })
+  }
+
+    //jquery functions
+  $(document).ready(function() {
+    $('#delete_btn').click(function () {   
+        console.log('delete clicked'); 
+        var array = []
+        var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+
+        for (var i = 0; i < checkboxes.length; i++) {
+          if(checkboxes[i].value != 'ro-crate-metadata.json' && checkboxes[i].value != 'on'){
+            array.push(checkboxes[i].value)
+          }
+        }
+        console.log(array);
+        deleteFileRocrate(array);
+        window.location.href = `/spaces/${SpaceId}/all_files`;
+    });
+  });
 
   const fetchSpaces = async () => {
     axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content${folder_get}`)
@@ -65,6 +96,15 @@ function HierarchicalSpacePage() {
       })
   }
 
+  const popoverfixcrate = (
+    <Popover id="popover-open">
+        <Popover.Header as="h3">Fix Crate</Popover.Header>
+        <Popover.Body>
+        Click this to <b>fix metadata</b> issues from <b>files</b> that have been added to the crate from the <b>explorer</b>.
+        </Popover.Body>
+    </Popover>
+  );
+
   const popoveropenfilebrowser = (
     <Popover id="popover-open">
         <Popover.Header as="h3">Open File Browser</Popover.Header>
@@ -91,30 +131,29 @@ function HierarchicalSpacePage() {
       await fixCrate();
       window.location.href =window.location.href;
     }
-    if(message == "delete"){
-      alert('deleting stuff: TODO');
-    }
   }
 
 	if (typeof folder_get !== 'undefined' && folder_get.length > 0) {
     if (Loading){
       return(
         <div class="busy">
-          <ReactLoading type='bars' color='blue' height={'20vw'} width={'20vw'} />
+          <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
         </div>
       )
     }else{
       return (
 				<div>
             <hr />
-            <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz" ><FaUpload size="1.5em"/></button>
+            <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz" ><BsFillPlusSquareFill size="1.5em"/></button>
             <button onClick={() => updateMessage("annotate")} id="history_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaEdit size="1.5em"/></button>
-            <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaTools size="1.5em"/></button>
+            <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverfixcrate}>
+              <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaBandAid size="1.5em"/></button>
+            </OverlayTrigger>
             <button onClick={() => updateMessage("delete")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaTrashAlt size="1.5em"/></button>
 						<div>
 							<FilesView key={countRef.current} listfiles= {spaceList} />
 						</div>
-          <Modal show={show} size="lg" onHide={handleClose}>
+            <Modal show={show} size="lg" onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Upload zone </Modal.Title>
             </Modal.Header>
@@ -124,10 +163,10 @@ function HierarchicalSpacePage() {
                 <Col sm={3}>
                   <Nav variant="pills" className="flex-column">
                     <Nav.Item>
-                      <Nav.Link eventKey="first">add local files</Nav.Link>
+                      <Nav.Link eventKey="first" variant="dark"><BsFilePlusFill size="1.5em"/></Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="second">add remote reference(s)</Nav.Link>
+                      <Nav.Link eventKey="second" variant="dark"><BsCloudPlusFill size="1.5em"/></Nav.Link>
                     </Nav.Item>
                   </Nav>
                 </Col>

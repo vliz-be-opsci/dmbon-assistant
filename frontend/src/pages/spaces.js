@@ -86,7 +86,7 @@ function SpacePage() {
   if(Loading){
       return(
         <div class="busy">
-            <ReactLoading type='bars' color='grey' height={'20vw'} width={'20vw'} />
+            <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
         </div>
       )
       }else{
