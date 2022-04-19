@@ -2,7 +2,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, {useState, useEffect} from 'react';
 import {Navbar, Container, Nav, NavDropdown, Dropdown} from 'react-bootstrap';
-import {FaHome, FaFolderOpen, FaGitAlt, FaCog, FaFlask} from 'react-icons/fa';
+import {FaHome, FaFolderOpen, FaGitAlt, FaCog} from 'react-icons/fa';
+import {GoSettings} from 'react-icons/go';
+import {RiOrganizationChart} from 'react-icons/ri';
+import {GiCargoCrate} from 'react-icons/gi';
 import axios from 'axios';
 import '../css/navbar.css';
 import {BASE_URL_SERVER} from '../App.js';
@@ -132,17 +135,21 @@ function NavBar() {
             
         }else{
             return (
+                <>
                 <div className="container" >
                     <Navbar className="bluebar">
                         <Container>
-                            <Navbar.Brand href="/" ><p className='bluebar_button'><FaHome/></p></Navbar.Brand>
-                            <Navbar.Brand href="/spaces" ><p className='bluebar_button activito'>Spaces</p></Navbar.Brand>
+                            <Navbar.Brand href="/" ><p className='bluebar_button'><FaHome size="1.5em"/></p></Navbar.Brand>
+                            <Navbar.Brand href="/spaces" ><p className='bluebar_button activito'><GiCargoCrate size="1.5em"/></p></Navbar.Brand>
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                             <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
-                                <Nav.Link href="/" ><p className='bluebar_button'>Profiles</p></Nav.Link>
+                                <Nav.Link href="/" ><p className='bluebar_button'><RiOrganizationChart size="1.5em"/></p></Nav.Link>
+                                
+                            </Nav>
+                            <Nav className="justify-content-end">
                                 <Dropdown title="Settings" id="basic-nav-dropdown">
-                                <Dropdown.Toggle id='bluebar_dropdown'>settings</Dropdown.Toggle>
+                                    <Dropdown.Toggle id='bluebar_dropdown'><GoSettings size="1.5em"/></Dropdown.Toggle>
                                     <Dropdown.Menu className="bluebar darkborder">
                                         <Dropdown.Item href="#action/3.1" className='bluebar_button'>Action</Dropdown.Item>
                                         <Dropdown.Item href="#action/3.2" className='bluebar_button'>Another action</Dropdown.Item>
@@ -156,6 +163,7 @@ function NavBar() {
                         </Container>
                     </Navbar>
                 </div>
+                </> 
             )
         }     
     } else {
@@ -164,14 +172,16 @@ function NavBar() {
             <div className="container">
                 <Navbar expand="lg" className="bluebar">
                     <Container>
-                        <Navbar.Brand href="/"><p className='bluebar_button activito'><FaHome /></p> </Navbar.Brand>
+                        <Navbar.Brand href="/"><p className='bluebar_button activito'><FaHome size="2em"/></p> </Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/"><p className='bluebar_button'>Profiles</p></Nav.Link>
-                            <Nav.Link href="/spaces"><p className='bluebar_button'>Spaces</p></Nav.Link>
+                            <Nav.Link href="/spaces"><p className='bluebar_button'><GiCargoCrate size="2em"/></p></Nav.Link>
+                            <Nav.Link href="/"><p className='bluebar_button'><RiOrganizationChart size="2em"/></p></Nav.Link>
+                        </Nav>
+                        <Nav className="justify-content-end">
                             <Dropdown title="Settings" id="basic-nav-dropdown">
-                            <Dropdown.Toggle id='bluebar_dropdown'>settings</Dropdown.Toggle>
+                                <Dropdown.Toggle id='bluebar_dropdown'><GoSettings size="2em"/></Dropdown.Toggle>
                                 <Dropdown.Menu className="bluebar darkborder">
                                     <Dropdown.Item href="#action/3.1" className='bluebar_button'>Action</Dropdown.Item>
                                     <Dropdown.Item href="#action/3.2" className='bluebar_button'>Another action</Dropdown.Item>

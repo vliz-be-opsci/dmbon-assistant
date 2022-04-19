@@ -40,7 +40,7 @@ function HierarchicalSpacePage() {
       })
   }
 
-    //jquery functions
+  //jquery functions
   $(document).ready(function() {
     $('#delete_btn').click(function () {   
         console.log('delete clicked'); 

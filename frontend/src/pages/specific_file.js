@@ -115,7 +115,7 @@ function FileSpecificPage() {
           if (sr[0]["http://www.w3.org/ns/shacl#conforms"][0]["@value"] === false) {
             return (
               <>
-                <Alert variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                <Alert variant="danger" dismissible>
                   <Alert.Heading>Requirements not met</Alert.Heading>  
                   <p>
                     <b>{ammount_violations} errors  have to be fixed for {FileId} to be compliant to the current project. </b>

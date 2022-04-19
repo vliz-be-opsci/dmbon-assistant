@@ -5,14 +5,17 @@ import {Alert, Form, Button} from 'react-bootstrap';
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import $ from 'jquery';
+import {GoDiffAdded} from 'react-icons/go';
+import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai';
 import '../css/alert_shacl_requirement.css';
 
 function AlertShaclReq(props) {
     //constants
     const {SpaceId} = useParams();
-    const [Loading, setLoading] = useState(false) 
-    const [Error, setError] = useState(true) 
+    const [Loading, setLoading] = useState(false) ;
+    const [Error, setError] = useState(true); 
     const [show, setShow] = useState(props.show_alert);
+    const [showViolationDescription, setShowViolationDescription] = useState(false);
     const [valueInput, setValueInput] = useState(''); 
     const predicate_name = props.predicate_name;
     const severity_error = props.severity_error;
@@ -155,20 +158,20 @@ function AlertShaclReq(props) {
             if(component.severity == "Warning"){
                 return (
                     <Button variant="warning" className='severitybutton' onClick={() => addPredicate()}>
-                        Add value
+                        <GoDiffAdded/>
                     </Button>
                 );
             }
             if(component.severity == "Violation"){
                 return (
                     <Button variant="danger" className='severitybutton' onClick={() => addPredicate()}>
-                        Edit value
+                        <GoDiffAdded/>
                     </Button>
                 );
             }
             return (
                 <Button variant="info" className='severitybutton' onClick={() => addPredicate()}>
-                    Edit value
+                    <GoDiffAdded/>
                 </Button>
             );
         }
@@ -178,14 +181,21 @@ function AlertShaclReq(props) {
             return(
                 <>
                     <Form>
-                        <Form.Group><Form.Select onChange={(e) => handleChange(e)} aria-label="Default select example">
-                            <option>Select option</option> 
-                            {in_value_value.map(in_value_option =>
-                                <option>{in_value_option}</option>
-                            )}
-                        </Form.Select></Form.Group>
-                        <br></br>
-                        <SubmitButton severity={severity_error} ></SubmitButton>
+                        <table>
+                            <tr>
+                                <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
+                                <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
+                                <td style={{"width":"70%"}}>
+                                <Form.Group><Form.Select onChange={(e) => handleChange(e)} aria-label="Default select example">
+                                    <option>Select option</option> 
+                                    {in_value_value.map(in_value_option =>
+                                        <option>{in_value_option}</option>
+                                    )}
+                                </Form.Select></Form.Group>
+                                </td>
+                                <td style={{"width":"6%"}}><SubmitButton severity={severity_error} onClick={() => addPredicate()}></SubmitButton></td>
+                            </tr>
+                        </table>
                     </Form>
                 </>
             )
@@ -193,26 +203,70 @@ function AlertShaclReq(props) {
             return(
                 <>
                     <Form>
-                        <Form.Group><Form.Control type="text" onChange={(e) => handleChange(e)} placeholder="Enter value" aria-label="Default select example"/></Form.Group>
-                        <br></br>
-                        <SubmitButton severity={severity_error} onClick={() => addPredicate()}></SubmitButton>
+                        <table>
+                            <tr>
+                                <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
+                                <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
+                                <td style={{"width":"70%"}}><Form.Group><Form.Control type="text" onChange={(e) => handleChange(e)} placeholder="Enter value" aria-label="Default select example"/></Form.Group></td>
+                                <td style={{"width":"6%"}}><SubmitButton severity={severity_error} onClick={() => addPredicate()}></SubmitButton></td>
+                            </tr>
+                        </table>
                     </Form>
                 </>
             )
         }
 
         //make javascript function that check for the ammount of rows in the table and return the number of rows
-
-        if(in_value){return(<>{in_value_value}</>)}
-        return(<>{minCount}</>)
     }
 
+    //make function that will show result message when clicked
+    const ResultMessage = () => {
+        if(showViolationDescription){
+            return(
+            <>
+                <p>{result_message}</p>
+            </>
+            )
+        }else{
+            return(
+                <>
+                </>
+            )
+        }
+    }
+
+    //make const that will show a button that toggles the showViolationDescription
+    const ToggleButton = (props) => {
+        let severity = "";
+        if(props.severity == "Warning"){
+            severity = "warning";
+        }
+        if(props.severity == "Violation"){
+            severity = "danger";
+        }
+        if(props.severity != "Warning" && props.severity != "Violation"){
+            severity = "info";
+        }
+        if(showViolationDescription){
+            return(
+                <Button variant={severity} onClick={() => setShowViolationDescription(false)}>
+                    <AiOutlineEyeInvisible/>
+                </Button>
+            )
+        }else{
+            return(
+                <Button variant={severity} onClick={() => setShowViolationDescription(true)}>
+                    <AiOutlineEye/>
+                </Button>
+            )
+        }
+    }
 
     if(Loading){
         return(
-            <div>
+            <>
                 <ReactLoading type='bars' color='#006582' height={'3vw'} width={'3vw'} />
-            </div>
+            </>
         )
     }else{
         if (show) {
@@ -220,9 +274,8 @@ function AlertShaclReq(props) {
                 return(
                     <>
                         <Alert variant="danger" onClose={() => setShow(false)} dismissible>
-                            <Alert.Heading>{predicate_name}</Alert.Heading>
-                            <p>{result_message}</p>
                             {Alertlogsprops({shacl_requirements: constraint_props})}
+                            {ResultMessage()}
                         </Alert>
                     </>
                 )
@@ -231,9 +284,8 @@ function AlertShaclReq(props) {
                 return(
                     <>
                         <Alert variant="warning" onClose={() => setShow(false)} dismissible>
-                            <Alert.Heading>{predicate_name}</Alert.Heading>
-                            <p>{result_message}</p>
                             {Alertlogsprops({shacl_requirements: constraint_props})}
+                            {ResultMessage()}
                         </Alert>
                     </>
                 )
@@ -242,9 +294,8 @@ function AlertShaclReq(props) {
                 return(
                     <>
                         <Alert variant="info" onClose={() => setShow(false)} dismissible>
-                            <Alert.Heading>{predicate_name}</Alert.Heading>
-                            <p>{result_message}</p>
                             {Alertlogsprops({shacl_requirements: constraint_props})}
+                            {ResultMessage()}
                         </Alert>
                     </>
                 )
