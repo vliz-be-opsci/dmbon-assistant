@@ -184,7 +184,7 @@ function SpacesView(props) {
                 <table id="spaces_table" className='table_vliz'>
                     <thead>
                         <tr>
-                            <th>space name</th>
+                            <th>datacrate name</th>
                             <th>profile</th>
                             <th>storage-path</th>
                         </tr>

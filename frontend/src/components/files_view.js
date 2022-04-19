@@ -139,7 +139,7 @@ function FilesView(props) {
                         <th>A</th>
                         <th className="filetd">File Name</th>
                         <th>Relative storage location</th>
-                        <th>Semantic Progress</th>
+                        <th>Annotation Progress</th>
                     </tr>
                 </thead>
                 <tbody>

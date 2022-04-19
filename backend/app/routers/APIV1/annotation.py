@@ -204,6 +204,27 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         log.error(e)
         log.exception(e)
         raise HTTPException(status_code=500, detail=e)
+    
+@router.get('/shacl_report', status_code=200)
+def get_shacl_report(*,space_id: str = Path(None,description="space_id name")):
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    try:
+        space_object = Space.load(uuid=space_id)
+        log.info(space_object)
+        prerreturn = space_object.get_shacl_report()
+        log.info(f"prereturn of get shacl report: {prerreturn}")
+        if "error" in prerreturn.keys():
+            return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
+        return prerreturn
+    except Exception as e:
+        log.error(e)
+        log.exception(e)
+        raise HTTPException(status_code=500, detail=e)
 
 @router.get('/terms', status_code=200)
 def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):

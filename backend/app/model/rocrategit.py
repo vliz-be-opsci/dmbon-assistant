@@ -144,7 +144,6 @@ class RoCrateGitBase():
     
         for item in data["@graph"]:
             if item["@id"] == file_id:
-                #print(item)
                 item_dict = {}
                 item_dict["@id"] = item["@id"]
                 item_dict["@type"] = "schema:" + item["@type"]
@@ -172,7 +171,7 @@ class RoCrateGitBase():
                     
         log.debug(f"data: {datag}")
         
-        green = 0
+        green = 2
         orange = 0
         red = 0
 
@@ -241,6 +240,110 @@ class RoCrateGitBase():
         if len(all_predicates) == 0:
             return {"error":404,"detail":"Resource not found"}
         
+        log.info(all_files)
+        
+        return {'data':all_files, 'summary': summary, 'shacl_requirements': json.loads(r_decoded), 'shacl_original': f_constraints_text}
+    
+    def get_shacl_report(self):
+        """get the shacl report for the whole space
+        """
+        data = self._read_metadata_datacrate()
+        log.info(f"metadata of the space: {data}")
+        path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
+        log.info(path_shacl)
+        
+        barebones_json = {
+                "@context": 
+                    { 
+                    "schema": "http://schema.org/" , 
+                    "ex": "http://example.org/ns#"
+                    },
+                "@graph": []
+                }
+    
+        for item in data["@graph"]:
+            item_dict = {}
+            item_dict["@id"] = item["@id"]
+            item_dict["@type"] = "schema:" + item["@type"]
+            for key, value in item.items():
+                if key == "@type":
+                    continue
+                else:
+                    item_dict["schema:" + key] = value
+            barebones_json["@graph"].append(item_dict)
+                
+        shacl_file = open(path_shacl, "rb").read()
+        sh = Graph().parse(data=shacl_file, format="turtle")
+        r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, data_graph_format="json-ld", serialize_report_graph="json-ld")
+        r_decoded = r[1].decode("utf-8")
+        
+        green = 0
+        orange = 0
+        red = 0
+        
+        datag = []
+        for item in data["@graph"]:
+            green+=2
+            for key, value in item.items():
+                dict_predicates = {}
+                dict_predicates["predicate"] = key
+                dict_predicates["value"] = value
+                datag.append(dict_predicates)
+                    
+        log.debug(f"data: {datag}")
+        
+        
+
+        for item in datag:
+            if item["predicate"] != "@type" and item["predicate"] != "@id":
+                green+=1
+                
+        validation_report_json  = json.loads(r_decoded)        
+
+        # check the report for the number of violations for the item 
+        for item in validation_report_json:
+            log.debug(f' validation report item: {item}')
+            try:
+                if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
+                    for key, value in item.items():
+                        if key == "http://www.w3.org/ns/shacl#focusNode":
+                            name_focusnode = value[0]["@id"].split("/")[-1]
+                for key, value in item.items():
+                    if "resultSeverity" in key == "http://www.w3.org/ns/shacl#resultSeverity":
+                        if value[0]["@id"].split("#")[-1] == "Violation":
+                            red+=1
+                        if value[0]["@id"].split("#")[-1] == "Warning":
+                            orange+=1
+            except:
+                pass
+        log.debug(f' green: {green}, orange: {orange}, red: {red}')
+        percentage_red = math.ceil((red/(red+green+orange))*100)
+        percentage_orange = math.ceil((orange/(red+green+orange))*100)
+        percentage_green = math.ceil((green/(red+green+orange))*100)
+        summary = {"green": percentage_green, "orange": percentage_orange, "red": percentage_red}
+                  
+        all_files = []
+        #implement the shacl constraint check here
+        #read in shacl file
+        f_constraints = open(path_shacl, "r")
+        f_constraints_text = f_constraints.read()
+        test = shclh.ShapesInfoGraph(path_shacl)
+        shacldata = test.full_shacl_graph_dict()
+        #convert the shacl file to have all the properties per node id
+        node_properties_dicts = []
+        for node_to_check in shacldata:
+            log.info(node_to_check)
+        for node_to_check in shacldata:
+            toaddnode = {}
+            if node_to_check["target"] is not None:
+                target = node_to_check["target"].split("/")[-1]
+                toaddnode[target] = []
+                for propname , semantic_properties in node_to_check["properties"].items():
+                    #add reciproce checking for nodes in nodes here
+                    toaddnode[target].append({propname.split('/')[-1]: semantic_properties})
+                node_properties_dicts.append(toaddnode)
+        
+        log.debug(node_properties_dicts)
         log.info(all_files)
         
         return {'data':all_files, 'summary': summary, 'shacl_requirements': json.loads(r_decoded), 'shacl_original': f_constraints_text}
