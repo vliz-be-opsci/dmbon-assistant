@@ -5,3 +5,139 @@
     margin-bottom: 1%;
     padding: 1%;
 }
+
+/* have card that pops out when hovered over and that has a min width of 320px /3 */
+.card_td {
+    padding: 10%;
+    min-width: 105px;  
+    min-height: 150px;
+    height: 30vw; 
+    max-height: 50vh;
+    border: 2px solid #2c3e5055;
+    border-radius: 20px;
+    background-color: #91cedf33;
+}
+
+.card_td:hover {
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px 0 #2c3e5055, 0 6px 20px 0 #2c3e5055;
+    background-color: #91cedf55;
+}
+
+.card_row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 320px;
+}
+
+/* class that will display checkmark svg */
+.checkmark {
+    background-image: url('../static/checkmark-circle.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30%;
+    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
+}
+
+.checkmark:hover {
+    animation-play-state: paused;
+}
+
+.cross-red {
+    background-image: url('../static/cross-circle-red.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30%;
+    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
+}
+
+/* pause animation */
+.cross-red:hover {
+    animation-play-state: paused;
+}
+
+.cross-orange {
+    background-image: url('../static/cross-circle-orange.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30%;
+    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
+}
+
+.cross-orange:hover {
+    animation-play-state: paused;
+}
+
+.checkmark-orange {
+    background-image: url('../static/checkmark-circle-orange.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30%;
+    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
+}
+
+.checkmark-orange:hover {
+    animation-play-state: paused;
+}
+
+.git {
+    background-image: url('../static/git-svgrepo-light.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+}
+
+.git:hover {
+    background-image: url('../static/git-svgrepo-dark.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+}
+
+.ship {
+    background-image: url('../static/oceanic-cargo-ship-global-distribution-light.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+}
+
+.ship:hover {
+    background-image: url('../static/oceanic-cargo-ship-global-distribution-dark.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+}
+
+.ship-non-clickable {
+    background-image: url('../static/oceanic-cargo-ship-global-distribution-light.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+    cursor: default;
+    pointer-events: none;
+}
+
+.publication-message-text {
+    color:black;
+}
+
+/*make animation that will alternate opacity and backgrouund size when hovered over */
+@keyframes pulsate-opacity {
+    0% {
+        background-size: 30%;
+    }
+    50% {
+        background-size: 40%;
+    }
+    100% {
+        background-size: 30%;
+    }
+}
+
+
+
+
+

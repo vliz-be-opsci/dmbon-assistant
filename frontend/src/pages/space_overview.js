@@ -5,6 +5,7 @@ import {BASE_URL_SERVER} from '../App.js';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import ReactLoading from 'react-loading';
+import '../css/space_overview.css';
 function SpaceOverviewPage() {
 
     //define all constants first
@@ -13,6 +14,8 @@ function SpaceOverviewPage() {
     const [ShaclSummary, SetShaclSummary] = useState({});
     const [ShaclOverview, SetShaclOverview] = useState([{}]);
     const [Loading, setLoading] = useState(true); 
+    const [DoughnutSvg, SetDoughnutSvg] = useState('');
+    const [PublicationSvg, SetPublicationSvg] = useState('');
     const [ShaclErrors, SetShaclErrors] = useState(0);
     const [Graphdata, SetGraphdata] = useState({});
 
@@ -48,7 +51,10 @@ function SpaceOverviewPage() {
                 console.log(shacl_requirements);
                 SetShaclOverview(shacl_requirements);
                 SetShaclSummary(res.data.summary);
-                console.log(res.data.summary["red"]);
+                //determine aextra css properties for the svgs
+                if (res.data.summary["green"] == 100){SetDoughnutSvg("checkmark");SetPublicationSvg("ship");}
+                if (res.data.summary["red"] > 0){SetDoughnutSvg("cross-red");SetPublicationSvg("ship-non-clickable");}
+                if (res.data.summary["red"] == 0 && res.data.summary["green"] != 100){SetDoughnutSvg("checkmark-orange");SetPublicationSvg("ship");}
                 //set graphdata
                 SetGraphdata(
                     {
@@ -81,6 +87,26 @@ function SpaceOverviewPage() {
         
     }
 
+    const PublicationMessage = () => {
+      if(PublicationSvg == "ship-non-clickable"){
+        return(
+          <div className="publication-message">
+            <div className="publication-message-text">
+              <b>Fix errors before publishing</b>
+            </div>
+          </div>
+        )
+      }else{
+        return(
+          <div className="publication-message">
+            <div className="publication-message-text">
+              <p>Publish</p>
+            </div>
+          </div>
+        )
+      }
+    }
+
     useEffect(() => {
         fetchShaclOverview();
     }, [])
@@ -94,14 +120,21 @@ function SpaceOverviewPage() {
     }else{
         return (
             <div>
-                <h1>TODO: dashboard space </h1>
-                <ol>
-                    <li>semantic progress overview</li>
-                    <li>git overview</li>
-                    <li>publish overview</li>
-                </ol>
-                <a href={`/spaces/${SpaceId}/all_files`}>see all files</a>
-                <div><Doughnut data={Graphdata} width="200px" height="200px" options={{maintainAspectRatio:false, plugins:{legend:{display:false}}}}/></div>
+                <br />
+                <table style={{width:"100%"}}>
+                  <tr className='card_row'>
+                    <td style={{width:"33%"}}>
+                      <a href={`/spaces/${SpaceId}/all_files`}><div className={'card_td ' + DoughnutSvg}><Doughnut data={Graphdata} width="15px" height="15px" options={{maintainAspectRatio:false, plugins:{legend:{display:false}}}}/></div></a>
+                    </td>
+                    <td style={{width:"33%"}}>
+                      <a href={`/spaces/${SpaceId}/git`}><div className='card_td git'></div></a>
+                    </td>
+                    <td style={{width:"33%"}}>
+                      <a href={`/`} className={PublicationSvg}><div className={'card_td ' + PublicationSvg}><PublicationMessage/></div></a>
+                    </td>
+                  </tr>
+                </table>
+                
                 
             </div>
         )
