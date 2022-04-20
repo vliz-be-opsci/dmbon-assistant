@@ -68,20 +68,20 @@ function SpaceOverviewPage() {
                 //set graphdata
                 SetGraphdata(
                     {
-                        labels: [`Violations: `+errors, 'Good (%)', 'Warnings: '+warnings],
+                        labels: [`Violations: `+errors, 'Warnings: '+warnings],
                         datasets: [
                           {
                             label: '# of Errors',
-                            data: [res.data.summary["red"], res.data.summary["green"], res.data.summary["orange"]],
+                            data: [res.data.summary["red"],  res.data.summary["orange"],res.data.summary["green"]],
                             backgroundColor: [
                               'rgba(255, 99, 132, 0.2)',
-                              'rgba(75, 192, 192, 0.2)',
                               'rgba(255, 159, 64, 0.2)',
+                              'rgba(75, 192, 192, 0.2)',
                             ],
                             borderColor: [
                               'rgba(255, 99, 132, 1)',
-                              'rgba(75, 192, 192, 1)',
                               'rgba(255, 159, 64, 1)',
+                              'rgba(75, 192, 192, 1)',
                             ],
                             borderWidth: 1,
                           },

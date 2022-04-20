@@ -56,6 +56,16 @@
     background-size: 0;
 }
 
+.checkmark-orange:hover{
+    animation: grow_out 0.3s ease-in-out;
+    background-size: 0;
+}
+
+.checkmark:hover{
+    animation: grow_out 0.3s ease-in-out;
+    background-size: 0;
+}
+
 .cross-orange {
     background-image: url('../static/cross-circle-orange.svg');
     background-repeat: no-repeat;
@@ -127,8 +137,6 @@
         background-size: 40%;
     }
 }
-
-/*make 0.5 apace circle where error message will be displayed in that floats top left of the parent div */
 
 
 
