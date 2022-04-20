@@ -185,7 +185,7 @@ function AlertShaclReq(props) {
                             <tr>
                                 <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
                                 <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
-                                <td style={{"width":"70%"}}>
+                                <td style={{"width":"100%"}}>
                                 <Form.Group><Form.Select onChange={(e) => handleChange(e)} aria-label="Default select example">
                                     <option>Select option</option> 
                                     {in_value_value.map(in_value_option =>
@@ -207,7 +207,7 @@ function AlertShaclReq(props) {
                             <tr>
                                 <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
                                 <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
-                                <td style={{"width":"70%"}}><Form.Group><Form.Control type="text" onChange={(e) => handleChange(e)} placeholder="Enter value" aria-label="Default select example"/></Form.Group></td>
+                                <td style={{"width":"100%"}}><Form.Group><Form.Control type="text" onChange={(e) => handleChange(e)} placeholder="Enter value" aria-label="Default select example"/></Form.Group></td>
                                 <td style={{"width":"6%"}}><SubmitButton severity={severity_error} onClick={() => addPredicate()}></SubmitButton></td>
                             </tr>
                         </table>
