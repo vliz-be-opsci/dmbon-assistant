@@ -16,8 +16,8 @@ function SpaceOverviewPage() {
     const [Loading, setLoading] = useState(true); 
     const [DoughnutSvg, SetDoughnutSvg] = useState('');
     const [PublicationSvg, SetPublicationSvg] = useState('');
-    const [ShaclErrors, SetShaclErrors] = useState(0);
     const [Graphdata, SetGraphdata] = useState({});
+    const [legendToggle, SetLegendToggle] = useState(false);
 
     ChartJS.register(ArcElement, Tooltip, Legend);
     var dummydata = {
@@ -55,13 +55,23 @@ function SpaceOverviewPage() {
                 if (res.data.summary["green"] == 100){SetDoughnutSvg("checkmark");SetPublicationSvg("ship");}
                 if (res.data.summary["red"] > 0){SetDoughnutSvg("cross-red");SetPublicationSvg("ship-non-clickable");}
                 if (res.data.summary["red"] == 0 && res.data.summary["green"] != 100){SetDoughnutSvg("checkmark-orange");SetPublicationSvg("ship");}
+                //guess the number of errors and warnings by taking the percentage of the red and orage values from summary and multiplying by the number of shacl requirements
+                try {
+                  var errors = Math.round((res.data.summary["red"]/(res.data.summary["red"]+res.data.summary["orange"])) * shacl_requirements[0]["http://www.w3.org/ns/shacl#result"].length);
+                  var warnings = Math.round((res.data.summary["orange"]/(res.data.summary["red"]+res.data.summary["orange"])) * shacl_requirements[0]["http://www.w3.org/ns/shacl#result"].length);
+                } catch (error) {
+                  console.log(error);
+                  var errors = 0;
+                  var warnings = 0;
+                  var success = 100;
+                }
                 //set graphdata
                 SetGraphdata(
                     {
-                        labels: ['Violations (%)', 'Good (%)', 'Warnings (%)'],
+                        labels: [`Violations: `+errors, 'Good (%)', 'Warnings: '+warnings],
                         datasets: [
                           {
-                            label: '# of Votes',
+                            label: '# of Errors',
                             data: [res.data.summary["red"], res.data.summary["green"], res.data.summary["orange"]],
                             backgroundColor: [
                               'rgba(255, 99, 132, 0.2)',
@@ -78,9 +88,6 @@ function SpaceOverviewPage() {
                         ],
                       }
                 )
-                //get the number of shacl errors that are in shacl_requirements
-                try{var ammount_violations = shacl_requirements[0]["http://www.w3.org/ns/shacl#result"].length;console.log(ammount_violations);SetShaclErrors(ammount_violations);}
-                catch(error){console.log(error);var ammount_violations = 0;}
                 setLoading(false);
             })
         }  
@@ -100,12 +107,14 @@ function SpaceOverviewPage() {
         return(
           <div className="publication-message">
             <div className="publication-message-text">
-              <p>Publish</p>
+              <b>Publish datacrate</b>
             </div>
           </div>
         )
       }
     }
+
+
 
     useEffect(() => {
         fetchShaclOverview();
@@ -124,7 +133,11 @@ function SpaceOverviewPage() {
                 <table style={{width:"100%"}}>
                   <tr className='card_row'>
                     <td style={{width:"33%"}}>
-                      <a href={`/spaces/${SpaceId}/all_files`}><div className={'card_td ' + DoughnutSvg}><Doughnut data={Graphdata} width="15px" height="15px" options={{maintainAspectRatio:false, plugins:{legend:{display:false}}}}/></div></a>
+                      <a href={`/spaces/${SpaceId}/all_files`}>
+                        <div className={"card_td "+ DoughnutSvg} onMouseEnter={()=> SetLegendToggle(true)} onMouseLeave={()=> SetLegendToggle(false)}>
+                          <Doughnut data={Graphdata} width="15px" height="15px" options={{maintainAspectRatio:false, plugins:{legend:{display:legendToggle}}}}/>
+                        </div>
+                      </a>
                     </td>
                     <td style={{width:"33%"}}>
                       <a href={`/spaces/${SpaceId}/git`}><div className='card_td git'></div></a>

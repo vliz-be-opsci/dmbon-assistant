@@ -38,25 +38,22 @@
     background-image: url('../static/checkmark-circle.svg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 30%;
-    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
-}
-
-.checkmark:hover {
-    animation-play-state: paused;
+    background-size: 40%;
+    animation: grow_in 0.8s ease-in-out;
 }
 
 .cross-red {
     background-image: url('../static/cross-circle-red.svg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 30%;
-    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
+    background-size: 40%;
+    animation: grow_in 0.8s ease-in-out;
 }
 
-/* pause animation */
+/* animation for checkmark svg to translate downwards */
 .cross-red:hover {
-    animation-play-state: paused;
+    animation: grow_out 0.3s ease-in-out;
+    background-size: 0;
 }
 
 .cross-orange {
@@ -64,23 +61,14 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 30%;
-    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
+    animation: grow_in 0.8s ease-in-out;
 }
-
-.cross-orange:hover {
-    animation-play-state: paused;
-}
-
 .checkmark-orange {
     background-image: url('../static/checkmark-circle-orange.svg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 30%;
-    animation: pulsate-opacity 1.5s ease-in-out infinite alternate forwards;
-}
-
-.checkmark-orange:hover {
-    animation-play-state: paused;
+    background-size: 40%;
+    animation: grow_in 0.8s ease-in-out;
 }
 
 .git {
@@ -102,6 +90,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 60%;
+    color:#00AA7b;
 }
 
 .ship:hover {
@@ -118,24 +107,28 @@
     background-size: 60%;
     cursor: default;
     pointer-events: none;
+    color:#aa4545;
 }
-
-.publication-message-text {
-    color:black;
-}
-
 /*make animation that will alternate opacity and backgrouund size when hovered over */
-@keyframes pulsate-opacity {
+@keyframes grow_out {
     0% {
-        background-size: 30%;
-    }
-    50% {
         background-size: 40%;
     }
     100% {
-        background-size: 30%;
+        background-size: 0%;
     }
 }
+
+@keyframes grow_in {
+    0% {
+        background-size: 0%;
+    }
+    100% {
+        background-size: 40%;
+    }
+}
+
+/*make 0.5 apace circle where error message will be displayed in that floats top left of the parent div */
 
 
 
