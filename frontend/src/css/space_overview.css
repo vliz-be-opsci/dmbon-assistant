@@ -92,8 +92,11 @@
     background-image: url('../static/git-svgrepo-dark.svg');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 60%;
+    background-size: 20%;
+    background-position: 95% 7%;
 }
+
+
 
 .ship {
     background-image: url('../static/oceanic-cargo-ship-global-distribution-light.svg');
@@ -119,6 +122,10 @@
     pointer-events: none;
     color:#aa4545;
 }
+
+a {
+    text-decoration: none;
+}
 /*make animation that will alternate opacity and backgrouund size when hovered over */
 @keyframes grow_out {
     0% {
@@ -137,6 +144,20 @@
         background-size: 40%;
     }
 }
+
+.git-status-container {
+    border-radius: 20px;
+    height: 25vw;
+    max-height: 40vh;
+}
+
+.git-status-message {
+    padding: 10%;
+    text-align: center;
+    color: black;
+    text-decoration: none;
+}
+  
 
 
 

@@ -18,6 +18,10 @@ function SpaceOverviewPage() {
     const [PublicationSvg, SetPublicationSvg] = useState('');
     const [Graphdata, SetGraphdata] = useState({});
     const [legendToggle, SetLegendToggle] = useState(false);
+    const [repo_dirty, SetRepoDirty] = useState(false);
+    const [ahead, SetAhead] = useState(0);
+    const [behind, SetBehind] = useState(0);
+    const [repo_message, SetRepoMessage] = useState('');
 
     ChartJS.register(ArcElement, Tooltip, Legend);
     var dummydata = {
@@ -88,10 +92,97 @@ function SpaceOverviewPage() {
                         ],
                       }
                 )
-                setLoading(false);
             })
         }  
         
+    }
+
+    //have axios call to get the git status of the current space git/status
+    const fetchGitStatus = async() => {
+        if(SpaceId){
+            axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status/`)
+            .then(res => {
+                console.log(res)
+                SetAhead(res.data.ahead);
+                SetBehind(res.data.behind);
+                SetRepoMessage(res.data.message);
+                SetRepoDirty(res.data.dirty);
+                setLoading(false);
+            })
+        }
+    }
+
+    //function that makes an axios call to pull data from git for the current spaceid git/pull
+    const gitPull = async() => {
+      if(SpaceId){
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/pull/`)
+        .then(res => {
+            console.log(res)
+            window.location(`spaces/${SpaceId}/all_files`);
+        })
+      }
+    }
+
+    //function that makes an axios call to push data from git for the current spaceid git/push
+    const gitPush = async() => {
+      if(SpaceId){
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/push/`)
+        .then(res => {
+            console.log(res)
+            window.location.reload();
+        })
+      }
+    }
+
+    //have react component to display the git status
+    const GitStatus = () => {
+      if(behind > 0 ){
+        return(
+          <div className="git-status-container">
+            <div className="git-status-message">
+              <p>Repo is {behind} commit(s) behind the remote, pull to sync</p> 
+            </div>
+            <div className="git-status-button">
+              <button onClick={gitPull} className="git-status-button-pull button_vliz">Pull</button>
+            </div>
+          </div>
+        )
+      }
+      if(repo_dirty && ahead == 0){
+        return(
+          <div className="git-status-container">
+            <div className="git-status-message">
+              <p>There are changes to commit</p>
+            </div>
+            <a href={`/spaces/${SpaceId}/git`}>
+              <div className="git-status-button">
+                <button className="button_vliz">Commit changes</button>
+              </div>
+            </a>
+          </div>
+        )
+      }
+      if(ahead > 0 ){
+        return(
+          <div className="git-status-container">
+            <div className="git-status-message">
+              <p>Repo is {ahead} commit(s) ahead of the remote, push to sync</p>
+            </div>
+            <div className="git-status-button">
+              <button onClick={gitPush} className="git-status-button-push button_vliz">Push</button>
+            </div>
+          </div>
+        )
+      }
+      else{
+        return(
+          <div className="git-status-container">
+            <div className="git-status-message">
+              <p>All good icon here</p>
+            </div>  
+          </div>
+        )
+      }
     }
 
     const PublicationMessage = () => {
@@ -118,6 +209,7 @@ function SpaceOverviewPage() {
 
     useEffect(() => {
         fetchShaclOverview();
+        fetchGitStatus();
     }, [])
 
     if(Loading){
@@ -140,15 +232,17 @@ function SpaceOverviewPage() {
                       </a>
                     </td>
                     <td style={{width:"33%"}}>
-                      <a href={`/spaces/${SpaceId}/git`}><div className='card_td git'></div></a>
+                      <a>
+                        <div className='card_td git'>
+                          <GitStatus/>
+                        </div>
+                      </a>
                     </td>
                     <td style={{width:"33%"}}>
                       <a href={`/`} className={PublicationSvg}><div className={'card_td ' + PublicationSvg}><PublicationMessage/></div></a>
                     </td>
                   </tr>
-                </table>
-                
-                
+                </table>    
             </div>
         )
     }

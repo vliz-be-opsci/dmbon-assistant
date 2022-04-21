@@ -135,12 +135,6 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         # If no remotes exist or the HEAD is detached, there is no ahead/behind info
         if ahead_behind_match:
             ahead = int(ahead_behind_match.group(1))
-            current_hash = repo.head.object.hexsha
-            o = repo.remotes.origin
-            o.fetch()
-            changed = o.refs["master"].object.hexsha != current_hash
-            if changed:
-                behind = 1
             behind = int(ahead_behind_match.group(2))
         pulls = "Repo is {} commits ahead and {} behind.".format(ahead, behind)
     except:
@@ -181,7 +175,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
             pass
     
     
-    return {'data':toreturn, 'status_message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
+    return {'data':toreturn, 'message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
 
 @router.post('/{command}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
