@@ -10,11 +10,14 @@ from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
 from collections import MutableMapping
 from fastapi.staticfiles import StaticFiles
+import re
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
+import logging
+log=logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/git",
@@ -115,12 +118,36 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
             space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
+
     #function to pull data from remote if remote was provided and if pulse finds diff 
     try:
         repo = git.Repo(space_folder)
-    except:
+    except Exception as e:
+        log.error(e);
         repo = git.Repo(os.path.join(space_folder,"repo"))
-    print(repo.heads)
+    ahead = 0
+    behind = 0
+    # check if the repo has a remote url
+    try:
+        #check if the remote origin has commits that haven't been pulled yet
+        repo_status = repo.git.status(porcelain="v2", branch=True)
+        ahead_behind_match = re.search(r"#\sbranch\.ab\s\+(\d+)\s-(\d+)", repo_status)
+        # If no remotes exist or the HEAD is detached, there is no ahead/behind info
+        if ahead_behind_match:
+            ahead = int(ahead_behind_match.group(1))
+            current_hash = repo.head.object.hexsha
+            o = repo.remotes.origin
+            o.fetch()
+            changed = o.refs["master"].object.hexsha != current_hash
+            if changed:
+                behind = 1
+            behind = int(ahead_behind_match.group(2))
+        pulls = "Repo is {} commits ahead and {} behind.".format(ahead, behind)
+    except:
+        pulls = "not available for this space"
+        
+
+    
     hcommit = repo.head.commit
     diff_list = hcommit.diff()
     difff_list = hcommit.diff(ignore_blank_lines=True, ignore_space_at_eol=True,create_patch=True)
@@ -152,7 +179,9 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
             i+=1
         except:
             pass
-    return {'data':toreturn}
+    
+    
+    return {'data':toreturn, 'status_message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
 
 @router.post('/{command}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):

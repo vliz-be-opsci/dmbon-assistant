@@ -4,8 +4,9 @@ import axiosRetry from 'axios-retry';
 import {BASE_URL_SERVER} from '../App.js';
 import {Form, FloatingLabel, Modal, Button, OverlayTrigger, Popover} from 'react-bootstrap';
 import ReactLoading from 'react-loading';
-import { FaPlus} from 'react-icons/fa';
+import {FaPlus,FaFolderOpen, FaGitAlt, FaCog} from 'react-icons/fa';
 import {MdOpenInBrowser} from "react-icons/md";
+import Datacrate_overview_row from './datacrate_overview_row.js';
 
 axiosRetry(axios, { retries: 3 });
 
@@ -108,13 +109,6 @@ function SpacesView(props) {
         setLoading(false);
     }
 
-    const OpenBrowserSpace = async (spaceid) => {
-        var spaceid = spaceid;
-        axios.get(BASE_URL_SERVER+`apiv1/spaces/${spaceid}/content/openexplorer`)
-          .then(res => {
-            console.log(res)
-          })
-    }
 
     const searchTable = async(value_input) => {
         // Declare variables
@@ -156,17 +150,6 @@ function SpacesView(props) {
         }
       }
 
-      const popoveropenfilebrowser = (
-        <Popover id="popover-open">
-            <Popover.Header as="h3">Open File Browser</Popover.Header>
-            <Popover.Body>
-            Click this to <b>open</b> a file <b>explorer</b> at the path of the <b>datacrate location</b>.
-             You can add files/folders here and these will be incorperated in the ROCrate.
-             Note that the File <b>explorer</b> will <b>not</b> be <b>focussed</b> on <b>automatically</b>.
-            </Popover.Body>
-        </Popover>
-      );
-
     useEffect(() => {
         fetchProfiles();
     },[]);
@@ -184,24 +167,16 @@ function SpacesView(props) {
                 <table id="spaces_table" className='table_vliz'>
                     <thead>
                         <tr>
-                            <th>datacrate name</th>
-                            <th>profile</th>
-                            <th>storage-path</th>
+                            <th>Datacrate name</th>
+                            <th>Profile</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                     {spacesListData.map(space =>
-                        <tr>
-                            <td><a href={'/spaces/' + space.name }>{space.truespacename}</a></td>
-                            <td>{space.trueprofilename}</td>
-                            <td>
-                            <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoveropenfilebrowser}>
-                                <button onClick={() => OpenBrowserSpace(space.name)}>
-                                    <MdOpenInBrowser></MdOpenInBrowser>
-                                </button>
-                            </OverlayTrigger>
-                            </td>
-                        </tr>
+                    <>
+                        <Datacrate_overview_row spacedata={space}></Datacrate_overview_row>
+                    </>
                     )}
                     <tr>
                        <td colSpan="3"><Button variant="danger" onClick={handleShow} style={{width: '100%'}}><FaPlus></FaPlus></Button></td> 

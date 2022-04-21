@@ -35,9 +35,20 @@ class GitRepoCache():
         try:
             git.Repo.clone_from(ssh_url, location)
         except:
-            log.info(f"deleting existing repo on location {location} for repo :{ssh_url}")
-            shutil.rmtree(location, onerror=on_rm_error)
-            git.Repo.clone_from(ssh_url, location)         
+            try:
+                log.info(f"deleting existing repo on location {location} for repo :{ssh_url}")
+                shutil.rmtree(location, onerror=on_rm_error)
+                git.Repo.clone_from(ssh_url, location)    
+            except:
+                # we make a new map for the repo to be cloned in (location)
+                # and then we delete the old one
+                try:
+                    os.mkdir(location)
+                    git.Repo.clone_from(ssh_url, location)
+                except Exception as e:
+                    log.error(f"error cloning repo {ssh_url} to {location}")
+                    log.exception(e)
+                
     
     @staticmethod
     def update_content(location):

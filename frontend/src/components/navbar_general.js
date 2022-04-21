@@ -19,6 +19,9 @@ function NavBar() {
     const end_url = url_array[url_array.length-1]
     const [ShaclOverview, SetShaclOverview] = useState([{}]);
     const [ShaclErrors, SetShaclErrors] = useState(0);
+    const [repo_dirty, SetRepoDirty] = useState(false);
+    const [ahead, SetAhead] = useState(0);
+    const [behind, SetBehind] = useState(0);
 
     //get space name via axios request and set it to state
     const fetchSpaceName = async() => {
@@ -46,8 +49,102 @@ function NavBar() {
                 try{var ammount_violations = shacl_requirements[0]["http://www.w3.org/ns/shacl#result"].length;console.log(ammount_violations);SetShaclErrors(ammount_violations);}
                 catch(error){console.log(error);var ammount_violations = 0;}
             })
+            
+            //do axios request to get the git status /git/status
+            axios.get(BASE_URL_SERVER+`apiv1/spaces/${spaceid}/git/status/`)
+            .then(res => {
+                console.log(res)
+                var git_status = res.data;
+                console.log(git_status);
+                SetRepoDirty(git_status.dirty);
+                SetAhead(git_status.ahead);
+                SetBehind(git_status.behind);
+            })
         }   
     }
+
+    const BadgeGit = () => {
+        if(repo_dirty){
+            if(behind > 0){
+                return(
+                    <Badge className="badge-git" color="error" anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }} badgeContent={behind}>
+                        <Badge className="badge-git" color="warning" anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }} variant="dot">
+                            <FaGitAlt size="2em"></FaGitAlt>
+                        </Badge>
+                    </Badge>
+                )
+            }else{
+                return(
+                    <Badge className="badge-git" color="warning" variant='dot'>
+                        <FaGitAlt size="2em"></FaGitAlt>
+                    </Badge>
+                )
+            }
+        }
+        if(ahead > 0){
+            if(behind > 0){
+                return(
+                    <Badge className="badge-git" color="error" anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }} badgeContent={behind}>
+                        <Badge className="badge-git" color="warning" anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }} badgeContent={ahead}>
+                            <FaGitAlt size="2em"></FaGitAlt>
+                        </Badge>
+                    </Badge>
+                )
+            }else{
+                return(
+                    <Badge className="badge-git" color="warning" badgeContent={ahead}>
+                        <FaGitAlt size="2em"></FaGitAlt>
+                    </Badge>
+                )
+            }
+        }
+        if(behind > 0){
+            if(ahead > 0){
+                return(
+                    <Badge className="badge-git" color="error" anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }} badgeContent={behind}>
+                        <Badge className="badge-git" color="warning" anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }} badgeContent={ahead}>
+                            <FaGitAlt size="2em"></FaGitAlt>
+                        </Badge>
+                    </Badge>
+                )
+            }else{
+                return(
+                    <Badge className="badge-git" color="error" anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }} badgeContent={behind}>
+                        <FaGitAlt size="2em"></FaGitAlt>
+                    </Badge>
+                )
+            }
+        }
+        if(ahead == 0 && behind == 0 && repo_dirty != true){
+            return(
+                <Badge color="success" variant="dot">
+                    <FaGitAlt size="2em"></FaGitAlt>
+                </Badge>
+            )
+        }
+    }
+
 
     const BadgeFolder = () => {
         if(ShaclErrors > 0){
@@ -58,9 +155,7 @@ function NavBar() {
             )
         }else{
             return(
-                <Badge color="success" variant="dot">
-                    <FaFolderOpen size="2em"/>
-                </Badge>
+                <FaFolderOpen size="2em"/>
             )
         }
     }
@@ -86,7 +181,7 @@ function NavBar() {
                                 <Nav className="me-auto justify-content-center">
                                     <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button '>{Spacename}</p></Nav.Link>
                                     <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button activito'><FaGitAlt size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button activito'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
                                     <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
@@ -110,7 +205,7 @@ function NavBar() {
                                 <Nav className="me-auto justify-content-center">
                                     <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button'>{Spacename}</p></Nav.Link>
                                     <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button activito'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><FaGitAlt size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
                                     <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
@@ -134,7 +229,7 @@ function NavBar() {
                                 <Nav className="me-auto justify-content-center">
                                     <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button'>{Spacename}</p></Nav.Link>
                                     <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><FaGitAlt size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
                                     <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button activito'><FaCog size="2em"/></p></Nav.Link>
@@ -158,7 +253,7 @@ function NavBar() {
                                 <Nav className="me-auto justify-content-center">
                                     <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button activito'>{Spacename}</p></Nav.Link>
                                     <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><FaGitAlt size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
                                     <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>

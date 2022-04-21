@@ -49,6 +49,9 @@ class Space(RoCrateGitBase):
                 seed_dependencies = self.ro_profile.seed_dependencies
                 log.debug(seed_dependencies)
                 #TODO: get all the seed_dependencies from the given profile uuid
+                
+                #TODO: Add a check on the created repo to see if the repo is not empty => if empty then copy over all the files from the seed repos else don't do anything
+                
                 self.clone_repo(self.remote_url)
                 repos_to_copy_over = []
                 for seed_repo in seed_dependencies.keys():
@@ -56,6 +59,7 @@ class Space(RoCrateGitBase):
                 #copy over all the files from the repos
                 for repo in repos_to_copy_over:
                     self._copy_files_to_workspace(repo_url=repo)
+                self.clone_repo(self.remote_url)
             #TODO: add the new metadata to the spaces.json file
             self.write()
         else:
