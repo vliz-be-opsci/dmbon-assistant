@@ -94,9 +94,16 @@
     background-position: center;
     background-size: 20%;
     background-position: 95% 7%;
+    display: block;
+}
+/* have the checkmark in the top right corner of the card */
+.git > div > div  {
+    opacity: 0;
 }
 
-
+.git:hover > div > div {
+    opacity: 1;
+}
 
 .ship {
     background-image: url('../static/oceanic-cargo-ship-global-distribution-light.svg');

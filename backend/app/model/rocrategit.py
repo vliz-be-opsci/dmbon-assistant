@@ -431,9 +431,15 @@ class RoCrateGitBase():
         test = shclh.ShapesInfoGraph(path_shacl)
         shacldata = test.full_shacl_graph_dict()
         data = self._read_metadata_datacrate()
+        try:
+            myrocrate = ROCrate(self.storage_path)
+            data_entities = myrocrate.data_entities
+        except Exception as e:
+            log.error(f'error when loading rocrate data via rocrate python lib: {e}')
+            log.exception(e)
+            data_entities = data['@graph']
+            log.debug(data_entities)
         
-        myrocrate = ROCrate(self.storage_path)
-        data_entities = myrocrate.data_entities
 
         #convert the chacl file to have all the properties per node id
         node_properties_dicts = []
@@ -504,7 +510,11 @@ class RoCrateGitBase():
                     chacl_URI_list.append(key_annotation)
             log.info(f"chacl_list_printed: {chacl_URI_list}")
             for entity in data_entities:
-                log.info(f"Crate data entities: {entity._jsonld}")
+                try:
+                    log.info(f"Crate data entities: {entity._jsonld}")
+                except Exception as e:
+                    log.error(f'error when displaying jsonld rocrate data via rocrate python lib: {e}')
+                    log.exception(e)
                 if entity["@id"] == file_id:
                     entity[uri_name]= value_uri
             if uri_name not in chacl_URI_list:
@@ -512,7 +522,15 @@ class RoCrateGitBase():
                 
             ## implement annotation in the data is found , send warning message is annotation title not found in constraints ##
         ## write back to metadata file and return metadata.json file 
-        myrocrate.write(self.storage_path)
+        try:
+            myrocrate.write(self.storage_path)
+        except Exception as e:
+            log.error(f'error when writing rocrate data via rocrate python lib: {e}')
+            log.exception(e)
+            #write back data to meta json file located in the workspace
+            with open(os.path.join(self.storage_path, "ro-crate-metadata.json"), "w") as outfile:
+                json.dump(data, outfile, indent=4)
+            
         data = self._read_metadata_datacrate()
         return {"Data":data, "Warnings":warnings}
         

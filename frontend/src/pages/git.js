@@ -61,8 +61,8 @@ export default class GitPage extends React.Component {
       console.log(this.state.SpaceId);
       //axios request 
       this.setLoading(true);
-        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/push`)
-        .then(response => {this.setLoading(false);})
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/push`,{})
+        .then(response => {this.setLoading(false);window.location.reload();})
         .catch(error => {
         this.setLoading(false);
         alert(error);
@@ -72,7 +72,7 @@ export default class GitPage extends React.Component {
     getPull(){
       console.log('pulling from git repo');
       this.setLoading(true);
-        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/pull`)
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/pull`,{})
         .then(response => {this.setLoading(false);window.location.href = `/spaces/${this.state.SpaceId}/all_files`;})
         .catch(error => {
         this.setLoading(false);

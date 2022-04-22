@@ -170,6 +170,7 @@ function FilesView(props) {
                 </tbody>
             </table>    
             </CheckboxGroup>
+            <br></br>
         </div>
     )
 }

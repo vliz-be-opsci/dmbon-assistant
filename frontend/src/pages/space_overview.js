@@ -21,29 +21,11 @@ function SpaceOverviewPage() {
     const [repo_dirty, SetRepoDirty] = useState(false);
     const [ahead, SetAhead] = useState(0);
     const [behind, SetBehind] = useState(0);
+    const [gitpushloading, SetGitPushLoading] = useState(false);
+    const [gitpullloading, SetGitPullLoading] = useState(false);
     const [repo_message, SetRepoMessage] = useState('');
 
     ChartJS.register(ArcElement, Tooltip, Legend);
-    var dummydata = {
-        labels: ['Violations (%)', 'Good (%)', 'Warnings (%)'],
-        datasets: [
-          {
-            label: '# of Votes',
-            data: [70, 10, 20],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(255, 159, 64, 0.2)',
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(255, 159, 64, 1)',
-            ],
-            borderWidth: 1,
-          },
-        ],
-      };
 
     //have axios call to get all the semantic data for the space 
     const fetchShaclOverview = async() => {
@@ -114,8 +96,9 @@ function SpaceOverviewPage() {
 
     //function that makes an axios call to pull data from git for the current spaceid git/pull
     const gitPull = async() => {
+      SetGitPullLoading(true);
       if(SpaceId){
-        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/pull/`)
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/pull/`,{})
         .then(res => {
             console.log(res)
             window.location(`spaces/${SpaceId}/all_files`);
@@ -125,14 +108,50 @@ function SpaceOverviewPage() {
 
     //function that makes an axios call to push data from git for the current spaceid git/push
     const gitPush = async() => {
+      SetGitPushLoading(true);
       if(SpaceId){
-        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/push/`)
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/push/`,{})
         .then(res => {
             console.log(res)
             window.location.reload();
         })
       }
     }
+
+    //have component that changes button to loading component
+    const GitPullButton = () => {
+      if(gitpullloading){
+        return(
+            <>
+              <ReactLoading type='bars' color='#006582'/>
+            </>
+        )
+      }else{
+        return(
+          <>
+            <button onClick={gitPull} className="git-status-button-pull button_vliz">Pull</button>
+          </>
+        )
+      }
+    }
+
+    const GitPushButton = () => {
+      if(gitpullloading){
+        return(
+            <>
+              <ReactLoading type='bars' color='#006582'/>
+            </>
+        )
+      }else{
+        return(
+          <>
+            <button onClick={gitPush} className="git-status-button-push button_vliz">Push</button>
+          </>
+        )
+      }
+    }
+
+
 
     //have react component to display the git status
     const GitStatus = () => {
@@ -143,7 +162,7 @@ function SpaceOverviewPage() {
               <p>Repo is {behind} commit(s) behind the remote, pull to sync</p> 
             </div>
             <div className="git-status-button">
-              <button onClick={gitPull} className="git-status-button-pull button_vliz">Pull</button>
+              {GitPullButton()}
             </div>
           </div>
         )
@@ -169,7 +188,7 @@ function SpaceOverviewPage() {
               <p>Repo is {ahead} commit(s) ahead of the remote, push to sync</p>
             </div>
             <div className="git-status-button">
-              <button onClick={gitPush} className="git-status-button-push button_vliz">Push</button>
+              {GitPushButton()}
             </div>
           </div>
         )
@@ -177,8 +196,10 @@ function SpaceOverviewPage() {
       else{
         return(
           <div className="git-status-container">
-            <div className="git-status-message">
-              <p>All good icon here</p>
+            <div className="git-status-message-checkmark">
+              <svg width="18vw" height="18vw" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#00AA7b" d="M12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 C17.5228475,2 22,6.4771525 22,12 C22,17.5228475 17.5228475,22 12,22 Z M12,21 C16.9705627,21 21,16.9705627 21,12 C21,7.02943725 16.9705627,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 Z M15.1464466,9.14644661 C15.3417088,8.95118446 15.6582912,8.95118446 15.8535534,9.14644661 C16.0488155,9.34170876 16.0488155,9.65829124 15.8535534,9.85355339 L10.8535534,14.8535534 C10.6582912,15.0488155 10.3417088,15.0488155 10.1464466,14.8535534 L8.14644661,12.8535534 C7.95118446,12.6582912 7.95118446,12.3417088 8.14644661,12.1464466 C8.34170876,11.9511845 8.65829124,11.9511845 8.85355339,12.1464466 L10.5,13.7928932 L15.1464466,9.14644661 Z"/>
+              </svg>    
             </div>  
           </div>
         )

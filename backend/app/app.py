@@ -68,8 +68,8 @@ def enable_test_logging():
             logging.config.dictConfig(yaml.load(yml_logconf, Loader=yaml.SafeLoader))
         log.info(f"Logging enabled according to config in {logconf}")
         print(logconf)
-        Locations(root=os.path.join(os.getcwd(),"app","webtop-work-space"))  
-        
+
+Locations(root=os.path.join(os.getcwd(),"app","webtop-work-space"))  
 enable_test_logging()
 
 def custom_openapi():

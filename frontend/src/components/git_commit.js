@@ -40,12 +40,13 @@ function GitCommit() {
     const submitform = event => {
         //prevent reload page
         event.preventDefault();
+        //get the form data
+        const summary_message = event.target.elements.git_commit_summary.value;
         console.log(event.target.elements.git_commit_summary.value);
-        console.log(event.target.elements.git_commit_description.value);
         //do axios request to post to submit all the changes to git 
         setLoading(true);
-        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/commit`)
-        .then(response => {setLoading(false);})
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/commit`,{message: summary_message})
+        .then(response => {setLoading(false);window.location.reload();})
         .catch(error => {
         setLoading(false);
         alert('There was an error!', error);
@@ -72,10 +73,6 @@ function GitCommit() {
                             <Form.Group className="mb-3" controlId="git_commit_summary">
                                 <Form.Label>Summary</Form.Label>
                                 <Form.Control type="text" placeholder="update rocrate" />
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="git_commit_description">
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control as="textarea" rows={3} placeholder="description update rocrate"/>
                             </Form.Group>
                             <Button variant="success" type="submit" className="large">
                                 Submit Commit 

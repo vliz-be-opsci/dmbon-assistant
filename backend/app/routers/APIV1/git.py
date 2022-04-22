@@ -55,6 +55,9 @@ class ContentModel(BaseModel):
 
 class DeleteContentModel(BaseModel):
     content: List[str] = Field(None, description = "List of files to delete , if full path given it will delete one file , of only file name given it will delete all entities in the system with file name.")
+    
+class GitCommitMessageModel(BaseModel):
+    message: Optional[str] = Field(None, description = "Commit message")
 
 ### define helper functions for the api ###
 
@@ -140,26 +143,28 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     except:
         pulls = "not available for this space"
         
-
+    #check if there are any unstaged files in the repo 
+    diff_list = repo.index.diff(None)
+    
     
     hcommit = repo.head.commit
-    diff_list = hcommit.diff()
-    difff_list = hcommit.diff(ignore_blank_lines=True, ignore_space_at_eol=True,create_patch=True)
-    print(diff_list, file=sys.stderr)
+    #diff_list = hcommit.diff()
+    difff_list = repo.index.diff(None,ignore_blank_lines=True, ignore_space_at_eol=True,create_patch=True)
+    log.debug(difff_list)
     i = 0
     for diff in diff_list:
         try:
             toappend = {}
-            print(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
+            log.info(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
             toappend["change_type"] = diff.change_type
             # Returns true if it is a new file
-            print(diff.new_file) 
+            log.info(diff.new_file) 
             toappend["newfile"] = diff.new_file
             # Print the old file path
-            print(diff.a_path)
+            log.info(diff.a_path)
             toappend["a_path"] = diff.a_path
             # Print the new file path. If the filename (or path) was changed it will differ
-            print(diff.b_path) 
+            log.info(diff.b_path) 
             toappend["b_path"] = diff.b_path
             toappend["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")
             # text of diff make unified diff first 
@@ -178,7 +183,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     return {'data':toreturn, 'message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
 
 @router.post('/{command}', status_code=200)
-def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
+def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)"), item:GitCommitMessageModel):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
         data = json.load(file)
@@ -197,15 +202,20 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
     #repo commit
     if command == "commit":
         try:
-            print("before commit", file=sys.stderr)
-            repo.index.commit("RO-crate API commit")   # <--- TODO: ADD user to the commit message for better cross scientists performance
-            print("after commit", file=sys.stderr)
-            return {"data":"{} successfull".format(str(command))}
+            #get all the changed files in the repo and add them to the index
+            repo.git.add(all=True)
+            if item.message == "":
+                raise HTTPException(status_code=400, detail="No commit message given")
+            else:
+                repo.index.commit(item.message)
+                return {"data":"{} successfull".format(str(command))}
         except Exception as e:
+            log.error(f'an error occured when trying to commit : {e}')
+            log.exception(e)
             raise HTTPException(status_code=500, detail=e)
     
     try:
-        print(repo.remote().refs, file=sys.stderr)
+        log.debug(repo.remote().refs)
     except:
         raise HTTPException(status_code=400, detail="repo has no remote references to push or pull to.")
 
@@ -218,7 +228,6 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
         origin.push()
         return {"data":"{} successfull".format(str(command))}
         
-    
     if command == "pull":
         try:
             origin = repo.remote(name='origin')
@@ -226,4 +235,3 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
             raise HTTPException(status_code=500, detail=e)
         origin.pull()
         return {"data":"{} successfull".format(str(command))}
-        
