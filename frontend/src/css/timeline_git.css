@@ -1,0 +1,62 @@
+/*.timelineselected {
+    width: 75px;
+    height: 75px;
+}*/
+.timeline-big {
+    position: relative;
+    overflow: hidden;
+}
+
+.selected {
+    width: 60px;
+    height: 60px;
+}
+
+.selected-icon {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.timeline-big:hover .selected:hover {
+    width: 75px;
+    height: 75px;
+    /*have shadow here */
+    border: 5px dashed #2c3e5055;
+
+}
+
+/* add animation when timeline hovered */
+.timeline-big:hover .selected {
+    animation: flickering 0.3s ease-in-out infinite alternate;
+    opacity: 0;
+}
+
+@keyframes flickering {
+    0% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+a {
+    color: #fff;
+}
+
+a:hover{
+    color: #fff;
+}
+
+/*hide timeline when height is less then 150px*/
+@media screen and (max-width: 1200px) and (min-width: 480px) {
+    .timeline-big {
+        visibility: hidden;
+    }
+}
+    
+

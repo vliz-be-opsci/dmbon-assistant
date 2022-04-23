@@ -15,6 +15,7 @@ var port_server = process.env.REACT_APP_PORT_BACKEND_SERVER;
 const BASE_URL_SERVER = 'http://'+window.location.hostname+':'+port_server+'/';
 function App() {
   return (
+    <>
     <div className="App">
       <Navbar/>
       <div className="container">
@@ -29,8 +30,9 @@ function App() {
           <Route path='/spaces/:SpaceId/all_files/:FileId' element={<FileSpecificPage/>} />
         </Routes>
       </div>
-      
     </div>
+    </>
+    
   );
 }
 
