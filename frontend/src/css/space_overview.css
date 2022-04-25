@@ -10,9 +10,7 @@
 .card_td {
     padding: 10%;
     min-width: 105px;  
-    min-height: 150px;
-    height: 30vw; 
-    max-height: 50vh;
+    aspect-ratio: 1/1;
     border: 2px solid #2c3e5055;
     border-radius: 20px;
     background-color: #91cedf33;

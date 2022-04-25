@@ -145,7 +145,13 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         
     #check if there are any unstaged files in the repo 
     diff_list = repo.index.diff(None)
-    
+    try:
+        diff = str(repo.git.diff('origin')).splitlines()
+        log.info("before null")
+        log.info(diff)
+    except Exception as e:
+        log.error(e)
+        log.exception(e)
     
     hcommit = repo.head.commit
     #diff_list = hcommit.diff()
