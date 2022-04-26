@@ -209,14 +209,6 @@ def complete_metadata_crate(source_path_crate):
                     id["hasPart"].append({'@id':i})
             data['@graph'].append({'@id':i, '@type':"File"})  
     
-    #remove duplicates
-    seen_ids = []
-    for ids in data['@graph']:
-        if ids['@id'] in seen_ids:
-            data['@graph'].remove(ids)
-        else:
-            seen_ids.append(ids['@id'])
-    
     ## add file_ids metadata correspondingly ##
     for ids in data['@graph']:
         for tocheck_id in all_meta_ids_data:
@@ -226,7 +218,38 @@ def complete_metadata_crate(source_path_crate):
                         if key_dict_single_meta not in ids.keys():
                             log.debug(f"key of single file metadata: {key_dict_single_meta}")
                             ids[key_dict_single_meta] = value_dcit_sinle_meta
-                            
+    
+    #remove duplicates
+    seen_ids = []
+    for ids in data['@graph']:
+        if ids['@id'] in seen_ids:
+            log.info("duplicate id found: "+ids['@id'])
+            data['@graph'].remove(ids)
+        else:
+            seen_ids.append(ids['@id'])
+                          
+    #remove duplicates from hasPart
+    new_graph = []
+    seen_ids = []
+    for ids in data['@graph']:
+        if ids['@id'] not in seen_ids:
+            seen_ids.append(ids['@id'])
+            
+            # if ids has hasPart check hasparts
+            if 'hasPart' in ids:
+                new_hasparts = []
+                seen_hasparts = []
+                for haspart in ids['hasPart']:
+                    if haspart['@id'] in seen_hasparts:
+                        log.info("duplicate id found in hasparts of id: "+ haspart["@id"] + ids['@id'])
+                    else:
+                        seen_hasparts.append(haspart['@id'])
+                        new_hasparts.append(haspart)
+                ids['hasPart'] = new_hasparts
+            new_graph.append(ids)
+    
+    data["@graph"] = new_graph
+    
     #write the rocrate file back 
     with open(os.path.join(source_path_crate, 'ro-crate-metadata.json'), 'w') as json_file:
         json.dump(data, json_file)

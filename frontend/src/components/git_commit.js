@@ -67,25 +67,26 @@ function GitCommit() {
             <div>
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey="0">
-                        <Accordion.Header>Commit form</Accordion.Header>
+                        
+                        <Accordion.Header>Overview of your local unstaged changes</Accordion.Header>
+                        <Accordion.Body>
+                            <ReactGhLikeDiff
+                                diffString={GitDiff}
+                            /> 
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey="1">
+                    <Accordion.Header>document your unstaged changes </Accordion.Header>
                         <Accordion.Body>
                         <Form onSubmit={submitform}>
                             <Form.Group className="mb-3" controlId="git_commit_summary">
                                 <Form.Label>Summary</Form.Label>
-                                <Form.Control type="text" placeholder="update rocrate" />
+                                <Form.Control as="textarea" placeholder="explantion for these changes"/>
                             </Form.Group>
                             <Button variant="success" type="submit" className="large">
                                 Submit Commit 
                             </Button>
                         </Form>
-                        </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey="1">
-                        <Accordion.Header>Space differences</Accordion.Header>
-                        <Accordion.Body>
-                            <ReactGhLikeDiff
-                                diffString={GitDiff}
-                            /> 
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
