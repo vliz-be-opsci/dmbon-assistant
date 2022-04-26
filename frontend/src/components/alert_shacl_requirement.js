@@ -21,6 +21,8 @@ function AlertShaclReq(props) {
     const severity_error = props.severity_error;
     const constraint_props = props.constraint_props;
     const result_message = props.result_message;
+    const spacelist_data = props.spacelist_data;
+
     //functions
 
     //function that changes the value of the input
@@ -55,10 +57,66 @@ function AlertShaclReq(props) {
         window.location.reload();
     }
 
+    //function that perform an axios post request to add a blank node to the metadata file
+    const addBlankNode = async () => {
+        //change the frist letter of uri_predicate to uppercase
+        const uri_predicate_name = predicate_name.charAt(0).toUpperCase() + predicate_name.slice(1);
+        console.log(uri_predicate_name);
+        //setLoading(true); 
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/annotation/file/${props.FileId}/blanknode`, {
+            "URI_predicate_name": predicate_name,
+            "node_type": uri_predicate_name
+        }
+        ).then(res => {
+            console.log(res);
+            setLoading(false);
+            window.location.reload();
+        }
+        ).catch(error => {
+            console.log(error);
+            setLoading(false);
+        }); 
+        
+    }
+
+            
+
 
     function Alertlogsprops(props) {
         var shacl_requirements = props.shacl_requirements;
         console.log(shacl_requirements);
+        //check if any key in the array shacl_requirements is node
+        var isnode = false;
+        for (var i = 0; i < shacl_requirements.length; i++) {
+            if(Object.keys(shacl_requirements[i]).includes("node")){
+                isnode = true;
+                try {
+                    var node_value_array = shacl_requirements[i]["node"][0]["@id"].split("/");
+                    var node_value_shape_array = node_value_array[node_value_array.length-1].split("Shape");
+                    var node_value = node_value_shape_array[0];
+                    console.log(node_value);
+                } catch (error) {
+                    console.log(error);
+                }
+                
+            }
+        }
+
+        //check fi the result_message contains "Value does not conform to Shape "
+        var node_in_graph = false;
+        if(result_message.includes("Value does not conform to Shape ")){
+            node_in_graph = true;
+            console.log(spacelist_data);
+            //loop through spacelist_data to find predicate that equals the predicate_name and return the value of the node
+            for (var i = 0; i < spacelist_data.length; i++) {
+                if(spacelist_data[i]["predicate"] === predicate_name){
+                    console.log(spacelist_data[i]["value"]);
+                    var button_node_value = spacelist_data[i]["value"];
+                    var href_button_node_value = spacelist_data[i]["value"].split("nodeshape: ")[1];
+                }
+            }
+        }
+
         //check if any key in the array shacl_requirements is minCount
         var minCount = false;
         for (var i = 0; i < shacl_requirements.length; i++) {
@@ -200,20 +258,54 @@ function AlertShaclReq(props) {
                 </>
             )
         }else{
-            return(
-                <>
-                    <Form>
-                        <table>
-                            <tr>
-                                <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
-                                <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
-                                <td style={{"width":"100%"}}><Form.Group><Form.Control type="text" onChange={(e) => handleChange(e)} placeholder="Enter value" aria-label="Default select example"/></Form.Group></td>
-                                <td style={{"width":"6%"}}><SubmitButton severity={severity_error} onClick={() => addPredicate()}></SubmitButton></td>
-                            </tr>
-                        </table>
-                    </Form>
-                </>
-            )
+            // determine here if the the node value to add is a node or not 
+            if(isnode){
+                if(node_in_graph){
+                    return(
+                        <>
+                            <Form>
+                                <table>
+                                    <tr>
+                                        <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
+                                        <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
+                                        <td colSpan="2" style={{"width":"100%"}}><a target="_blank" href={'/spaces/'+SpaceId+'/all_files/'+href_button_node_value}>{button_node_value}</a></td>
+                                    </tr>
+                                </table>
+                            </Form>
+                        </>
+                    )
+                }else{
+                    return(
+                        <>
+                            <Form>
+                                <table>
+                                    <tr>
+                                        <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
+                                        <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
+                                        <td colSpan="2" style={{"width":"100%"}}><button onClick={() => addBlankNode()} className="button_vliz space_button">add {predicate_name} node</button></td>
+                                    </tr>
+                                </table>
+                            </Form>
+                        </>
+                    )
+                }
+            }else{
+                return(
+                    <>
+                        <Form>
+                            <table>
+                                <tr>
+                                    <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
+                                    <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
+                                    <td style={{"width":"100%"}}><Form.Group><Form.Control type="text" onChange={(e) => handleChange(e)} placeholder="Enter value" aria-label="Default select example"/></Form.Group></td>
+                                    <td style={{"width":"6%"}}><SubmitButton severity={severity_error} onClick={() => addPredicate()}></SubmitButton></td>
+                                </tr>
+                            </table>
+                        </Form>
+                    </>
+                )
+            }
+            
         }
 
         //make javascript function that check for the ammount of rows in the table and return the number of rows

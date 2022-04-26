@@ -128,6 +128,11 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     except Exception as e:
         log.error(e);
         repo = git.Repo(os.path.join(space_folder,"repo"))
+    
+    #perform a fetch on the git repo
+    log.info("Fetching remote")
+    repo.git.fetch()
+    
     ahead = 0
     behind = 0
     # check if the repo has a remote url

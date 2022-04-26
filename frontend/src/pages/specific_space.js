@@ -50,7 +50,6 @@ function SpaceSpecificPage() {
         }
         console.log(array);
         deleteFileRocrate(array);
-        window.location.href = `/spaces/${SpaceId}/all_files`;
     });
   });
 

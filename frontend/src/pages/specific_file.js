@@ -5,11 +5,13 @@ import {useParams} from 'react-router-dom';
 import FileAnnotationView from './../components/file_annotation_view';
 import {Alert, Button} from 'react-bootstrap';
 import AlertShaclReq from './../components/alert_shacl_requirement';
+import ReactLoading from 'react-loading';
 
 function FileSpecificPage() {
 
 //define all constants first
-  const [spaceList, setSpacesList] = useState([]) 
+  const [spaceList, setSpacesList] = useState([]) ;
+  const [Loading, setLoading] = useState(true);
   const {SpaceId} = useParams();
   const {FileId}  = useParams();
   const [show, setShow] = useState(true);
@@ -24,6 +26,7 @@ function FileSpecificPage() {
         setSpacesList(res.data.data);
         console.log(res.data.shacl_requirements);
         setShaclRequirements(res.data.shacl_requirements);
+        setLoading(false);
       })
   }
 
@@ -129,6 +132,7 @@ function FileSpecificPage() {
                         severity_error={violation.severity_error}
                         predicate_name={violation.predicate_name}
                         result_message={violation.resultMessage}
+                        spacelist_data={spaceList}
                         show_alert={show}
                         FileId={FileId}
                       />
@@ -164,16 +168,27 @@ function FileSpecificPage() {
     fetchSpaces();
   },[]);
 
-    return (
-        <div>
-            <p></p>
-            <Alertlogs shacl_requirements={shaclRequirements}/>
-            <div>
-            <FileAnnotationView listannotations={spaceList}/>
-            </div>
-            <br/>
-        </div>
+  //return 
+
+  if(Loading){
+    return(
+      <div class="busy">
+          <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
+      </div>
     )
+  }else{
+    return (
+      <div>
+          <p></p>
+          <Alertlogs shacl_requirements={shaclRequirements}/>
+          <div>
+          <FileAnnotationView listannotations={spaceList}/>
+          </div>
+          <br/>
+      </div>
+    );
+  }
+    
 }
 
 export default FileSpecificPage

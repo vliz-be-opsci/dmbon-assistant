@@ -11,6 +11,7 @@ from rdflib import Graph
 import json, math
 from pyshacl import validate
 from base64 import decode
+import uuid as uuidmake
 
 log=logging.getLogger(__name__)
 
@@ -240,20 +241,26 @@ class RoCrateGitBase():
         log.debug(node_properties_dicts)
                 
         all_predicates = []
+        all_recursive_predicates = []
         #get all files from the projectfile
         for dictionaries in data["@graph"]:
             for item, value in dictionaries.items():
                 if item == "@id" and value == file_id:
                     for item_save, value_save in dictionaries.items():
                         all_predicates.append(item_save)
-                        all_files.append({'predicate':item_save,'value':value_save})
+                        #check if value-save is not on object 
+                        if(type(value_save) is not dict):
+                            all_files.append({'predicate':item_save,'value':value_save})
+                        else:
+                            all_files.append({'predicate':item_save,'value':"nodeshape: "+value_save["@id"]})
+                            all_recursive_predicates.append({'predicate':item_save,'value':value_save})
         
         if len(all_predicates) == 0:
             return {"error":404,"detail":"Resource not found"}
         
         log.info(all_files)
         
-        return {'data':all_files, 'summary': summary, 'shacl_requirements': json.loads(r_decoded), 'shacl_original': f_constraints_text}
+        return {'data':all_files, 'complex_data':all_recursive_predicates,'summary': summary, 'shacl_requirements': json.loads(r_decoded), 'shacl_original': f_constraints_text}
     
     def get_shacl_report(self):
         """get the shacl report for the whole space
@@ -285,7 +292,7 @@ class RoCrateGitBase():
                 
         shacl_file = open(path_shacl, "rb").read()
         sh = Graph().parse(data=shacl_file, format="turtle")
-        r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, data_graph_format="json-ld", serialize_report_graph="json-ld")
+        r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, js=True, data_graph_format="json-ld", serialize_report_graph="json-ld", debug=True)
         r_decoded = r[1].decode("utf-8")
         
         green = 0
@@ -388,6 +395,27 @@ class RoCrateGitBase():
                 uri_name  = annotationfile.URI_predicate_name
                 entity.pop(uri_name, None)
         myrocrate.write(self.storage_path)
+        
+    def create_blank_node_by_id(self, file_id=str, node_type=str, uri_predicate=str):
+        tocheck_folder = self.storage_path
+        #load in metadata files
+        data = self._read_metadata_datacrate()
+        
+        new_uuid_blank_node = uuidmake.uuid4().hex
+        #go over each file in the graph to see if the @id is the same as the file_id
+        for item in data["@graph"]:
+            if item["@id"] == file_id:
+                #if it is the same, create a new blank node with the same @id
+                new_blank_node = {}
+                new_blank_node["@id"] = new_uuid_blank_node
+                new_blank_node["@type"] = node_type
+                #add the new blank node to the graph
+                data["@graph"].append(new_blank_node)
+                #add uri predicate to the item with value of nw blacnk node @id
+                item[uri_predicate] = {"@id":new_uuid_blank_node}
+                #write the new graph to the metadata file
+                self._write_metadata_datacrate(data)
+                return new_blank_node
         
     def delete_predicates_by_id(self,to_delete_predicate=str, file_id=str):
         """ delete predicates to given ids by giving a dictionary of predicates to delete 

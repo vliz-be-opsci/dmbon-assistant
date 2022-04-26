@@ -78,7 +78,6 @@ function SpaceOverviewPage() {
                         ],
                       }
                 )
-                setLoading(false);
             })
         }  
         
@@ -94,6 +93,7 @@ function SpaceOverviewPage() {
                 SetBehind(res.data.behind);
                 SetRepoMessage(res.data.message);
                 SetRepoDirty(res.data.dirty);
+                setLoading(false);
             })
         }
     }

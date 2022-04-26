@@ -42,7 +42,7 @@ function TimeLineGit(props) {
           axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/pull/`,{})
           .then(res => {
               console.log(res)
-              window.location(`spaces/${SpaceId}/all_files`);
+              window.location.reload();
           })
         }
       }

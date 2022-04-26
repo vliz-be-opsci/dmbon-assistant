@@ -32,6 +32,23 @@ function FileAnnotationView(props) {
             document.location.reload(true);
         }
     };
+
+    //make component that will return value of predicate if value predicates contains nodeshape: then return href nodeschape
+    const getValue = (props) => {
+
+        const value  = props.value;
+        if(value.indexOf("nodeshape:") !== -1){
+            const hrefvalue = value.split("nodeshape: ")[1];
+            return(
+                <a href={`/spaces/${SpaceId}/all_files/${hrefvalue}`}>{value}</a>
+            )
+        }else{
+            return(
+                <span>{value}</span>
+            )
+        }
+    }
+
     return (
         <div>
             <table className='table_vliz'>
@@ -53,7 +70,7 @@ function FileAnnotationView(props) {
                                 {annotation.predicate}
                             </td>
                             <td>
-                                {annotation.value}
+                                {getValue({"value":annotation.value})}
                             </td>
                         </tr>
                     )}
