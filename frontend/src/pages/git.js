@@ -1,123 +1,73 @@
-import React from 'react';
-import $ from 'jquery';
-import GitCommit from '../components/git_commit.js';
-import GitHistory from '../components/git_history.js';
+import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
+import {useParams} from 'react-router-dom';
 import ReactLoading from 'react-loading';
 import {BASE_URL_SERVER} from '../App.js';
+import GitCommit from '../components/git_commit.js';
+import GitHistory from '../components/git_history.js';
 
-$(document).ready(function() {
-    $(".btn").click(function() {
-        console.log("button clicked");
-        console.log("actionbutton clicked");
-        $(":button").each(function(){
-            $(this).removeClass("btn-success");
-            $(this).addClass("btn-primary");
+function NewGitPage() {
+
+    //define all constants first
+    const [Loading, setLoading] = useState(false); 
+    const {SpaceId} = useParams();
+    const [message, setMessage] = useState("commit");
+    //All the functions here
+
+    //function that will send axios request to server to push git commit
+    const sendPush = () => {
+        console.log('pushing to git repo');
+        setLoading(true);
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/push`,{})
+            .then(response => {this.setLoading(false);window.location.reload();})
+            .catch(error => {
+            setLoading(false);
+            alert(error);
         });
-        $(this).removeClass("btn-primary");
-        $(this).addClass("btn-success");
-    });
-});
-
-export default class GitPage extends React.Component {
-    constructor(props) {
-      super(props);
-  
-      this.state = {
-        message: "commit",
-        Loading: false,
-        SpaceId: ""
-      }
-      this.updateMessage = this.updateMessage.bind(this);
-      this.setLoading    = this.setLoading.bind(this);
-      this.setSpaceId    = this.setSpaceId.bind(this);
     }
 
-    componentDidMount() {
-      const SpaceId = window.location.href.split("/spaces/")[1].split("/git")[0];
-      this.setSpaceId(SpaceId);
+    //function that will send axios request to server to pull git commit
+    const getPull = () => {
+        console.log('pulling from git repo');
+        setLoading(true);
+        axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/pull`,{})
+            .then(response => {this.setLoading(false);window.location.href = `/spaces/${SpaceId}/all_files`;})
+            .catch(error => {
+            setLoading(false);
+            console.log(error);
+            alert(error);
+        });
     }
 
-    setSpaceId(id) {
-      this.setState({
-        SpaceId: id
-      })
+    //component to determine whether to display the history or the commit component
+    const Displaygit = () => {
+        if(message == "commit"){
+            return <GitCommit />;
+        }
+        if(message == "history"){
+            return <GitHistory />;
+        }
     }
 
-    updateMessage(message) {
-      this.setState({
-        message: message
-      });
-    }
 
-    setLoading(load) {
-      this.setState({
-        Loading: load
-      });
-    }
-
-    sendPush(){
-      console.log('pushing to git repo');
-      console.log(this.state.SpaceId);
-      //axios request 
-      this.setLoading(true);
-        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/push`,{})
-        .then(response => {this.setLoading(false);window.location.reload();})
-        .catch(error => {
-        this.setLoading(false);
-        alert(error);
-      });
-    }
-
-    getPull(){
-      console.log('pulling from git repo');
-      this.setLoading(true);
-        axios.post(BASE_URL_SERVER+`apiv1/spaces/${this.state.SpaceId}/git/pull`,{})
-        .then(response => {this.setLoading(false);window.location.href = `/spaces/${this.state.SpaceId}/all_files`;})
-        .catch(error => {
-        this.setLoading(false);
-        console.log(error);
-        alert(error);
-      });
-    }
-
-    render() {
-
-      const message = this.state.message;
-			let todisplay;
-      if(message == "commit"){
-				todisplay = <GitCommit />;
-				console.log(todisplay);
-			}
-			if(message == "history"){
-				todisplay = <GitHistory />;
-				console.log(todisplay);
-			}
-
-      if(this.state.Loading){
-        return(
+    if(Loading){
+      return(
         <div class="busy">
-            <p>View differences: 
             <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
-            </p>
         </div>
-        )
-      }
-      
-      if(this.state.Loading == false){
+      )
+    }else{
         return (
-            <div>
-                <div>
-                  <hr />
-                  <button onClick={() => this.getPull()} id="pull_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Pull</button>
-                  <button onClick={() => this.updateMessage("commit")} id="commit_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz" >Commit</button>
-                  <button onClick={() => this.sendPush()} id="push_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Push</button>
-                  <button onClick={() => this.updateMessage("history")} id="history_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">History</button>
-                  <hr />
-                  {todisplay}
-              </div>
-            </div>
-        );
-      }
+          <>
+            <button onClick={() => getPull()} id="pull_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Pull</button>
+            <button onClick={() => setMessage("commit")} id="commit_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz" >Commit</button>
+            <button onClick={() => sendPush()} id="push_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Push</button>
+            <button onClick={() => setMessage("history")} id="history_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">History</button>
+            <hr></hr>
+            <Displaygit />
+          </>
+      )
     }
-  }
+}
+
+export default NewGitPage
