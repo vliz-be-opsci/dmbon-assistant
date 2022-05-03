@@ -25,14 +25,11 @@
     "react-bootstrap": "^2.0.2",
     "react-chartjs-2": "^4.1.0",
     "react-dom": "^17.0.2",
-    "react-dropzone": "^11.4.2",
     "react-gh-like-diff": "^2.0.2",
     "react-icons": "^4.3.1",
     "react-loading": "^2.0.3",
     "react-router-dom": "^6.0.2",
-    "react-script-tag": "^1.1.2",
     "react-scripts": "4.0.3",
-    "styled-components": "^5.3.5",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

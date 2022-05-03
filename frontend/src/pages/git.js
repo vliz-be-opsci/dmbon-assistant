@@ -26,21 +26,47 @@ export default class GitPage extends React.Component {
       this.state = {
         message: "commit",
         Loading: false,
-        SpaceId: ""
+        SpaceId: "",
+        behind: "",
+        ahead: ""
       }
       this.updateMessage = this.updateMessage.bind(this);
       this.setLoading    = this.setLoading.bind(this);
       this.setSpaceId    = this.setSpaceId.bind(this);
+      this.setbehind     = this.setbehind.bind(this);
+      this.setahead      = this.setahead.bind(this);
     }
 
     componentDidMount() {
       const SpaceId = window.location.href.split("/spaces/")[1].split("/git")[0];
       this.setSpaceId(SpaceId);
+      //perform axiosrequest that will get the git status of the space
+      axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/status`)
+      .then(response => {
+        if(response.data.behind > 0){
+          this.setbehind("disabled");
+        }
+        if(response.data.ahead > 0){
+          this.setahead("disabled");
+        }
+      })
     }
 
     setSpaceId(id) {
       this.setState({
         SpaceId: id
+      })
+    }
+
+    setbehind(behind){
+      this.setState({
+        behind: behind
+      })
+    }
+
+    setahead(ahead){
+      this.setState({
+        ahead: ahead
       })
     }
 
@@ -55,6 +81,8 @@ export default class GitPage extends React.Component {
         Loading: load
       });
     }
+
+
 
     sendPush(){
       console.log('pushing to git repo');
@@ -82,7 +110,6 @@ export default class GitPage extends React.Component {
     }
 
     render() {
-
       const message = this.state.message;
 			let todisplay;
       if(message == "commit"){
@@ -93,7 +120,6 @@ export default class GitPage extends React.Component {
 				todisplay = <GitHistory />;
 				console.log(todisplay);
 			}
-
       if(this.state.Loading){
         return(
         <div class="busy">
@@ -103,13 +129,12 @@ export default class GitPage extends React.Component {
         </div>
         )
       }
-      
       if(this.state.Loading == false){
         return (
             <div>
                 <div>
                   <hr />
-                  <button onClick={() => this.getPull()} id="pull_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Pull</button>
+                  <button onClick={() => this.getPull()} id="pull_btn" type="button" style={{width:"23%",margin:"10px"}} class={"button_vliz "+ this.behind}>Pull</button>
                   <button onClick={() => this.updateMessage("commit")} id="commit_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz" >Commit</button>
                   <button onClick={() => this.sendPush()} id="push_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">Push</button>
                   <button onClick={() => this.updateMessage("history")} id="history_btn" type="button" style={{width:"23%",margin:"10px"}} class="button_vliz">History</button>

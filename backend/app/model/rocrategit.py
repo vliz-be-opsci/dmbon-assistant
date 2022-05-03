@@ -414,6 +414,7 @@ class RoCrateGitBase():
                 #add uri predicate to the item with value of nw blacnk node @id
                 item[uri_predicate] = {"@id":new_uuid_blank_node}
                 #write the new graph to the metadata file
+                log.debug(data)
                 self._write_metadata_datacrate(data)
                 return new_blank_node
         
@@ -459,14 +460,9 @@ class RoCrateGitBase():
         test = shclh.ShapesInfoGraph(path_shacl)
         shacldata = test.full_shacl_graph_dict()
         data = self._read_metadata_datacrate()
-        try:
-            myrocrate = ROCrate(self.storage_path)
-            data_entities = myrocrate.data_entities
-        except Exception as e:
-            log.error(f'error when loading rocrate data via rocrate python lib: {e}')
-            log.exception(e)
-            data_entities = data['@graph']
-            log.debug(data_entities)
+
+        data_entities = data['@graph']
+        log.debug(data_entities)
         
 
         #convert the chacl file to have all the properties per node id
@@ -548,7 +544,7 @@ class RoCrateGitBase():
             if uri_name not in chacl_URI_list:
                 warnings.append("non shacl defined constraint metadata has been added: "+ uri_name)
                 
-            ## implement annotation in the data is found , send warning message is annotation title not found in constraints ##
+        ## implement annotation in the data is found , send warning message is annotation title not found in constraints ##
         ## write back to metadata file and return metadata.json file 
         try:
             myrocrate.write(self.storage_path)

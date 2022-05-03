@@ -1,0 +1,13 @@
+aiohttp==3.8.1
+fastapi==0.75.2
+numpy==1.18.1
+pydantic==1.9.0
+pyshacl==0.19.0
+pytest==7.1.2
+python-dotenv==0.20.0
+PyYAML==6.0
+rdflib==6.1.1
+requests==2.23.0
+rocrate==0.5.5
+SPARQLWrapper==2.0.0
+validators==0.18.2

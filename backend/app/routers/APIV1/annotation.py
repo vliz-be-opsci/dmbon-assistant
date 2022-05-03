@@ -56,7 +56,7 @@ class AnnotationModel(BaseModel):
     value    : str = Field(None, description = "Value linked to the URI predicate name chosen")
     
 class BlankModel(BaseModel):
-    URI_predicate_name : str = Field(None, description = "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates;")
+    URI_predicate_name : str = Field(None, description = "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates")
     node_type : str = Field(None, description = "Type of the node that will be added.")
 
 class AnnotationsModel(BaseModel):
