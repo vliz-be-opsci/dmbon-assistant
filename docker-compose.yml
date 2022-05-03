@@ -8,9 +8,8 @@ version: "3.7"
       # be.vliz.container.vcs-url: Link to version control
       # be.vliz.container.docs-url: Link to documentation
 # ==============
-# volumes:
-#   eurobis_data:
-#   erddap_content:
+volumes:
+  user_data:
 
 networks:
   crate_net:
@@ -22,6 +21,8 @@ services:
       context: ./backend/.
       dockerfile: Dockerfile
     container_name: crate-backend
+    volumes:
+      - user_data:/app/webtop-work-space
     ports:
       - 6656:80
     networks:
@@ -29,7 +30,7 @@ services:
     env_file:
       - .env
     restart: unless-stopped 
-    # command: python /code/main.py -ll '${LOGLEVEL}' 
+    command: /app/start-api-server.sh 
     logging:
       driver: json-file
       options:
@@ -53,11 +54,11 @@ services:
   #     - crate_net 
   #   ports:
   #     - ${CRATE_EXPOSE_PORT:-8080}:80
-  #   # volumes: 
-  #   #   - eurobis_data:/erddapData/ 
   #   env_file:
   #     - .env 
   #   restart: unless-stopped 
+      # depends_on:
+      #     crate-backend
   #   logging:
   #     driver: json-file
   #     options:
