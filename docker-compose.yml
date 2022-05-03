@@ -19,9 +19,11 @@ services:
   # ------------
   crate_backend: 
     build: 
-      context: . 
-      dockerfile: ./backend/Dockerfile
+      context: ./backend/.
+      dockerfile: Dockerfile
     container_name: crate-backend
+    ports:
+      - 6656:80
     networks:
       - crate_net 
     env_file:
@@ -40,30 +42,30 @@ services:
       be.vliz.container.vcs-url: "https://github page"
       be.vliz.container.docs-url: "https://confluence page"
 
-  # ------------
-  crate-frontend:  
-    build: 
-      context: . 
-      dockerfile: ./services/erddap-server/Dockerfile
-    # image: axiom/docker-erddap:2.14 
-    container_name: crate-frontend
-    networks:
-      - crate_net 
-    ports:
-      - ${CRATE_EXPOSE_PORT:-8080}:80
-    # volumes: 
-    #   - eurobis_data:/erddapData/ 
-    env_file:
-      - .env 
-    restart: unless-stopped 
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-    labels:
-      be.vliz.container.description: "RoCrate Maker FrontEnd"
-      be.vliz.container.owner: "cedric.decruw@vliz.be"
-      be.vliz.container.project: "RoCRATE"
-      be.vliz.container.group: "RoCrate-group"
-      be.vliz.container.vcs-url: "https://github page"
-      be.vliz.container.docs-url: "https://confluence page"
+  # # ------------
+  # crate-frontend:  
+  #   build: 
+  #     context: . 
+  #     dockerfile: ./services/erddap-server/Dockerfile
+  #   # image: axiom/docker-erddap:2.14 
+  #   container_name: crate-frontend
+  #   networks:
+  #     - crate_net 
+  #   ports:
+  #     - ${CRATE_EXPOSE_PORT:-8080}:80
+  #   # volumes: 
+  #   #   - eurobis_data:/erddapData/ 
+  #   env_file:
+  #     - .env 
+  #   restart: unless-stopped 
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: 10m
+  #   labels:
+  #     be.vliz.container.description: "RoCrate Maker FrontEnd"
+  #     be.vliz.container.owner: "cedric.decruw@vliz.be"
+  #     be.vliz.container.project: "RoCRATE"
+  #     be.vliz.container.group: "RoCrate-group"
+  #     be.vliz.container.vcs-url: "https://github page"
+  #     be.vliz.container.docs-url: "https://confluence page"
