@@ -278,13 +278,7 @@ function AlertShaclReq(props) {
                     return(
                         <>
                             <Form>
-                                <table>
-                                    <tr>
-                                        <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
-                                        <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
-                                        <td colSpan="2" style={{"width":"100%"}}><button onClick={() => addBlankNode()} className="button_vliz space_button">add {predicate_name} node</button></td>
-                                    </tr>
-                                </table>
+                            <button onClick={() => addBlankNode()} className="button_vliz space_button">add {predicate_name} node</button>
                             </Form>
                         </>
                     )

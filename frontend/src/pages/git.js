@@ -19,7 +19,7 @@ function NewGitPage() {
         console.log('pushing to git repo');
         setLoading(true);
         axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/push`,{})
-            .then(response => {this.setLoading(false);window.location.reload();})
+            .then(response => {setLoading(false);window.location.reload();})
             .catch(error => {
             setLoading(false);
             alert(error);
