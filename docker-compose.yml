@@ -1,0 +1,72 @@
+version: "3.7"
+# ==============
+# FROM https://confluence.vliz.be/pages/viewpage.action?pageId=51251214
+      # be.vliz.container.description:  Container description
+      # be.vliz.container.owner: Maintainer of the container
+      # be.vliz.container.project: Name(s) of the project(s) for which the container is used
+      # be.vliz.container.group: Bundles containers together logically
+      # be.vliz.container.vcs-url: Link to version control
+      # be.vliz.container.docs-url: Link to documentation
+# ==============
+volumes:
+  user_data:
+
+networks:
+  crate_net:
+# ==============
+services: 
+  # ------------
+  crate_backend: 
+    build: 
+      context: ./backend/.
+      dockerfile: Dockerfile
+    container_name: crate-backend
+    volumes:
+      - user_data:/app/webtop-work-space
+    ports:
+      - 6656:80
+    networks:
+      - crate_net 
+    env_file:
+      - .env
+    restart: unless-stopped 
+    command: /app/start-api-server.sh 
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m 
+    labels:
+      be.vliz.container.description: "RoCrate Maker backend."
+      be.vliz.container.owner: "cedric.decruw@vliz.be"
+      be.vliz.container.project: "RoCRATE"
+      be.vliz.container.group: "RoCrate-group"
+      be.vliz.container.vcs-url: "https://github page"
+      be.vliz.container.docs-url: "https://confluence page"
+
+  # # ------------
+  # crate-frontend:  
+  #   build: 
+  #     context: . 
+  #     dockerfile: ./services/erddap-server/Dockerfile
+  #   # image: axiom/docker-erddap:2.14 
+  #   container_name: crate-frontend
+  #   networks:
+  #     - crate_net 
+  #   ports:
+  #     - ${CRATE_EXPOSE_PORT:-8080}:80
+  #   env_file:
+  #     - .env 
+  #   restart: unless-stopped 
+      # depends_on:
+      #     crate-backend
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: 10m
+  #   labels:
+  #     be.vliz.container.description: "RoCrate Maker FrontEnd"
+  #     be.vliz.container.owner: "cedric.decruw@vliz.be"
+  #     be.vliz.container.project: "RoCRATE"
+  #     be.vliz.container.group: "RoCrate-group"
+  #     be.vliz.container.vcs-url: "https://github page"
+  #     be.vliz.container.docs-url: "https://confluence page"
