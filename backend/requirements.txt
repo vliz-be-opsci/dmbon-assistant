@@ -11,4 +11,3 @@ requests==2.23.0
 rocrate==0.5.5
 SPARQLWrapper==2.0.0
 validators==0.18.2
-git-python

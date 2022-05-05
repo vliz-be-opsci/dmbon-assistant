@@ -3,12 +3,12 @@ services:
   fast_api_app:
     build: .
     ports:
-       - 6656:80
+       - 8081:80
     stage: test
-    # script:
-    #   - pytest --junitxml=report.xml
-    # artifacts:
-    #   when: always
-    #   reports:
-    #     junit: report.xml
+    script:
+      - pytest --junitxml=report.xml
+    artifacts:
+      when: always
+      reports:
+        junit: report.xml
 
