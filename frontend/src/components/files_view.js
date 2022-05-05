@@ -124,6 +124,22 @@ function FilesView(props) {
         }
     }
 
+    //child component to see if a component should have a open in external window button or not
+    const OpenInExternal = (props) => {
+        var file = props.file;
+        console.log(file);
+        if(file.type == 'file'){
+            return(
+                <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popoveropenexternal}>
+                    <button onClick={() => openFileExternal(file.file)}><MdOpenInBrowser></MdOpenInBrowser></button>
+                </OverlayTrigger>
+            )
+        }else{
+            return(<></>)
+        }
+    }
+
+
     useEffect(() => {
         fetchSpaceName();
     },[]);
@@ -152,9 +168,7 @@ function FilesView(props) {
                         <tr>
                             <td><Checkbox value={file.file} onChange={(e) => setfileinarray(file.file,e.target.checked)}/></td>
                             <td variant="info">
-                                <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popoveropenexternal}>
-                                    <button onClick={() => openFileExternal(file.file)}><MdOpenInBrowser></MdOpenInBrowser></button>
-                                </OverlayTrigger>
+                                <OpenInExternal file={file}></OpenInExternal>
                             </td>
                             <td className="filetd">
                             <a href={ '/spaces/'+SpaceId+'/all_files/'+ file.file}>{file.file} </a>

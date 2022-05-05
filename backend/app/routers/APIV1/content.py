@@ -152,7 +152,24 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
     for (dirpath, dirnames, filenames) in os.walk(space_folder):
         for filen in filenames:
             if '.git' not in dirpath:
-                toreturn.append({"file":filen,"folder":dirpath})
+                toreturn.append({"file":filen,"folder":dirpath,"type":"file"})
+    
+    #open up the rocrate metadata.json file and loop over all the entries in the @graph and add the ids that are not yet in the toreturn["file"] list 
+    space_object = Space.load(uuid=space_id)
+    metadata = space_object._read_metadata_datacrate()
+    log.info(metadata)
+    for entry in metadata['@graph']:
+        found = 0
+        for item in toreturn:
+            if item["file"] == entry["@id"]:
+                found = 1
+        if found == 0:
+            if "@type" in entry:
+                if entry["@type"] == "File":
+                    toreturn.append({"file":entry["@id"],"folder":"/", "type":"reference"})
+            
+    
+    
     return toreturn
 
 @router.get('/file/{file_id}')

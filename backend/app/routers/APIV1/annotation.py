@@ -253,19 +253,24 @@ def get_shacl_report(*,space_id: str = Path(None,description="space_id name")):
 
 @router.get('/terms', status_code=200)
 def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
-    #TODO from json select which shacl file should be taken
-    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-        data = json.load(file)
-        try:
-            space_folder = data[space_id]['storage_path']
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-    #read in shacl file 
-    path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=space_id),"all_constraints.ttl")
-    print(path_shacl, file=sys.stderr)
-    test = shclh.ShapesInfoGraph(path_shacl)
-    shacldata = test.full_shacl_graph_dict()
-    return shacldata
+    try:
+        
+        #TODO from json select which shacl file should be taken
+        with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+            data = json.load(file)
+            try:
+                space_folder = data[space_id]['storage_path']
+            except Exception as e:
+                raise HTTPException(status_code=404, detail="Space not found")
+        #read in shacl file 
+        path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=space_id),"all_constraints.ttl")
+        print(path_shacl, file=sys.stderr)
+        test = shclh.ShapesInfoGraph(path_shacl)
+        shacldata = test.full_shacl_graph_dict()
+        return shacldata
+    except Exception as e:
+        log.error(e)
+        log.exception(e)
 
 @router.post('/', status_code=200)
 def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
