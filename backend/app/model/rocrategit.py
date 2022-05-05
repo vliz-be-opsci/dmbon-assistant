@@ -372,29 +372,27 @@ class RoCrateGitBase():
         :type  toadd_dict: dict
         """
         #try and get the same result by using rocrate
-        myrocrate = ROCrate(self.storage_path)
-        data_entities = myrocrate.data_entities
-        for entity in data_entities:
+        data = self._read_metadata_datacrate()
+        for entity in data["@graph"]:
             log.info(f"Crate data entities: {entity._jsonld}")
             for annotationfile in toadd_dict:
                 uri_name  = annotationfile.URI_predicate_name
                 value_uri = annotationfile.value
                 entity[uri_name] = value_uri
-        myrocrate.write(self.storage_path)
+        self._write_metadata_datacrate(data)
     
     def delete_predicates_all(self,todelete_dict=dict):
         """ delete predicates from all ids 
         :param todelete_dict: dictionary of all the predicates and value to delete from the ro-crate-metadata.json
         :type  todelete_dict: dict
         """
-        myrocrate = ROCrate(self.storage_path)
-        data_entities = myrocrate.data_entities
-        for entity in data_entities:
+        data = self._read_metadata_datacrate()
+        for entity in data["@graph"]:
             log.info(f"Crate data entities: {entity._jsonld}")
             for annotationfile in todelete_dict:
                 uri_name  = annotationfile.URI_predicate_name
                 entity.pop(uri_name, None)
-        myrocrate.write(self.storage_path)
+        self._write_metadata_datacrate(data)
         
     def create_blank_node_by_id(self, file_id=str, node_type=str, uri_predicate=str):
         tocheck_folder = self.storage_path
@@ -546,14 +544,9 @@ class RoCrateGitBase():
                 
         ## implement annotation in the data is found , send warning message is annotation title not found in constraints ##
         ## write back to metadata file and return metadata.json file 
-        try:
-            myrocrate.write(self.storage_path)
-        except Exception as e:
-            log.error(f'error when writing rocrate data via rocrate python lib: {e}')
-            log.exception(e)
-            #write back data to meta json file located in the workspace
-            with open(os.path.join(self.storage_path, "ro-crate-metadata.json"), "w") as outfile:
-                json.dump(data, outfile, indent=4)
+        #write back data to meta json file located in the workspace
+        with open(os.path.join(self.storage_path, "ro-crate-metadata.json"), "w") as outfile:
+            json.dump(data, outfile, indent=4)
             
         data = self._read_metadata_datacrate()
         return {"Data":data, "Warnings":warnings}
