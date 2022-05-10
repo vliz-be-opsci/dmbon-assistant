@@ -13,6 +13,7 @@ import HomePage from './pages/home_page';
 require('dotenv').config()
 var port_server = process.env.REACT_APP_PORT_BACKEND_SERVER;
 const BASE_URL_SERVER = 'http://'+window.location.hostname+':'+port_server+'/';
+//App.use(express.static('public'));
 function App() {
   return (
     <>
