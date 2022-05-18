@@ -8,7 +8,7 @@ LAST_BUILD_FILE="build/build.time"
 function build {
   export NODE_OPTIONS=--openssl-legacy-provider
   npm run build
-  echo $(date --iso=seconds) > ${LAST_BUILD_FILE}
+  echo -n $(date --iso=seconds) > ${LAST_BUILD_FILE}
 }
 
 function changes {
