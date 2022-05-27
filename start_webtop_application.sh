@@ -1,10 +1,6 @@
 #! /usr/bin/env bash
 
-# open multiple terminals and execute the following commands:
-# cd /Users/<username>/webtop/frontend
-# sh frontend_run.sh
-# cd /Users/<username>/webtop/backend
-# sh start-api-server.sh
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd ${SCRIPT_DIR}
 
-(cd backend/ && sh start-api-server.sh & ) # the & is to run the command in the background
-(cd frontend/ && sh frontend_run.sh & ) 
+./dmbon-assistant.sh start
