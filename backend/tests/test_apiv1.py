@@ -79,7 +79,7 @@ def test_make_space():
     '''
     Locations(root=os.path.join(os.getcwd(),'app','webtop-work-space' ,'cache'))
     Space(name="test_space_project",
-    storage_path="C:\\Users\\cedric\\Desktop\\no importante", #TODO: get better way to test out spaces storage_path
+    storage_path="env_variable_here", #TODO: have a env varibale ready here to be used as the test storage path
     ro_profile="0d972c79c8634b18b5fd13fdde8c8cb7",
     )
 

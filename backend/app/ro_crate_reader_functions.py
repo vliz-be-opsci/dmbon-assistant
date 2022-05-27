@@ -108,7 +108,6 @@ class GitRepoCache:
 
     def get_content_location_for(self, repo_url):
         """return the physical location of the local repo checkout of the given repo_url"""
-        #TODO 1: convert repo url to local folder https://github.com/cedricdcc/dmbon_test_profile_crate.git
         repo_folder = self.repo_url_to_localfolder(repo_url)
         #     2: check if local folder exists
         if(os.path.exists(repo_folder) == False):
@@ -258,44 +257,6 @@ class MakeSpace:
             json.dump(self.metadata_cache, json_file)
          
 #test = MakeNewProfile(profile_id="test_new_method", logo="https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png" ,description= "test of the new method", repo_url="https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git")
-'''
-#test zone              
-test = rocrate_helper("C:\\Users\\cedric\\Desktop\\no importante\\ad117931652f4dccb6ef0bb3b3393cc2\\project")
-test.read_metafile()
-test.get_overview_metadata()
-
-secondtest = rocrate_helper('https://github.com/cedricdcc/test_rocrate_repo.git')
-secondtest.get_all_metadata_files()
-secondtest.get_ttl_files()
-print(secondtest.ttlinfo)
-'''   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class Profile:
     """ Class to represent a selectable profile for data spaces.
