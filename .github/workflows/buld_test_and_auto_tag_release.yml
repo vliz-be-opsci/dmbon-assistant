@@ -9,18 +9,11 @@ on:
 jobs:
 
   test_build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-
-    - name: Setup Environment
-      uses: actions/setup-node@v3
       with:
         node-version: 18.1.0
-    - run: npm install
-    - run: npm run build
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.36.0
       env:
@@ -57,7 +50,6 @@ jobs:
           repository: vliz-be-opsci/${{ github.event.repository.name }}  # The repository to scan. Change the part before the / to name or organisation where repo resides
           releases-only: false  # Set to true if you want to know the tag linked to the latest release
         id: vliz-be-opsci  # The step ID to refer to later.
-
       - run: echo "${{ github.event.repository.name }} is at version ${{ steps.vliz-be-opsci.outputs.tag }}"
         name: check if latest tag meets maor release requirements
       - uses: actions-ecosystem/action-regex-match@v2
