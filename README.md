@@ -1,7 +1,7 @@
 [![On_Push_Testing](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml/badge.svg?branch=main)](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml)
 
 # dmbon-assistant
-fast-api version of the rocrate rest api
+webtop appliction consisting of a backend powered by fast-api and a react frontend.
 
 ## for people without docker:
 run following commands in terminal of the root project directory:
