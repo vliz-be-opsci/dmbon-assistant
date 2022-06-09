@@ -1,22 +1,9 @@
-from fastapi import FastAPI, Path, Query, HTTPException, status, APIRouter
-from fastapi.openapi.utils import get_openapi
-from typing import List, Optional, Set
+from fastapi import Path, HTTPException, APIRouter
+from typing import Optional
 from pydantic import BaseModel, Field
-import os, json, requests, asyncio, sys, aiohttp, shutil, git, uuid, subprocess, stat
-from importlib import import_module
-from datetime import datetime
+import os, json, shutil, git, uuid, subprocess, stat
 from aiohttp import ClientSession
 import validators
-from rocrate.rocrate import ROCrate
-from pathlib import Path as pads
-from collections import MutableMapping
-from fastapi.staticfiles import StaticFiles
-from fastapi.openapi.docs import (
-    get_redoc_html,
-    get_swagger_ui_html,
-    get_swagger_ui_oauth2_redirect_html,
-)
-import app.ro_crate_reader_functions as ro_read
 import logging
 log=logging.getLogger(__name__)
 #all diff subroutes
@@ -35,16 +22,13 @@ router.include_router(git_router, prefix="/{space_id}")
 router.include_router(annotation_router, prefix="/{space_id}")
 
 ## import the config file for the specific route of the api ##
+
 from dotenv import load_dotenv
 env = load_dotenv()
 log.debug(f"all env variables: {env}")
 BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
-### define class profiles for the api ###
 
-class ProfileModel(BaseModel):
-    logo: Optional[str] = Field(None, example = 'https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png', description = "Logo to be displayed in RO crate UI")
-    description: Optional[str] = Field(None, description = "description of the RO-profile")
-    url_ro_profile: str = Field(None, description = "github url where the rocrate profile is located")
+### define class profiles for the api ###
 
 class SpaceModel(BaseModel):
     name: str = Field(None, description= "Name that the space should have")
@@ -52,37 +36,7 @@ class SpaceModel(BaseModel):
     RO_profile: str = Field(None, description = "Ro-Profile name that will be used for the space")
     remote_url: Optional[str] = Field(None, description = "git repo url to get project from")
 
-class FileModel(BaseModel):
-    name     : str = Field(None, description = "Name of the file that will be added, can be filepath")
-    content  : str = Field(None, description = "Filepath that needs to be added to the space, can also be a directory or url")
-    
-class AnnotationModel(BaseModel):
-    URI_predicate_name : str = Field(None, description = "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates.\
-                                                for more info about the allowed predicates, use TODO: insert api call for predicates here.")
-    value    : str = Field(None, description = "Value linked to the URI predicate name chosen")
-
-class AnnotationsModel(BaseModel):
-    Annotations: List[AnnotationModel] = Field(None, description = "List of annotations to add to resource. \
-                                              for more info about the allowed annotation predicates, use TODO: insert api call for predicates here.")
-
-class ContentModel(BaseModel):
-    content: List[FileModel] = Field(None, description = "List of files that need to be added, this list can also contain directories")
-
-class DeleteContentModel(BaseModel):
-    content: List[str] = Field(None, description = "List of files to delete , if full path given it will delete one file , of only file name given it will delete all entities in the system with file name.")
-
 ### define helper functions for the api ###
-
-#TODO: function that reads into the roprofile rocrate metadata and finds the conforms to part ;
-#  1: gets the shacl or other constraint files.
-#  2: reciprocly go through all rocrate conform to untill all contraints are gathered. 
-#  3: combines all the contraints into 1 contraint file and return this in a folder that is a sibling of the project folder.
-
-#TODO: function that searches for the typechanger for mimetypes when adding new files to the rocrate , be it either from url or from local system
-
-#TODO: figure out how to get the mimetype of url resources added (maybe through name?)
-
-#TODO: function that reads the shacl contraint file and gets the right properties for an accordingly chosen schema target class (@type in rocrate metadata.json)
 
 def complete_metadata_crate(source_path_crate):
     try:

@@ -50,7 +50,6 @@ class GitRepoCache():
                     log.error(f"error cloning repo {ssh_url} to {location}")
                     log.exception(e)
                 
-    
     @staticmethod
     def update_content(location):
         # do the git stuff to clone or update
@@ -83,7 +82,7 @@ class RoCrateGitBase():
     
     def __init__():
         pass
-
+    
     #TODO: !!!
     def find_parts(self,type_uri):
         # returns list of parts in this crate that match this type_uri
@@ -95,8 +94,10 @@ class RoCrateGitBase():
         toreturn = []
         print(md)
         for files_to_check in md["@graph"]:
-            if(".git" in files_to_check["@id"] or "git@github.com" in files_to_check["@id"]):
-                toreturn.append(files_to_check["@id"])
+            #check if the files_to_check has the type_uri as a property if it doesn then add the value to the toreturn
+            for item, value in files_to_check.items():
+                if item == type_uri:
+                    toreturn.append(value)
         return toreturn
     
     def get_object(self, subject_uri, predicate_uri):

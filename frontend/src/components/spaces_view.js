@@ -35,8 +35,13 @@ function SpacesView(props) {
             }
             setProfileseList(reallist);
             console.log(res.data);
+            var profiledata = res.data;
             setProfilesList(res.data);
-            setTimeout(() => {  spacesList(res.data); }, 2000);
+            axios.get(BASE_URL_SERVER+'apiv1/spaces/')
+            .then(res => {
+              console.log(res.data)
+              spacesList(profiledata, res.data);
+            })
           })
       }
 
@@ -69,21 +74,21 @@ function SpacesView(props) {
     }
 
     //transform spaces info 
-    const spacesList = async (profiledata) => {
+    const spacesList = async (profiledata, listspace) => {
         setLoading(true);
         var spacelistmetadata = [];
         console.log(Object.keys(profiledata).length);
         console.log(profiledata);
-        console.log(props.listspace);
-        for (let index = 0; index < props.listspace.length; index++) {
+        console.log(listspace);
+        for (let index = 0; index < listspace.length; index++) {
             var spacelistdata = {}
-            for (let inde = 0; inde < Object.keys(props.listspace[index]).length; inde++) {
-                const element = Object.keys(props.listspace[index])[inde];
-                var value = Object.values(props.listspace[index])[inde];
+            for (let inde = 0; inde < Object.keys(listspace[index]).length; inde++) {
+                const element = Object.keys(listspace[index])[inde];
+                var value = Object.values(listspace[index])[inde];
                 spacelistdata[element] = value;
             }
-            console.log(props.listspace);
-            var space_name_array = props.listspace[index]["storage_path"];
+            console.log(listspace);
+            var space_name_array = listspace[index]["storage_path"];
             space_name_array = space_name_array.replace("\\", "/").split("/");
             var space_name = space_name_array[space_name_array.length-1];
             console.log(space_name);
@@ -94,7 +99,7 @@ function SpacesView(props) {
                 console.log(Object.keys(Object.values(profiledata)[ind]).length);
                 for (let i = 0; i < Object.keys(Object.values(profiledata)[ind]).length; i++) {
                     console.log(Object.values(Object.values(profiledata)[ind])[i]);
-                    if(Object.values(Object.values(profiledata)[ind])[i] == props.listspace[index]["RO_profile"]){
+                    if(Object.values(Object.values(profiledata)[ind])[i] == listspace[index]["RO_profile"]){
                         console.log( Object.values(profiledata)[ind]["name"]);
                         spacelistdata["trueprofilename"] = Object.values(profiledata)[ind]["name"];
                     }

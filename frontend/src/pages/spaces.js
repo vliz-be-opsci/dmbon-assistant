@@ -66,7 +66,6 @@ function SpacePage() {
         }
         setProfilesList(reallist);
         countRef.current++;
-        setLoading(false);
       })
   }
 
@@ -82,6 +81,10 @@ function SpacePage() {
     fetchSpaces();
     fetchProfiles();
   },[]);
+
+  useEffect(() => {
+    setLoading(false);
+  },[spaceList]);
 
   if(Loading){
       return(

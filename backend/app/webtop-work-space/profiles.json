@@ -29,12 +29,13 @@
             "https://github.com/cedricdcc/my_bon_test_crate_2.git"
         ]
     },
-    "3b1020e07f6640b4bb97766e62c7708a": {
-        "name": "OSD_datacrate_profile",
-        "repo_url": "https://github.com/vliz-be-opsci/test_OSD_profilecrate.git",
-        "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
-        "description": "test profile to with real shacl data involving the OSD project",
-        "uuid": "3b1020e07f6640b4bb97766e62c7708a",
-        "seed_dependencies": ["https://github.com/vliz-be-opsci/test_OSD_profilecrate.git"]
+    "8033711d61f24a2c9fbbe6401a6b2d90": {
+        "name": "space_test_OSD_profilecrate",
+        "repo_url": "https://github.com/vliz-be-opsci/test_OSD_profilecrate",
+        "logo_url": null,
+        "description": "Seed profile space_test_OSD_profilecrate of the space OSD",
+        "uuid": "8033711d61f24a2c9fbbe6401a6b2d90",
+        "seed_dependencies": [],
+        "parent_space": "OSD"
     }
 }
