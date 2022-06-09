@@ -1,4 +1,4 @@
-[![On_Push_Testing](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml/badge.svg)](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml)
+[![On_Push_Testing](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml/badge.svg?branch=main)](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml)
 
 # dmbon-assistant
 fast-api version of the rocrate rest api
@@ -44,13 +44,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Setup Environment
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.1.0
-    - run: npm install
-    - run: npm run build
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.36.0
       env:
