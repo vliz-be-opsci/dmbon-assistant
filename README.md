@@ -12,7 +12,7 @@ sh start-api-server.sh
 
 ## for people withdocker:
 run following commands in terminal of the root project directory:
-#TODO have a docker solution 
+#TODO have a docker solution. 
 ```
 sudo docker-compose up
 ```
