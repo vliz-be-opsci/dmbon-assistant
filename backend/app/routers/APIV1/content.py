@@ -87,6 +87,9 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
             if "@type" in entry:
                 if entry["@type"] == "File":
                     toreturn.append({"file":entry["@id"],"folder":"/", "type":"reference"})
+                else: 
+                    if entry["@type"] != "Dataset":
+                        toreturn.append({"file":entry["@id"],"folder":"/", "type":entry["@type"]})
             
     
     
