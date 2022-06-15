@@ -3,7 +3,7 @@ import {useParams} from 'react-router-dom';
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {Button, Modal} from 'react-bootstrap';
-function SettingsSpacePage() {
+function SettingsDatacratePage() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -11,7 +11,7 @@ function SettingsSpacePage() {
     function deletespace(e) {
         e.preventDefault();
         axios.delete(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}`)
-        .then(() => window.location.href = `/spaces`);
+        .then(() => window.location.href = `/Datacrates`);
     }
     //<input directory="" webkitdirectory="" type="file" />
     return (
@@ -40,4 +40,4 @@ function SettingsSpacePage() {
  
 }
 
-export default SettingsSpacePage
+export default SettingsDatacratePage

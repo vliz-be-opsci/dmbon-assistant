@@ -153,7 +153,7 @@ function TimeLineGit(props) {
                         <TimelineSeparator>
                             <TimelineConnector />
                             <TimelineDot color="warning" className='selected'>
-                            <a href={`/spaces/${SpaceId}/git`}>
+                            <a href={`/Datacrates/${SpaceId}/git`}>
                                 <RiGitRepositoryCommitsFill className='selected-icon'/>
                             </a> 
                             </TimelineDot>

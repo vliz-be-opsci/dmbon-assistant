@@ -86,6 +86,7 @@ class RoCrateGitBase():
     #TODO: !!!
     def find_parts(self,type_uri):
         # returns list of parts in this crate that match this type_uri
+        self.delete_hashtag_from_begin_id()
         md = self._read_metadata()
         print(type_uri)
         # run through md to find...
@@ -108,6 +109,7 @@ class RoCrateGitBase():
     def get_predicates_all(self):
         """ get predicates from all ids
         """
+        self.delete_hashtag_from_begin_id()
         md = self._read_metadata_datacrate()
         log.debug(md)
         all_files = []
@@ -135,12 +137,22 @@ class RoCrateGitBase():
         log.debug(f'All predicates from all files from project : {files_attributes}')
         return {"data":files_attributes}
     
+    def delete_hashtag_from_begin_id(self):
+        #get the metadata
+        data = self._read_metadata_datacrate()
+        # go over each item in the graph and if the @id starts with a # then remove it
+        for item in data["@graph"]:
+            if item["@id"].startswith("#"):
+                item["@id"] = item["@id"][1:]
+        #write the metadata
+        self._write_metadata_datacrate(data)
     
     def get_predicates_by_id(self,file_id=str):
         """ get predicates from a given id
         :param id: str of the id to get all the predicates of in the ro-crate-metadata.json
         :type  id: str
         """
+        self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         log.info(f"metadata of the space: {data}")
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
@@ -266,6 +278,7 @@ class RoCrateGitBase():
     def get_shacl_report(self):
         """get the shacl report for the whole space
         """
+        self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         log.info(f"metadata of the space: {data}")
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
@@ -372,6 +385,7 @@ class RoCrateGitBase():
         :param toadd_dict: dictionary of all the predicates and value to add to the ro-crate-metadata.json
         :type  toadd_dict: dict
         """
+        self.delete_hashtag_from_begin_id()
         #try and get the same result by using rocrate
         data = self._read_metadata_datacrate()
         for entity in data["@graph"]:
@@ -387,6 +401,7 @@ class RoCrateGitBase():
         :param todelete_dict: dictionary of all the predicates and value to delete from the ro-crate-metadata.json
         :type  todelete_dict: dict
         """
+        self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         for entity in data["@graph"]:
             log.info(f"Crate data entities: {entity._jsonld}")
@@ -398,6 +413,7 @@ class RoCrateGitBase():
     def create_blank_node_by_id(self, file_id=str, node_type=str, uri_predicate=str):
         tocheck_folder = self.storage_path
         #load in metadata files
+        self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         
         new_uuid_blank_node = uuidmake.uuid4().hex
@@ -425,6 +441,7 @@ class RoCrateGitBase():
         :type  file_id: str
         :raises KeyError: the supplied key was not found in the ro-crate-metadata.json file
         """
+        self.delete_hashtag_from_begin_id()
         tocheck_folder = self.storage_path
         todelete = False
         #load in metadata files
@@ -454,6 +471,7 @@ class RoCrateGitBase():
         :type  file_id: str
         :raises KeyError: the supplied key was not found in the ro-crate-metadata.json file
         """
+        self.delete_hashtag_from_begin_id()
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
         log.info(path_shacl)
         test = shclh.ShapesInfoGraph(path_shacl)

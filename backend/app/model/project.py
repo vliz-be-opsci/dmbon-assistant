@@ -44,9 +44,10 @@ class Project(RoCrateGitBase):
             log.debug(f"all seed dependencies to make Project: {seed_dependencies}")
             #self.location_init_repo = self._download_repo(repo_url = self.repo_url)
             #self.get_rocrate_metadata_git_urls(rocrate_metadata_location= os.path.join(self.location_init_repo,"ro-crate-metadata.json"))
-        self.seed_dependencies = SeedCrate.load_all(seed_dependencies) 
+            self.seed_dependencies = seed_dependencies
         if uuid is None:
             self.write()
+        self.seed_dependencies = SeedCrate.load_all(seed_dependencies) 
     
     def __str__(self):
         return f"Project(uuid = {self.uuid})"
@@ -68,7 +69,7 @@ class Project(RoCrateGitBase):
                     logo_url=self.logo_url,
                     description=self.description,
                     uuid= self.uuid,
-                    seed_dependencies= list(self.seed_dependencies.keys()) #todo use set instead of list
+                    seed_dependencies= list(self.seed_dependencies) #todo use set instead of list and ask marc why we used a dict instead of a list in the first place
                 )
 
     def location(self):

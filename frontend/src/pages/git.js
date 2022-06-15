@@ -31,7 +31,7 @@ function NewGitPage() {
         console.log('pulling from git repo');
         setLoading(true);
         axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/pull`,{})
-            .then(response => {this.setLoading(false);window.location.href = `/spaces/${SpaceId}/all_files`;})
+            .then(response => {this.setLoading(false);window.location.href = `/Datacrates/${SpaceId}/all_files`;})
             .catch(error => {
             setLoading(false);
             console.log(error);

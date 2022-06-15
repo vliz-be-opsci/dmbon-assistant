@@ -40,7 +40,7 @@ function FileAnnotationView(props) {
         if(value.indexOf("nodeshape:") !== -1){
             const hrefvalue = value.split("nodeshape: ")[1];
             return(
-                <a href={`/spaces/${SpaceId}/all_files/${hrefvalue}`}>{value}</a>
+                <a href={`/Datacrates/${SpaceId}/all_files/${hrefvalue}`}>{value}</a>
             )
         }else{
             return(

@@ -58,7 +58,7 @@ function SpacesView(props) {
         handleClose();
         setLoading(true);
         axios.post(BASE_URL_SERVER+'apiv1/spaces/', topost)
-            .then(response => {setLoading(false);window.location.href = `/spaces`;})
+            .then(response => {setLoading(false);window.location.href = `/Datacrates`;})
             .catch(error => {
                 setLoading(false);
                 alert('There was an error!', error);
@@ -102,6 +102,8 @@ function SpacesView(props) {
                     if(Object.values(Object.values(profiledata)[ind])[i] == listspace[index]["RO_profile"]){
                         console.log( Object.values(profiledata)[ind]["name"]);
                         spacelistdata["trueprofilename"] = Object.values(profiledata)[ind]["name"];
+                        spacelistdata["trueprofileuuid"] = Object.keys(profiledata)[ind];
+                        spacelistdata["parent_space"] = Object.values(profiledata)[ind]["parent_space"];
                     }
                 }
             }
@@ -173,6 +175,7 @@ function SpacesView(props) {
                     <thead>
                         <tr>
                             <th>Datacrate name</th>
+                            <th>Space</th>
                             <th>Profile</th>
                             <th>Actions</th>
                         </tr>
@@ -184,7 +187,7 @@ function SpacesView(props) {
                     </>
                     )}
                     <tr>
-                       <td colSpan="3"><Button variant="danger" onClick={handleShow} style={{width: '100%'}}><FaPlus></FaPlus></Button></td> 
+                       <td colSpan="4"><Button variant="danger" onClick={handleShow} style={{width: '100%'}}><FaPlus></FaPlus></Button></td> 
                     </tr>
                     </tbody>
                 </table> 

@@ -4,10 +4,10 @@ import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import ReactLoading from 'react-loading';
 
-function SpecificSpace() {
+function SpecificProfile() {
     //define all constants first
     //All the functions here
-    const {SpaceId} = useParams();
+    const {ProfileId} = useParams();
     const [Loading, setLoading] = useState(false); 
 
     if(Loading){
@@ -19,10 +19,10 @@ function SpecificSpace() {
     }else{
         return (
             <>
-                <p>Specific space {SpaceId} here </p>
+                <p>Specific profile {ProfileId} here </p>
             </>
         )
     }
 }
 
-export default SpecificSpace;
+export default SpecificProfile;

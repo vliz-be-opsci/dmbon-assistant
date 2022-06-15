@@ -179,7 +179,7 @@ function Datacrate_overview_row(props) {
         if(noerror){
             return(
                 <tr>
-                    <td colSpan="3">
+                    <td colSpan="4">
                         <Spinner animation="border" variant="primary" />
                     </td>
                 </tr>
@@ -188,8 +188,6 @@ function Datacrate_overview_row(props) {
             return(<></>)
         }
     }
-
-    
 
     //useEffect 
     useEffect(() => {
@@ -207,25 +205,26 @@ function Datacrate_overview_row(props) {
         return ( 
         <>
             <tr>
-                <td><a href={'/spaces/' + todisplaydata.name }><button className='project_name'>{todisplaydata.truespacename}</button></a></td>
-                <td>{todisplaydata.trueprofilename}</td>
+                <td><a href={'/Datacrates/' + todisplaydata.name }><button className='button_datacrates'>{todisplaydata.truespacename}</button></a></td>
+                <td><a href={'/Spaces/' + todisplaydata.parent_space }><button className='button_datacrates'>{todisplaydata.parent_space}</button></a></td>
+                <td><a href={'/Profiles/' + todisplaydata.trueprofileuuid }><button className='button_datacrates'>{todisplaydata.trueprofilename}</button></a></td>
                 <td>
                 <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoveropenfilebrowser}>
                     <button onClick={() => OpenBrowserSpace(todisplaydata.name)}>
                         <MdOpenInBrowser></MdOpenInBrowser>
                     </button>
                 </OverlayTrigger>
-                <a href={'/spaces/' + todisplaydata.name + '/all_files'}>
+                <a href={'/Datacrates/' + todisplaydata.name + '/all_files'}>
                     <button>
                         <BadgeFolder ShaclErrors={todisplaydata.shacl_violations}/>
                     </button>
                 </a>
-                <a href={'/spaces/' + todisplaydata.name + '/git'}>
+                <a href={'/Datacrates/' + todisplaydata.name + '/git'}>
                     <button>
                         <BadgeGit/>
                     </button>
                 </a>
-                <a href={'/spaces/' + todisplaydata.name + '/settings'}>
+                <a href={'/Datacrates/' + todisplaydata.name + '/settings'}>
                     <button>
                     <FaCog></FaCog>
                     </button>

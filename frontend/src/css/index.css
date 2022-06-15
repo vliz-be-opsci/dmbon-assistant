@@ -170,6 +170,14 @@ code {
   word-wrap: break-word;
 }
 
+.button_datacrates {
+  font-size: 0.9rem;
+  width: 90%;
+  margin: auto;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
 #searchtable {
   background-color: #6cb2c5;
   background-image: url('../static/searchicon.png'); /* Add a search icon to input */

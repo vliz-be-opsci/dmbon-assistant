@@ -1,24 +1,4 @@
 {
-    "e87f3ce648194a72b23ffa2925afb21f": {
-        "name": "no good profile",
-        "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
-        "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
-        "description": "test new method object oriented from test_apiv1.py",
-        "uuid": "e87f3ce648194a72b23ffa2925afb21f",
-        "seed_dependencies": [
-            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
-        ]
-    },
-    "b529234ddef348e79763cee57d724dc4": {
-        "name": "test_nonsence_profile",
-        "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
-        "logo_url": "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png",
-        "description": "test new method object oriented from test_apiv1.py",
-        "uuid": "b529234ddef348e79763cee57d724dc4",
-        "seed_dependencies": [
-            "https://github.com/cedricdcc/my_bon_test_crate_2.git"
-        ]
-    },
     "233ec883a63a4cf8965fb7fab08fe7c5": {
         "name": "test_vliz_profile",
         "repo_url": "https://github.com/arms-mbon/my_bon_test_vlizrepo_crate.git",
@@ -29,12 +9,12 @@
             "https://github.com/cedricdcc/my_bon_test_crate_2.git"
         ]
     },
-    "8033711d61f24a2c9fbbe6401a6b2d90": {
+    "788195bb52c148468d7a444cf58986d3": {
         "name": "space_test_OSD_profilecrate",
         "repo_url": "https://github.com/vliz-be-opsci/test_OSD_profilecrate",
         "logo_url": null,
         "description": "Seed profile space_test_OSD_profilecrate of the space OSD",
-        "uuid": "8033711d61f24a2c9fbbe6401a6b2d90",
+        "uuid": "788195bb52c148468d7a444cf58986d3",
         "seed_dependencies": [],
         "parent_space": "OSD"
     }

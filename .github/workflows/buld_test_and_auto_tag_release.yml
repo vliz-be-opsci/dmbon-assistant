@@ -34,7 +34,7 @@ jobs:
         description: 'latest version of the ${{ github.event.repository.name }}.' 
         # Force-update a branch instead of using a tag.
         # Default: false
-        force-branch: false
+        force-branch: false #check with marc if we want a latest branch people can use or a latest tag and keep tehe versioning of the current tags clean with vx.x.x
           
   release-manager:
     needs: test_build 

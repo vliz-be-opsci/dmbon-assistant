@@ -10,7 +10,7 @@ import '../css/space_overview.css';
 
 
 
-function SpaceOverviewPage() {
+function DatecrateOverviewPage() {
 
     //define all constants first
     //All the functions here
@@ -105,7 +105,7 @@ function SpaceOverviewPage() {
         axios.post(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/git/pull/`,{})
         .then(res => {
             console.log(res)
-            window.location(`spaces/${SpaceId}/all_files`);
+            window.location(`Datacrates/${SpaceId}/all_files`);
         })
       }
     }
@@ -195,7 +195,7 @@ function SpaceOverviewPage() {
                 <table style={{width:"100%"}}>
                   <tr className='card_row'>
                     <td style={{width:"33%"}}>
-                      <a href={`/spaces/${SpaceId}/all_files`}>
+                      <a href={`/Datacrates/${SpaceId}/all_files`}>
                         <div className={"card_td "+ DoughnutSvg} onMouseEnter={()=> SetLegendToggle(true)} onMouseLeave={()=> SetLegendToggle(false)}>
                           <Doughnut data={Graphdata} width="15px" height="15px" options={{maintainAspectRatio:false, plugins:{legend:{display:legendToggle}}}}/>
                         </div>
@@ -220,4 +220,4 @@ function SpaceOverviewPage() {
     
 }
 
-export default SpaceOverviewPage
+export default DatecrateOverviewPage

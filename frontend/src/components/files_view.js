@@ -171,10 +171,10 @@ function FilesView(props) {
                                 <OpenInExternal file={file}></OpenInExternal>
                             </td>
                             <td className="filetd">
-                            <a href={ '/spaces/'+SpaceId+'/all_files/'+ file.file}>{file.file} </a>
+                            <a href={ '/Datacrates/'+SpaceId+'/all_files/'+ file.file}>{file.file} </a>
                             </td>
                             <td>
-                                <a href={ '/spaces/'+SpaceId+'/files'+ Relative_folder(file.folder)}>{Relative_folder(file.folder)} </a>
+                                <a href={ '/Datacrates/'+SpaceId+'/files'+ Relative_folder(file.folder)}>{Relative_folder(file.folder)} </a>
                             </td>
                             <td>
                                 <PredicateProgressbar key={props.key} filee={file.file}/>

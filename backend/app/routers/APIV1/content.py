@@ -209,6 +209,8 @@ async def add_new_references(*,space_id: str = Path(None,description="space_id n
         try:
             crate.write_crate(space_folder)
         except Exception as e:
+            
+            
             log.error(f"crate write error :{e}")
             log.exception(e)
             

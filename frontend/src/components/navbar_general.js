@@ -167,7 +167,7 @@ function NavBar() {
     }, [])
 
     console.log(spaceid);
-    if (url.includes("spaces")) {
+    if (url.includes("Datacrates")) {
         if (spaceid){
             if(end_url.includes("git")){
                 return (
@@ -179,12 +179,12 @@ function NavBar() {
                                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                                 <Navbar.Collapse id="basic-navbar-nav">
                                 <Nav className="me-auto justify-content-center">
-                                    <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button '>{Spacename}</p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button activito'><BadgeGit/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/`}><p className='bluebar_button '>{Spacename}</p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/git`}><p className='bluebar_button activito'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
-                                    <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
                                 </Nav>
                                 </Navbar.Collapse>
                             </Container>
@@ -203,12 +203,12 @@ function NavBar() {
                                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                                 <Navbar.Collapse id="basic-navbar-nav">
                                 <Nav className="me-auto justify-content-center">
-                                    <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button'>{Spacename}</p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button activito'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/`}><p className='bluebar_button'>{Spacename}</p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/files`}><p className='bluebar_button activito'><BadgeFolder/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
-                                    <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
                                 </Nav>
                                 </Navbar.Collapse>
                             </Container>
@@ -227,12 +227,12 @@ function NavBar() {
                                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                                 <Navbar.Collapse id="basic-navbar-nav">
                                 <Nav className="me-auto justify-content-center">
-                                    <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button'>{Spacename}</p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/`}><p className='bluebar_button'>{Spacename}</p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
-                                    <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button activito'><FaCog size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/settings`}><p className='bluebar_button activito'><FaCog size="2em"/></p></Nav.Link>
                                 </Nav>
                                 </Navbar.Collapse>
                             </Container>
@@ -251,12 +251,12 @@ function NavBar() {
                                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                                 <Navbar.Collapse id="basic-navbar-nav">
                                 <Nav className="me-auto justify-content-center">
-                                    <Nav.Link href= {`/spaces/${spaceid}/`}><p className='bluebar_button activito'>{Spacename}</p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
-                                    <Nav.Link href= {`/spaces/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/`}><p className='bluebar_button activito'>{Spacename}</p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/files`}><p className='bluebar_button'><BadgeFolder/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/git`}><p className='bluebar_button'><BadgeGit/></p></Nav.Link>
                                 </Nav>
                                 <Nav className="justify-content-end">
-                                    <Nav.Link href= {`/spaces/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
+                                    <Nav.Link href= {`/Datacrates/${spaceid}/settings`}><p className='bluebar_button'><FaCog size="2em"/></p></Nav.Link>
                                 </Nav>
                                 </Navbar.Collapse>
                             </Container>
@@ -273,7 +273,7 @@ function NavBar() {
                     <Navbar className="bluebar">
                         <Container>
                             <Navbar.Brand href="/" ><p className='bluebar_button'><FaHome size="2em"/></p></Navbar.Brand>
-                            <Navbar.Brand href="/spaces" ><p className='bluebar_button activito'><GiCargoCrate size="2em"/></p></Navbar.Brand>
+                            <Navbar.Brand href="/Datacrates" ><p className='bluebar_button activito'><GiCargoCrate size="2em"/></p></Navbar.Brand>
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                             <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
@@ -309,7 +309,7 @@ function NavBar() {
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/spaces"><p className='bluebar_button'><GiCargoCrate size="2em"/></p></Nav.Link>
+                            <Nav.Link href="/Datacrates"><p className='bluebar_button'><GiCargoCrate size="2em"/></p></Nav.Link>
                             <Nav.Link href="/"><p className='bluebar_button'><RiOrganizationChart size="2em"/></p></Nav.Link>
                         </Nav>
                         <Nav className="justify-content-end">

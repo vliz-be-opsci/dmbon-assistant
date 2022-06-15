@@ -39,7 +39,7 @@ class Space(RoCrateGitBase):
                 log.debug(seed_dependencies)
                 #TODO: get all the seed_dependencies from the given profile uuid
                 self.make_repo()
-                repos_to_copy_over = []
+                repos_to_copy_over = [self.ro_profile.repo_url]
                 for seed_repo in seed_dependencies.keys():
                     repos_to_copy_over.append(seed_repo)
                 #copy over all the files from the repos
@@ -47,19 +47,19 @@ class Space(RoCrateGitBase):
                     self._copy_files_to_workspace(repo_url=repo)
             else:
                 seed_dependencies = self.ro_profile.seed_dependencies
-                log.debug(seed_dependencies)
+                log.debug(f"all seed dependencies: {seed_dependencies}")
                 #TODO: get all the seed_dependencies from the given profile uuid
                 
                 #TODO: Add a check on the created repo to see if the repo is not empty => if empty then copy over all the files from the seed repos else don't do anything
                 
                 self.clone_repo(self.remote_url)
-                repos_to_copy_over = []
-                for seed_repo in seed_dependencies.keys():
+                repos_to_copy_over = [self.ro_profile.repo_url]
+                for seed_repo in seed_dependencies.keys(): #TODO check if this is just a list of repos or if it is a dict of repos
                     repos_to_copy_over.append(seed_repo)
                 #copy over all the files from the repos
+                log.debug(f"All repoes to copy over: {repos_to_copy_over}")
                 for repo in repos_to_copy_over:
                     self._copy_files_to_workspace(repo_url=repo)
-                self.clone_repo(self.remote_url)
             #TODO: add the new metadata to the spaces.json file
             self.write()
         else:
@@ -77,7 +77,7 @@ class Space(RoCrateGitBase):
     def __hash__(self) -> int:
         return self.uuid.__hash__()
     
-    identity_props = ["storage_path","uuid","remote_url","ro_profile"]
+    identity_props = ["storage_path","uuid","remote_url","ro_profile","workspace_path"]
     
     def __eq__(self, __o: object) -> bool:
         return all([self.__getattribute__(attr).__eq__(__o.__getattribute__(attr)) for attr in Space.identity_props ])
@@ -135,8 +135,10 @@ class Space(RoCrateGitBase):
         """copy all the files from a given repo url to the workspace folder"""
         #convert repo url to folder of the repo 
         repo_location = Locations().get_repo_location_by_url(repo_url)
-        #init the workspacvemanager
+        log.debug(repo_location)
+        #init the workspacemanager
         workspace_manager = WorkSpaceManager(workspace_path=self.workspace_path)
+        log.debug(f"Current workspace path: {self.workspace_path}")
         # go over each file in the given folder and check if its not part of the .git folder -> copy over to the given self.storage_path
         for subdir, dirs, files in os.walk(repo_location):
             for file in files:
@@ -162,6 +164,7 @@ class WorkSpaceManager():
         self.workspace_path = workspace_path
     
     def check_write_constraints(self,filepath):
+        log.debug(f"filepath to check : {filepath}")
         if filepath.endswith(".ttl"):
             #check if combined_file_name is already present in the workspace folder, if not make it , if yes then append to the file
             fileout  = os.path.join(self.workspace_path,"all_constraints.ttl")
@@ -175,5 +178,8 @@ class WorkSpaceManager():
             f2.seek(0)
             f2.close()
             return True
-        else:
-            return False
+
+        if "ro-crate-metadata.json" in filepath:
+            return True
+
+        return False

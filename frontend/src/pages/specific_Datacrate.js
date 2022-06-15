@@ -2,30 +2,26 @@ import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
-import FilesView from './../components/files_view';
+import FilesView from '../components/files_view';
+import RemoteReferenceTableAdd from '../components/remote_reference_table_modal.js';
 import ReactLoading from 'react-loading';
-import {Button, Modal, Tab, Row, Nav, OverlayTrigger, Col, Popover} from 'react-bootstrap';
+import {Button, Modal, Popover, OverlayTrigger, Tab, Row, Col, Nav} from 'react-bootstrap';
 import {FaEdit, FaTrashAlt, FaBandAid} from 'react-icons/fa';
 import {BsFillPlusSquareFill, BsCloudPlusFill, BsFilePlusFill} from 'react-icons/bs';
-import RemoteReferenceTableAdd from '../components/remote_reference_table_modal.js';
 import $ from 'jquery';
 
-function HierarchicalSpacePage() {
+function DatacrateSpecificPage() {
 
-//define all constants first
+  //define all constants first
   const [spaceList, setSpacesList] = useState([{}]) 
-  const [Loading, setLoading] = useState(true) 
-  const [Message, setMessage] = useState("")
-  const url = window.location.href;
   const countRef = useRef(0);
   const {SpaceId} = useParams();
-  const folder_get = url.split(SpaceId+"/files")[1]
+  const [Message, setMessage] = useState("");
+  const [Loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  console.log(url);
-  console.log(folder_get);
-  //All the functions here
+
   // axios function to delete specifix file from rocrate space
   const deleteFileRocrate = async (todelete) => {
     console.log('todelete content: '+ todelete)
@@ -40,7 +36,7 @@ function HierarchicalSpacePage() {
       })
   }
 
-  //jquery functions
+    //jquery functions
   $(document).ready(function() {
     $('#delete_btn').click(function () {   
         console.log('delete clicked'); 
@@ -54,31 +50,18 @@ function HierarchicalSpacePage() {
         }
         console.log(array);
         deleteFileRocrate(array);
-        window.location.href = `/spaces/${SpaceId}/all_files`;
     });
   });
 
   const fetchSpaces = async () => {
-    axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content${folder_get}`)
+    axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content`)
       .then(res => {
-        console.log("data got from response");
         console.log(res.data)
-        if(folder_get == "/"){
-          setSpacesList(res.data)
-        }else{
-          setSpacesList(res.data.Data)
-        }
-        
+        setSpacesList(res.data)
+        countRef.current++;
         setLoading(false);
-      }, (error) => {
-        console.log(error);
-      }
-      )
+      })
   }
-
-  useEffect(() => {
-    fetchSpaces();
-  },[]);
 
   const OpenBrowserSpace = async () => {
     axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content/openexplorer`)
@@ -116,44 +99,50 @@ function HierarchicalSpacePage() {
     </Popover>
   );
 
+  /*
+  see the space and folder location of the crate
+  <h5 className="card text-white bg-dark">Specific Space : {SpaceId}</h5>
+  <h5 className="card text-black bg-warning">location space: {spaceList[0].folder}</h5>
+  */
+  useEffect(() => {
+    fetchSpaces();
+  },[Message]);
+
   const updateMessage = async (message) =>  {
     setMessage(message)
-    console.log({Message});
-    countRef.current++;
     if(message == "upload"){
       handleClose();
       await fixCrate();
       window.location.href = window.location.href;
     }  
     if(message == "fixcrate"){
-      alert('fixing crate chosen');
       setLoading(true);
       await fixCrate();
-      window.location.href =window.location.href;
+      window.location.href = window.location.href;
     }
   }
 
-	if (typeof folder_get !== 'undefined' && folder_get.length > 0) {
-    if (Loading){
-      return(
-        <div class="busy">
-          <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
-        </div>
-      )
-    }else{
-      return (
-				<div>
-            <hr />
+  if (Loading){
+    return (
+      <div class="busy">
+        <ReactLoading type='bars' color='#006582' height={'20vw'} width={'20vw'} />
+      </div>
+    )
+  }else{
+    return (
+      <div>
+
+          <hr/>
             <button onClick={handleShow} id="commit_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz" ><BsFillPlusSquareFill size="1.5em"/></button>
-            <button onClick={() => updateMessage("annotate")} id="history_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaEdit size="1.5em"/></button>
+            <button onClick={() => updateMessage("annotate")} id="annotate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaEdit size="1.5em"/></button>
             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoverfixcrate}>
               <button onClick={() => updateMessage("fixcrate")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaBandAid size="1.5em"/></button>
             </OverlayTrigger>
-            <button onClick={() => updateMessage("delete")} id="fixcrate_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaTrashAlt size="1.5em"/></button>
-						<div>
-							<FilesView key={countRef.current} listfiles= {spaceList} />
-						</div>
-            <Modal show={show} size="lg" onHide={handleClose}>
+            <button onClick={() => updateMessage("delete")} id="delete_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaTrashAlt size="1.5em"/></button>
+          <div>
+          <FilesView key={countRef.current} listfiles= {spaceList} />
+          </div>
+          <Modal show={show} size="lg" onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Upload zone </Modal.Title>
             </Modal.Header>
@@ -192,13 +181,9 @@ function HierarchicalSpacePage() {
             </Tab.Container>
             </Modal.Body>
           </Modal>
-				</div>
-			)
-    }
-			
-	}else{
-		window.location.href = `/spaces/${SpaceId}/all_files`;
-	}
+      </div>
+    )
+  }  
 }
 
-export default HierarchicalSpacePage
+export default DatacrateSpecificPage

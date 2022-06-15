@@ -1,14 +1,19 @@
 import './App.css';
 import {Route, Routes} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import SpacePage from './pages/spaces';
-import SpaceSpecificPage from './pages/specific_space';
+import DatacratePage from './pages/Datacrate';
+import SpacesPage from './pages/Spaces';
+import ProfilesPage from './pages/Profiles';
+import SpecificSpace from './pages/Specific_Space';
+import SpecificProfile from './pages/Specific_Profile';
+import DatacrateSpecificPage from './pages/specific_Datacrate';
 import FileSpecificPage from './pages/specific_file';
 import Navbar from './components/navbar_general';
-import SpaceOverviewPage from './pages/space_overview';
-import HierarchicalSpacePage from './pages/hierarchical_space_storage';
+import DatacrateOverviewPage from './pages/Datacrate_overview';
+import HierarchicalDatacratePage from './pages/hierarchical_Datacrate_storage';
 import GitPage from './pages/git';
-import SettingsSpacePage from './pages/settings_space';
+import SettingsDatacratePage from './pages/settings_Datacrate';
+import NotFoundPage from './pages/404';
 import HomePage from './pages/home_page';
 require('dotenv').config()
 var port_server = process.env.REACT_APP_PORT_BACKEND_SERVER;
@@ -21,14 +26,19 @@ function App() {
       <Navbar/>
       <div className="container">
         <Routes>
+          <Route path="*" element={NotFoundPage} />
           <Route path='/' element={<HomePage/>} />
-          <Route path='/spaces' element={<SpacePage/>} />
-          <Route path='/spaces/:SpaceId/all_files' element={<SpaceSpecificPage/>} />
-          <Route path='/spaces/:SpaceId/files/*' element={<HierarchicalSpacePage/>} />
-          <Route path='/spaces/:SpaceId' element={<SpaceOverviewPage/>} />
-          <Route path='/spaces/:SpaceId/git' element={<GitPage/>} />
-          <Route path='/spaces/:SpaceId/settings' element={<SettingsSpacePage/>} />
-          <Route path='/spaces/:SpaceId/all_files/:FileId' element={<FileSpecificPage/>} />
+          <Route path='/Datacrates' element={<DatacratePage/>} />
+          <Route path='/Profiles' element={<ProfilesPage/>} />
+          <Route path='/Profiles/:ProfileId' element={<SpecificProfile/>} />
+          <Route path='/Spaces' element={<SpacesPage/>} />
+          <Route path='/Spaces/:SpaceId' element={<SpecificSpace/>} />
+          <Route path='/Datacrates/:SpaceId/all_files' element={<DatacrateSpecificPage/>} />
+          <Route path='/Datacrates/:SpaceId/files/*' element={<HierarchicalDatacratePage/>} />
+          <Route path='/Datacrates/:SpaceId' element={<DatacrateOverviewPage/>} />
+          <Route path='/Datacrates/:SpaceId/git' element={<GitPage/>} />
+          <Route path='/Datacrates/:SpaceId/settings' element={<SettingsDatacratePage/>} />
+          <Route path='/Datacrates/:SpaceId/all_files/:FileId' element={<FileSpecificPage/>} />
         </Routes>
       </div>
     </div>
