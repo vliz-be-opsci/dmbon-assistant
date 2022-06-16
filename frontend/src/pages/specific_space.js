@@ -41,7 +41,7 @@ function SpecificSpace() {
                 try {
                     console.log(res.data[i]);
                     console.log(res.data[i].parent_space);
-                    console.log(spaceData.name);
+                    console.log(spaceData["name"]);
                     if (res.data[i].parent_space == spaceData.name) {
                         spaces_array.push(res.data[i]);
                     }
@@ -83,7 +83,6 @@ function SpecificSpace() {
     }else{
         return (
             <>
-                <p>Specific space {SpaceId} here </p>
                 <br></br>
                 <table id="spaces_table" className='table-sort table_vliz'>
                     <thead>

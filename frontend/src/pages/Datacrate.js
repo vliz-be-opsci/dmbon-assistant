@@ -112,42 +112,6 @@ function DatecratePage() {
               <div>
               <SpacesView listspace= {spaceList} />
               </div>
-              <Modal show={show} onHide={handleClose}>
-                  <Modal.Header closeButton>
-                  <Modal.Title>Add Space</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                  <Form.Group><Form.Label>Name datacrate</Form.Label><Form.Control type="text" placeholder="" name="selectname" onChange={handleChange}/></Form.Group>
-                    <Form.Group><Form.Label>Profile</Form.Label><Form.Select required aria-label="Default select example" name="selectprofile" onClick={handleChange}>
-                                      {profileList}
-                    </Form.Select></Form.Group>
-                    <br />
-                    <Form.Group>
-                      <FloatingLabel
-                        controlId="floatingInput"
-                        label="github repo url, leave empty if none is available"
-                        className="mb-3"
-                      >
-                        <Form.Control type="text" placeholder="" name="selecturl" onChange={handleChange}/>
-                      </FloatingLabel>
-                    </Form.Group>
-                    <br />
-                    <Form.Group>
-                      <FloatingLabel
-                        controlId="floatingInput"
-                        label="Storage path where to store the the new space"
-                        className="mb-3"
-                      >
-                        <Form.Control type="text" placeholder="C:/Users/username/" name="storagepath" onChange={handleChange}/>
-                      </FloatingLabel>
-                    </Form.Group>
-                  </Modal.Body>
-                  <Modal.Footer>
-                  <Button variant="danger" onClick={addspace}>
-                      Yes, add space
-                  </Button>
-                  </Modal.Footer>
-              </Modal>
           </div>
       )
     }

@@ -16,6 +16,8 @@ function SpacesView(props) {
     const [profileList, setProfileseList] = useState([{}]);
     const [spacesListData, setSpacesListData] =  useState([{}]);
     const [show, setShow] = useState(false);
+    const [showspacecreation, setShowSpaceCreation] = useState(false);
+    const [showprofilecreation, setShowProfileCreation] = useState(false);
     const [Loading, setLoading] = useState(true); 
     const [profileSelected, setProfileSelect] = useState("") ;
     const [storagepathSelected, setStoragepath] = useState("") ;
@@ -23,6 +25,10 @@ function SpacesView(props) {
     const [NameSelected, setNameSelect] = useState("") ;
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleCloseSpaceCreation = () => setShowSpaceCreation(false);
+    const handleshowCreationSpace = () => setShowSpaceCreation(true);
+    const handleCloseProfileCreation = () => setShowProfileCreation(false);
+    const handleshowCreationProfile = () => setShowProfileCreation(true);
     //get the info of the profiles
     const fetchProfiles = async () => {
         axios.get(BASE_URL_SERVER+'apiv1/profiles/')
@@ -102,7 +108,7 @@ function SpacesView(props) {
                     if(Object.values(Object.values(profiledata)[ind])[i] == listspace[index]["RO_profile"]){
                         console.log( Object.values(profiledata)[ind]["name"]);
                         spacelistdata["trueprofilename"] = Object.values(profiledata)[ind]["name"];
-                        spacelistdata["trueprofileuuid"] = Object.keys(profiledata)[ind];
+                        spacelistdata["trueprofileuuid"] = Object.values(profiledata)[ind]["uuid"];
                         spacelistdata["parent_space"] = Object.values(profiledata)[ind]["parent_space"];
                     }
                 }
@@ -187,13 +193,16 @@ function SpacesView(props) {
                     </>
                     )}
                     <tr>
-                       <td colSpan="4"><Button variant="danger" onClick={handleShow} style={{width: '100%'}}><FaPlus></FaPlus></Button></td> 
+                       <td><button onClick={handleShow} className="button_datacrates margin-right"><FaPlus></FaPlus></button></td> 
+                       <td><button onClick={handleshowCreationSpace} className="button_datacrates margin-right"><FaPlus></FaPlus></button></td> 
+                       <td><button onClick={handleshowCreationProfile} className="button_datacrates margin-right"><FaPlus></FaPlus></button></td> 
+                       <td></td>
                     </tr>
                     </tbody>
                 </table> 
-                <Modal show={show} onHide={handleClose}>
+                <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
                   <Modal.Header closeButton>
-                  <Modal.Title>Add Space</Modal.Title>
+                  <Modal.Title>Add Datacrate</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                   <Form.Group><Form.Label>Name datacrate</Form.Label><Form.Control type="text" placeholder="" name="selectname" onChange={handleChange}/></Form.Group>
@@ -223,7 +232,79 @@ function SpacesView(props) {
                   </Modal.Body>
                   <Modal.Footer>
                   <Button variant="danger" onClick={addspace}>
-                      Yes, add space
+                      Yes, add Datacrate
+                  </Button>
+                  </Modal.Footer>
+              </Modal> 
+              <Modal show={showspacecreation} onHide={handleCloseSpaceCreation} backdrop="static" keyboard={false}>
+                  <Modal.Header closeButton>
+                  <Modal.Title>Add Space</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                  <Form.Group><Form.Label>Name Space</Form.Label><Form.Control type="text" placeholder="" name="selectname" onChange={handleChange}/></Form.Group>
+                    <Form.Group><Form.Label>Profile</Form.Label><Form.Select required aria-label="Default select example" name="selectprofile" onClick={handleChange}>
+                                      {profileList}
+                    </Form.Select></Form.Group>
+                    <br />
+                    <Form.Group>
+                      <FloatingLabel
+                        controlId="floatingInput"
+                        label="github repo url, leave empty if none is available"
+                        className="mb-3"
+                      >
+                        <Form.Control type="text" placeholder="" name="selecturl" onChange={handleChange}/>
+                      </FloatingLabel>
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                      <FloatingLabel
+                        controlId="floatingInput"
+                        label="Storage path where to store the the new space"
+                        className="mb-3"
+                      >
+                        <Form.Control type="text" placeholder="C:/Users/username/" name="storagepath" onChange={handleChange}/>
+                      </FloatingLabel>
+                    </Form.Group>
+                  </Modal.Body>
+                  <Modal.Footer>
+                  <Button variant="danger" onClick={addspace}>
+                      Yes, add Space
+                  </Button>
+                  </Modal.Footer>
+              </Modal> 
+              <Modal show={showprofilecreation} onHide={handleCloseProfileCreation} backdrop="static" keyboard={false}>
+                  <Modal.Header closeButton>
+                  <Modal.Title>Add Profile</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                  <Form.Group><Form.Label>Name Profile</Form.Label><Form.Control type="text" placeholder="" name="selectname" onChange={handleChange}/></Form.Group>
+                    <Form.Group><Form.Label>Profile</Form.Label><Form.Select required aria-label="Default select example" name="selectprofile" onClick={handleChange}>
+                                      {profileList}
+                    </Form.Select></Form.Group>
+                    <br />
+                    <Form.Group>
+                      <FloatingLabel
+                        controlId="floatingInput"
+                        label="github repo url, leave empty if none is available"
+                        className="mb-3"
+                      >
+                        <Form.Control type="text" placeholder="" name="selecturl" onChange={handleChange}/>
+                      </FloatingLabel>
+                    </Form.Group>
+                    <br />
+                    <Form.Group>
+                      <FloatingLabel
+                        controlId="floatingInput"
+                        label="Storage path where to store the the new space"
+                        className="mb-3"
+                      >
+                        <Form.Control type="text" placeholder="C:/Users/username/" name="storagepath" onChange={handleChange}/>
+                      </FloatingLabel>
+                    </Form.Group>
+                  </Modal.Body>
+                  <Modal.Footer>
+                  <Button variant="danger" onClick={addspace}>
+                      Yes, add Profile
                   </Button>
                   </Modal.Footer>
               </Modal> 
