@@ -86,7 +86,7 @@ class RoCrateGitBase():
     #TODO: !!!
     def find_parts(self,type_uri):
         # returns list of parts in this crate that match this type_uri
-        self.delete_hashtag_from_begin_id()
+        #self.delete_hashtag_from_begin_id()
         md = self._read_metadata()
         print(type_uri)
         # run through md to find...

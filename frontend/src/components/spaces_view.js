@@ -23,6 +23,15 @@ function SpacesView(props) {
     const [storagepathSelected, setStoragepath] = useState("") ;
     const [URLSelected, setURLSelect] = useState("") ;
     const [NameSelected, setNameSelect] = useState("") ;
+    const [NameSpace, setNameSpace] = useState("") ;
+    const [NameProfile, setNameProfile] = useState("") ;
+    const [URLSpaceSelected, setURLSpaceSelect] = useState("") ;
+    const [URLProfileSelected, setURLProfileSelect] = useState("") ;
+    const [descriptionProfile, setDescriptionProfile] = useState("") ;
+    const [descriptionSpace, setDescriptionSpace] = useState("") ;
+    const [logoProfile, setLogoProfile] = useState("") ;
+    const [logoSpace, setLogoSpace] = useState("") ;
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const handleCloseSpaceCreation = () => setShowSpaceCreation(false);
@@ -51,7 +60,7 @@ function SpacesView(props) {
           })
       }
 
-    function addspace(e) {
+    function adddatacrate(e) {
         e.preventDefault();
         // change the profile name to profile uuid
         console.log(profileSelected);
@@ -70,6 +79,50 @@ function SpacesView(props) {
                 alert('There was an error!', error);
         });
     }
+
+    //function to post a new profile to the server
+    function addprofile(e) {
+        e.preventDefault();
+        // change the profile name to profile uuid
+        console.log(NameProfile);
+        //put axios request here that will try and make a new space for the user
+        const topost = { name: NameProfile ,
+                         logo: logoProfile , 
+                         description: descriptionProfile ,
+                         url_ro_profile: URLProfileSelected 
+                          };
+        handleClose();
+        setLoading(true);
+        axios.post(BASE_URL_SERVER+'apiv1/profiles/', topost)
+            .then(response => {setLoading(false);window.location.href = `/Profiles`;})
+            .catch(error => {
+                setLoading(false);
+                alert('There was an error!', error);
+        });
+      }
+
+    //function to post a new project to the server
+    function addspace(e) {
+      e.preventDefault();
+      // change the profile name to profile uuid
+      console.log(NameProfile);
+      //put axios request here that will try and make a new space for the user
+      const topost = { name: NameSpace ,
+                       logo: logoSpace , 
+                       description: descriptionSpace ,
+                       url_ro_project: URLSpaceSelected
+                        };
+      handleClose();
+      setLoading(true);
+      axios.post(BASE_URL_SERVER+'apiv1/projects/', topost)
+          .then(response => {setLoading(false);window.location.href = `/Projects`;})
+          .catch(error => {
+              setLoading(false);
+              alert('There was an error!', error);
+      });
+    }
+
+
   
     function handleChange(event) {
       console.log(event.target.name)
@@ -77,6 +130,14 @@ function SpacesView(props) {
       if(event.target.name == "selecturl"){setURLSelect(event.target.value);}
       if(event.target.name == "storagepath"){setStoragepath(event.target.value);}
       if(event.target.name == "selectname"){setNameSelect(event.target.value);}
+      if(event.target.name == "namespace"){setNameSpace(event.target.value);}
+      if(event.target.name == "profilename"){setNameProfile(event.target.value);}
+      if(event.target.name == "urlspace"){setURLSpaceSelect(event.target.value);}
+      if(event.target.name == "urlprofile"){setURLProfileSelect(event.target.value);}
+      if(event.target.name == "descriptionprofile"){setDescriptionProfile(event.target.value);}
+      if(event.target.name == "descriptionspace"){setDescriptionSpace(event.target.value);}
+      if(event.target.name == "logoprofile"){setLogoProfile(event.target.value);}
+      if(event.target.name == "logospace"){setLogoSpace(event.target.value);}
     }
 
     //transform spaces info 
@@ -231,7 +292,7 @@ function SpacesView(props) {
                     </Form.Group>
                   </Modal.Body>
                   <Modal.Footer>
-                  <Button variant="danger" onClick={addspace}>
+                  <Button variant="danger" onClick={adddatacrate}>
                       Yes, add Datacrate
                   </Button>
                   </Modal.Footer>
@@ -241,30 +302,36 @@ function SpacesView(props) {
                   <Modal.Title>Add Space</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                  <Form.Group><Form.Label>Name Space</Form.Label><Form.Control type="text" placeholder="" name="selectname" onChange={handleChange}/></Form.Group>
-                    <Form.Group><Form.Label>Profile</Form.Label><Form.Select required aria-label="Default select example" name="selectprofile" onClick={handleChange}>
-                                      {profileList}
-                    </Form.Select></Form.Group>
+                  <Form.Group><Form.Label>Name Space</Form.Label><Form.Control type="text" placeholder="" name="namespace" onChange={handleChange}/></Form.Group>
                     <br />
                     <Form.Group>
                       <FloatingLabel
                         controlId="floatingInput"
-                        label="github repo url, leave empty if none is available"
+                        label="github repo url"
                         className="mb-3"
                       >
-                        <Form.Control type="text" placeholder="" name="selecturl" onChange={handleChange}/>
+                        <Form.Control type="text" placeholder="" name="urlspace" onChange={handleChange}/>
                       </FloatingLabel>
                     </Form.Group>
-                    <br />
                     <Form.Group>
                       <FloatingLabel
                         controlId="floatingInput"
-                        label="Storage path where to store the the new space"
+                        label="url thats points to the logo of the space"
                         className="mb-3"
                       >
-                        <Form.Control type="text" placeholder="C:/Users/username/" name="storagepath" onChange={handleChange}/>
+                        <Form.Control type="text" placeholder="" name="logospace" onChange={handleChange}/>
                       </FloatingLabel>
                     </Form.Group>
+                    <Form.Group>
+                      <FloatingLabel
+                        controlId="floatingInput"
+                        label="description of the space"
+                        className="mb-3"
+                      >
+                        <Form.Control type="text" placeholder="" name="descriptionspace" onChange={handleChange}/>
+                      </FloatingLabel>
+                    </Form.Group>
+                    <br />
                   </Modal.Body>
                   <Modal.Footer>
                   <Button variant="danger" onClick={addspace}>
@@ -277,33 +344,40 @@ function SpacesView(props) {
                   <Modal.Title>Add Profile</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                  <Form.Group><Form.Label>Name Profile</Form.Label><Form.Control type="text" placeholder="" name="selectname" onChange={handleChange}/></Form.Group>
-                    <Form.Group><Form.Label>Profile</Form.Label><Form.Select required aria-label="Default select example" name="selectprofile" onClick={handleChange}>
-                                      {profileList}
-                    </Form.Select></Form.Group>
-                    <br />
-                    <Form.Group>
+                  <Form.Group><Form.Label>Name Profile</Form.Label><Form.Control type="text" placeholder="" name="nameprofile" onChange={handleChange}/></Form.Group>
+                  <br /> 
+                  <Form.Group>
                       <FloatingLabel
                         controlId="floatingInput"
-                        label="github repo url, leave empty if none is available"
+                        label="description of the profile"
                         className="mb-3"
                       >
-                        <Form.Control type="text" placeholder="" name="selecturl" onChange={handleChange}/>
+                        <Form.Control type="text" placeholder="" name="descriptionprofile" onChange={handleChange}/>
                       </FloatingLabel>
                     </Form.Group>
                     <br />
                     <Form.Group>
                       <FloatingLabel
                         controlId="floatingInput"
-                        label="Storage path where to store the the new space"
+                        label="github repo url"
                         className="mb-3"
                       >
-                        <Form.Control type="text" placeholder="C:/Users/username/" name="storagepath" onChange={handleChange}/>
+                        <Form.Control type="text" placeholder="" name="urlprofile" onChange={handleChange}/>
+                      </FloatingLabel>
+                    </Form.Group>
+                    <br />                 
+                    <Form.Group>
+                      <FloatingLabel
+                        controlId="floatingInput"
+                        label="logo profile"
+                        className="mb-3"
+                      >
+                        <Form.Control type="text" placeholder="" name="logoprofile" onChange={handleChange}/>
                       </FloatingLabel>
                     </Form.Group>
                   </Modal.Body>
                   <Modal.Footer>
-                  <Button variant="danger" onClick={addspace}>
+                  <Button variant="danger" onClick={addprofile}>
                       Yes, add Profile
                   </Button>
                   </Modal.Footer>
