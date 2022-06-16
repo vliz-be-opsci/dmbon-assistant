@@ -91,8 +91,6 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
                     if entry["@type"] != "Dataset":
                         toreturn.append({"file":entry["@id"],"folder":"/", "type":entry["@type"]})
             
-    
-    
     return toreturn
 
 @router.get('/file/{file_id}')

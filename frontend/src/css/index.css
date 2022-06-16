@@ -59,7 +59,7 @@ code {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
+  margin: auto;
   cursor: pointer;
   border-radius: 6px;
 }
@@ -99,8 +99,6 @@ code {
   border: none;
   border-radius: 5px;
   padding: 5px;
-  margin: auto;
-  margin-left: 15px;
   min-width: 50px;
   min-height:50px;
 }
@@ -172,10 +170,14 @@ code {
 
 .button_datacrates {
   font-size: 0.9rem;
-  width: 90%;
-  margin: auto;
+  width: 100%;
   white-space: normal;
   word-wrap: break-word;
+}
+
+.action_button {
+  margin-left: 15px;
+  vertical-align: middle;
 }
 
 #searchtable {

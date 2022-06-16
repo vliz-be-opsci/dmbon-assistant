@@ -7,6 +7,11 @@ log=logging.getLogger(__name__)
 #all diff subroutes
 from app.model.location import Locations
 from app.model.project import Project
+from dotenv import load_dotenv
+import os
+env = load_dotenv()
+log.debug(f"all env variables: {env}")
+BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
 
 router = APIRouter(
     prefix="",
@@ -31,9 +36,23 @@ class ProjectModel(BaseModel):
 @router.get('/')
 def get_all_projects_info():
     log.info(f"project get all begin")
-    with open(Locations().join_abs_path('projects.json'), "r+") as file:
-        data = json.load(file)
-        return data
+    with open(Locations().join_abs_path('projects.json'), "r+")as file:
+        try:
+            log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
+            data = json.load(file)
+            toreturn = []
+            for i,y in data.items():
+                clicktrough_url = BASE_URL_SERVER + 'apiv1/' + 'projects/' + i 
+                #example_url: https://example.org/dmbon/ns/entity_types#Space
+                toreturn.append({'name':y["name"],
+                                'uuid':y['uuid'],
+                                '@type':'https://example.org/dmbon/ns/entity_types#Project',
+                                'url_project':clicktrough_url})   
+            return toreturn
+        except Exception as e:
+            log.error(f"error  :{e}")
+            log.exception(e)
+            raise HTTPException(status_code=500, detail=e)
 
 @router.get('/{project_id}/')
 def get_project_info(project_id: str = Path(None,description="project_id name")):

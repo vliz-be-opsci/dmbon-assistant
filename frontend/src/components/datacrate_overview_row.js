@@ -11,12 +11,13 @@ function Datacrate_overview_row(props) {
     //constants 
     const spacedata = props.spacedata;
     const [todisplaydata, setTodisplaydata] = useState({});
+    const [profiledata, setProfiledata] = useState([{}]);
     const [Loadingrow, setLoadingRow] = useState(true); 
     const [repo_dirty, SetRepoDirty] = useState(false);
     const [ahead, SetAhead] = useState(0);
     const [behind, SetBehind] = useState(0);
     const [noerror, SetNoError] = useState(true);
-    console.log(spacedata);
+    //console.log(spacedata);
     //functions 
     const popoveropenfilebrowser = (
         <Popover id="popover-open">
@@ -28,6 +29,22 @@ function Datacrate_overview_row(props) {
             </Popover.Body>
         </Popover>
     );
+
+    //function to get all the spaces data
+    const fetchprojects = () => {
+        axios.get(BASE_URL_SERVER+`apiv1/projects`)
+            .then(function(res){
+                console.log(res);
+                console.log(res.data);
+                setProfiledata(res.data);
+                setLoadingRow(false);
+            }
+            ).catch(err => {
+                console.log(err);
+            }
+            )
+    }
+
 
     //function to get shacl data from the spacedata name
     const getShaclData = (spacedata) => {
@@ -64,7 +81,6 @@ function Datacrate_overview_row(props) {
             SetRepoDirty(git_status.dirty);
             SetAhead(git_status.ahead);
             SetBehind(git_status.behind);
-            setLoadingRow(false);
         })
     }
 
@@ -189,9 +205,31 @@ function Datacrate_overview_row(props) {
         }
     }
 
+    //child component to display the space id of a datacrate => if value is not undefined then display a butten , else display value null 
+    const SpaceIdbutton = (props) => {
+        var spaceidvalue = props.spaceidvalue;
+        var profiledata = props.profiledata;
+        if(spaceidvalue != undefined){
+            //check in the profiledata if the spaceid == profile.name and then use the uuid 
+            for(var i = 0; i < profiledata.length; i++){
+                console.log(profiledata[i]['name']);
+                if(spaceidvalue == profiledata[i]['name']){
+                    return(
+                        <a href={'/Spaces/' + profiledata[i]['uuid'] }><button className='button_datacrates'>{spaceidvalue}</button></a>
+                    )
+                }
+            }
+        }else{
+            return(
+                <>NULL</>
+            )
+        }
+    }
+
     //useEffect 
     useEffect(() => {
         getShaclData(spacedata);
+        fetchprojects();
     },[]);
 
     //return section
@@ -206,26 +244,26 @@ function Datacrate_overview_row(props) {
         <>
             <tr>
                 <td><a href={'/Datacrates/' + todisplaydata.name }><button className='button_datacrates'>{todisplaydata.truespacename}</button></a></td>
-                <td><a href={'/Spaces/' + todisplaydata.parent_space }><button className='button_datacrates'>{todisplaydata.parent_space}</button></a></td>
+                <td><SpaceIdbutton spaceidvalue={todisplaydata.parent_space} profiledata={profiledata}></SpaceIdbutton></td>
                 <td><a href={'/Profiles/' + todisplaydata.trueprofileuuid }><button className='button_datacrates'>{todisplaydata.trueprofilename}</button></a></td>
                 <td>
                 <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" overlay={popoveropenfilebrowser}>
-                    <button onClick={() => OpenBrowserSpace(todisplaydata.name)}>
+                    <button onClick={() => OpenBrowserSpace(todisplaydata.name)} className='action_button'>
                         <MdOpenInBrowser></MdOpenInBrowser>
                     </button>
                 </OverlayTrigger>
                 <a href={'/Datacrates/' + todisplaydata.name + '/all_files'}>
-                    <button>
+                    <button className='action_button'>
                         <BadgeFolder ShaclErrors={todisplaydata.shacl_violations}/>
                     </button>
                 </a>
                 <a href={'/Datacrates/' + todisplaydata.name + '/git'}>
-                    <button>
+                    <button className='action_button'>
                         <BadgeGit/>
                     </button>
                 </a>
                 <a href={'/Datacrates/' + todisplaydata.name + '/settings'}>
-                    <button>
+                    <button className='action_button'>
                     <FaCog></FaCog>
                     </button>
                 </a>
@@ -234,7 +272,6 @@ function Datacrate_overview_row(props) {
         </> 
         )
     }
-    
 }
 
 export default Datacrate_overview_row

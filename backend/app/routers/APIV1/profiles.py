@@ -7,6 +7,11 @@ log=logging.getLogger(__name__)
 #all diff subroutes
 from app.model.location import Locations
 from app.model.profile import Profile
+from dotenv import load_dotenv
+import os
+env = load_dotenv()
+log.debug(f"all env variables: {env}")
+BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
 
 router = APIRouter(
     prefix="",
@@ -31,9 +36,28 @@ class ProfileModel(BaseModel):
 @router.get('/')
 def get_all_profiles_info():
     log.info(f"profile get all begin")
-    with open(Locations().join_abs_path('profiles.json'), "r+") as file:
-        data = json.load(file)
-        return data
+    with open(Locations().join_abs_path('profiles.json'), "r+")as file:
+        try:
+            log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
+            data = json.load(file)
+            toreturn = []
+            for i,y in data.items():
+                clicktrough_url = BASE_URL_SERVER + 'apiv1/' + 'profiles/' + i 
+                try:
+                    parent_space = y["parent_space"]
+                except:
+                    parent_space = None
+                #example_url: https://example.org/dmbon/ns/entity_types#Space
+                toreturn.append({'name':y["name"],
+                                'uuid':i,
+                                '@type':'https://example.org/dmbon/ns/entity_types#Profile',
+                                "parent_space":parent_space,
+                                'url_space':clicktrough_url})   
+            return toreturn
+        except Exception as e:
+            log.error(f"error  :{e}")
+            log.exception(e)
+            raise HTTPException(status_code=500, detail=e)
 
 @router.get('/{profile_id}/')
 def get_profile_info(profile_id: str = Path(None,description="profile_id name")):

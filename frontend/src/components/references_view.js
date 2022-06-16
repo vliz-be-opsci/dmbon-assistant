@@ -1,43 +1,17 @@
 
 import {useParams} from 'react-router-dom';
 import React, {useState, useEffect} from 'react';
-import {OverlayTrigger, Popover} from 'react-bootstrap';
-import { FaArrowLeft } from "react-icons/fa";
-import PredicateProgressbar from './predicates_progressbar';
 import { AllCheckerCheckbox, Checkbox, CheckboxGroup } from '@createnl/grouped-checkboxes';
-import {MdOpenInBrowser} from "react-icons/md";
 import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 
 //get the current url to know the parent
 const url = window.location.href;
-const parenturl = url.substr(0,url.lastIndexOf('/'))
 
 function ReferencesView(props) {
     //get the current params from the url
     const {SpaceId} = useParams();
     const [filesselected, setFilesSelected] = useState([]);
-    const [SpaceName, setSpaceName] = useState("");
-
-    const Relative_folder = (folder) => {
-        try {
-            console.log(folder);
-            console.log(SpaceName);
-            let toreturn = folder.split(SpaceName);
-            console.log(toreturn);
-            var rest_folder = toreturn[toreturn.length-1];
-            rest_folder = rest_folder.replaceAll('\\','/');
-            console.log(rest_folder);
-            if(rest_folder.length == 0){
-                const returnoo = '/'
-                return returnoo
-            }
-            console.log(rest_folder);
-            return (rest_folder)
-        } catch (error) {
-            return('')
-        }
-    }
 
     const searchTable = async(value_input) => {
         // Declare variables
@@ -75,17 +49,6 @@ function ReferencesView(props) {
         }
       }
 
-    const fetchSpaceName = async() => {
-        axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}`)
-        .then(res => {
-            console.log(res)
-            var space_name_array = res.data.storage_path.replace('\\','/').split('/');
-            var space_name = space_name_array[space_name_array.length-1];
-            console.log(space_name);
-            setSpaceName(space_name);
-        })
-    } 
-
     const setfileinarray = async(filename,bool) => {
         if(bool == false){
             var carray =  filesselected;
@@ -102,9 +65,26 @@ function ReferencesView(props) {
         }
     }
 
-    useEffect(() => {
-        fetchSpaceName();
-    },[]);
+    //make child component that takes in the reference_file and checks if it is an url => if it is then it returns a hyperlink to set url , if not then it return a link to the node  eg : '/Datacrates/'+SpaceId+'/all_files/'+ reference_file
+    const Reference_file_link = (props) => {
+        const reference_file = props.reference_file;
+        try {
+            if(reference_file.includes('http')){
+                return(
+                    <a href={reference_file} target="_blank">{reference_file}</a>
+                )
+            }else{
+                return(
+                    <a href={'/Datacrates/'+SpaceId+'/all_files/'+ reference_file}>{reference_file}</a>
+                )
+            }
+        } catch (error) {
+            console.log(error);
+            return(
+                <>an error occured, please make an issue on github</>
+            )
+        }
+    }
 
     return (
         <div className='container'>
@@ -121,18 +101,12 @@ function ReferencesView(props) {
                 <tbody>
                     {props.listreferences.map(reference =>
                         <tr>
-                            <td><Checkbox value={file.file} onChange={(e) => setfileinarray(file.file,e.target.checked)}/></td>
-                            <td variant="info">
-                                <OpenInExternal file={file}></OpenInExternal>
-                            </td>
+                            <td><Checkbox value={reference.file} onChange={(e) => setfileinarray(reference.file,e.target.checked)}/></td>
                             <td className="filetd">
-                            <a href={ '/Datacrates/'+SpaceId+'/all_files/'+ file.file}>{file.file} </a>
+                                <Reference_file_link reference_file={reference.file}/>
                             </td>
                             <td>
-                                <a href={ '/Datacrates/'+SpaceId+'/files'+ Relative_folder(file.folder)}>{Relative_folder(file.folder)} </a>
-                            </td>
-                            <td>
-                                <PredicateProgressbar key={props.key} filee={file.file}/>
+                                {reference.type}
                             </td>
                         </tr>
                     )}

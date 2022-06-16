@@ -3,6 +3,7 @@ import axios from 'axios';
 import {BASE_URL_SERVER} from '../App.js';
 import {useParams} from 'react-router-dom';
 import FilesView from '../components/files_view';
+import ReferencesView from '../components/references_view';
 import RemoteReferenceTableAdd from '../components/remote_reference_table_modal.js';
 import ReactLoading from 'react-loading';
 import {Button, Modal, Popover, OverlayTrigger, Tab, Row, Col, Nav} from 'react-bootstrap';
@@ -14,6 +15,7 @@ function DatacrateSpecificPage() {
 
   //define all constants first
   const [spaceList, setSpacesList] = useState([{}]) 
+  const [referenceList, setReferencesList] = useState([{}]) 
   const countRef = useRef(0);
   const {SpaceId} = useParams();
   const [Message, setMessage] = useState("");
@@ -57,7 +59,18 @@ function DatacrateSpecificPage() {
     axios.get(BASE_URL_SERVER+`apiv1/spaces/${SpaceId}/content`)
       .then(res => {
         console.log(res.data)
-        setSpacesList(res.data)
+        var file_array = [];
+        var reference_array = [];
+        //loop over the res.data and sort out the items by type => if type == file then add it to the filearray => if not add it to the reference_array 
+        for (var i = 0; i < res.data.length; i++) {
+          if (res.data[i].type == "file") {
+            file_array.push(res.data[i]);
+          } else {
+            reference_array.push(res.data[i]);
+          }
+        }
+        setSpacesList(file_array);
+        setReferencesList(reference_array);
         countRef.current++;
         setLoading(false);
       })
@@ -141,6 +154,7 @@ function DatacrateSpecificPage() {
             <button onClick={() => updateMessage("delete")} id="delete_btn" type="button" style={{width:"23%",margin:"1%"}} class="button_vliz"><FaTrashAlt size="1.5em"/></button>
           <div>
           <FilesView key={countRef.current} listfiles= {spaceList} />
+          <ReferencesView key={countRef.current} listreferences= {referenceList} />
           </div>
           <Modal show={show} size="lg" onHide={handleClose}>
             <Modal.Header closeButton>

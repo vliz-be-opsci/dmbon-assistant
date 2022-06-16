@@ -3,6 +3,7 @@ import axios from 'axios';
 import {useParams} from 'react-router-dom';
 import SpacesView from '../components/spaces_view.js'
 import {Button, Modal, Form, FloatingLabel} from 'react-bootstrap';
+import ReferencesView from '../components/references_view';
 import ReactLoading from 'react-loading';
 import {BASE_URL_SERVER} from '../App.js';
 
@@ -10,6 +11,7 @@ function DatecratePage() {
 
 //define all constants first
   const [spaceList, setSpacesList] = useState([{}]) 
+  const [referenceList, setReferencesList] = useState([{}]) 
   const [NameSelected, setNameSelect] = useState("") 
   const [profileList, setProfilesList] = useState([{}]) 
   const [profileSelected, setProfileSelect] = useState("") 
@@ -47,7 +49,18 @@ function DatecratePage() {
     axios.get(BASE_URL_SERVER+'apiv1/spaces/')
       .then(res => {
         console.log(res.data)
-        setSpacesList(res.data)
+        var file_array = [];
+        var reference_array = [];
+        //loop over the res.data and sort out the items by type => if type == file then add it to the filearray => if not add it to the reference_array 
+        for (var i = 0; i < res.data.length; i++) {
+          if (res.data[i].type == "file") {
+            file_array.push(res.data[i]);
+          } else {
+            reference_array.push(res.data[i]);
+          }
+        }
+        setSpacesList(file_array);
+        setReferencesList(reference_array);
         countRef.current++;
       })
   }
