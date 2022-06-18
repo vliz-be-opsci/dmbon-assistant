@@ -2,9 +2,9 @@ import './App.css';
 import {Route, Routes} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import DatacratePage from './pages/Datacrate';
-import SpacesPage from './pages/Spaces';
+import SpacesPage from './pages/spaces';
 import ProfilesPage from './pages/Profiles';
-import SpecificSpace from './pages/Specific_Space';
+import SpecificSpace from './pages/specific_space';
 import SpecificProfile from './pages/Specific_Profile';
 import DatacrateSpecificPage from './pages/specific_Datacrate';
 import FileSpecificPage from './pages/specific_file';

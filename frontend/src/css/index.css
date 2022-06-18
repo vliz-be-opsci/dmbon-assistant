@@ -151,6 +151,12 @@ code {
   border-left: 1px solid #006582;
 }
 
+.no-overflow {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 200px;
+}
+
 /*links in .table_vliz have color white */
 .table_vliz > tbody > tr > td > a {
   color: white;

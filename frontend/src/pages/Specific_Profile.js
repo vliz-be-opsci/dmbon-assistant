@@ -92,7 +92,7 @@ function SpecificProfile() {
                             return (
                                 <tr key={index}>
                                     <td>{key}</td>
-                                    <td>{displayProfileData({key:key})}</td>
+                                    <td className='no-overflow'>{displayProfileData({key:key})}</td>
                                 </tr>
                             )
                         }

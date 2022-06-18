@@ -64,9 +64,10 @@ function SpacesView(props) {
         e.preventDefault();
         // change the profile name to profile uuid
         console.log(profileSelected);
+        console.log(profilesList[profileSelected]);
         //put axios request here that will try and make a new space for the user
         const topost = { storage_path: storagepathSelected ,
-                            RO_profile: profileSelected ,
+                            RO_profile: profilesList[profileSelected]["uuid"] ,
                             remote_url: URLSelected,
                             name: NameSelected           
                         };

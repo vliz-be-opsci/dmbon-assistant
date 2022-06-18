@@ -95,7 +95,7 @@ function SpecificSpace() {
                             return (
                                 <tr key={index}>
                                     <td>{key}</td>
-                                    <td>{displaySpaceData({key:key})}</td>
+                                    <td className='no-overflow'>{displaySpaceData({key:key})}</td>
                                 </tr>
                             )
                         }
