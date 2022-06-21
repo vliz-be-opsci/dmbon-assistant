@@ -6,11 +6,10 @@ webtop appliction consisting of a backend powered by fast-api and a react fronte
 ## for people without docker:
 run following commands in terminal of the root project directory:
 ```
-pip install -r app/requirements.txt
-sh start-api-server.sh
+sh ./dmbon-assistant start
 ```
 
-## for people withdocker:
+## for people with docker (not yet implemented):
 run following commands in terminal of the root project directory:
 #TODO have a docker solution. 
 ```
