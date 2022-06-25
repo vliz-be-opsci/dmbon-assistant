@@ -14,13 +14,40 @@ function SpecificSpace() {
     const [profileData, setProfilesData] = useState([{}]);
 
     //function to perform axios request to get the profile
-    const fetchSpace = () => {
+    const fetchSpace = async() => {
         setLoading(true);
         console.log(SpaceId);
         axios.get(BASE_URL_SERVER+'apiv1/projects/'+ SpaceId)
         .then(res => {
             console.log(res.data);
             setSpacesData(res.data);
+            var spacedata = res.data;
+            axios.get(BASE_URL_SERVER+'apiv1/profiles/')
+            .then(res => {
+                console.log(res.data);
+                //loop over the res.data and sort out the items if they use this profile
+                var spaces_array = [];
+                for (var i = 0; i < res.data.length; i++) {
+                    try {
+                        console.log(res.data[i]);
+                        console.log(res.data[i].parent_space);
+                        console.log(spaceData);
+                        console.log(spaceData["name"]);
+                        if (res.data[i].parent_space == spacedata.name) {
+                            spaces_array.push(res.data[i]);
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                setProfilesData(spaces_array);
+                setLoading(false);
+            }
+            )
+            .catch(error => {
+                console.log(error);
+            }
+            );
         }
         )
         .catch(error => {
@@ -29,35 +56,6 @@ function SpecificSpace() {
         );
     }
 
-    //function that will fetch all profiles
-    const fetchProfiles = () => {
-        setLoading(true);
-        axios.get(BASE_URL_SERVER+'apiv1/profiles/')
-        .then(res => {
-            console.log(res.data);
-            //loop over the res.data and sort out the items if they use this profile
-            var spaces_array = [];
-            for (var i = 0; i < res.data.length; i++) {
-                try {
-                    console.log(res.data[i]);
-                    console.log(res.data[i].parent_space);
-                    console.log(spaceData["name"]);
-                    if (res.data[i].parent_space == spaceData.name) {
-                        spaces_array.push(res.data[i]);
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-            setProfilesData(spaces_array);
-            setLoading(false);
-        }
-        )
-        .catch(error => {
-            console.log(error);
-        }
-        );
-    }
 
     //child component that will check if the valie of the profiledata[key] is a url => if url then display hyperlink else just display text 
     const displaySpaceData = (props) => {
@@ -71,7 +69,6 @@ function SpecificSpace() {
 
     useEffect(() => {
         fetchSpace();
-        fetchProfiles();
     }, []);
 
     if(Loading){

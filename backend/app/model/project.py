@@ -48,6 +48,7 @@ class Project(RoCrateGitBase):
         if uuid is None:
             self.write()
         self.seed_dependencies = SeedCrate.load_all(seed_dependencies) 
+        
     
     def __str__(self):
         return f"Project(uuid = {self.uuid})"

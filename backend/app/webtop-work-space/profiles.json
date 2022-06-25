@@ -9,13 +9,13 @@
             "https://github.com/cedricdcc/my_bon_test_crate_2.git"
         ]
     },
-    "788195bb52c148468d7a444cf58986d3": {
+    "12bdff989e96494da9f6fc50db026377": {
         "name": "space_test_OSD_profilecrate",
         "repo_url": "https://github.com/vliz-be-opsci/test_OSD_profilecrate",
         "logo_url": null,
-        "description": "Seed profile space_test_OSD_profilecrate of the space OSD",
-        "uuid": "788195bb52c148468d7a444cf58986d3",
+        "description": "Seed profile space_test_OSD_profilecrate of the space osd_test",
+        "uuid": "12bdff989e96494da9f6fc50db026377",
         "seed_dependencies": [],
-        "parent_space": "OSD"
+        "parent_space": "osd_test"
     }
 }

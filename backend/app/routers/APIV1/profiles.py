@@ -65,6 +65,7 @@ def get_profile_info(profile_id: str = Path(None,description="profile_id name"))
     with open(Locations().join_abs_path('profiles.json'), "r+") as file:
         data = json.load(file)
         try:
+            log.info(profile_id)
             toreturn = data[profile_id]
             return toreturn
         except Exception as e:

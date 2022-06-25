@@ -1,13 +1,19 @@
 import '../css/home_page.css';
+import {useEffect, useState} from 'react';
 import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
 import Footer from '../components/footer';
+import { Modal } from 'react-bootstrap';
+import {NEW_USER} from '../App.js';
 function HomePage() {
 
 //define all constants first
   //All the functions here
-
+    const [show, setShow] = useState(NEW_USER);
+  //child component that will determine wether or not a modal should be displayed for user setup
+ 
     return (
+        <>
         <div>
             <section className="blue">
                 <h2>DM-BON Assistant</h2>
@@ -48,6 +54,36 @@ function HomePage() {
             </section>
             <Footer />
         </div>
+        <Modal show = {show}>
+            <Modal.Header>
+                <Modal.Title>Welcome to the site new user!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>
+                    Please set up your account.
+                    The button below will take you to the datacrates page (for now).
+                </p>
+                <p>The following aspects need to be added in the init setup of the webtop client</p>
+                <ol>
+                    <li>GIT ssh account setup and check</li>
+                    <li>check if all the right json files are present eg : projects, spaces, profiles.json </li>
+                    <li>check if the right folder structure is present in the webtop client</li>
+                    <li>Personal info setup like ORCID and other info if neccesary</li>
+                    <li>Initial test of the user ssh by getting the test space, profile and datacrate from vliz-opsci guthub space</li>
+                    <li>if all is good then set .env variable to false so that setup is completed</li>
+                </ol>
+            </Modal.Body>
+            <Modal.Footer>
+                <button className="btn btn-primary" onClick={() => {
+                    window.location.href = "/spaces";
+                }
+                }>
+                    Set Up Account
+                </button>
+            </Modal.Footer>
+        </Modal>
+        </>
+        
     )
 }
 
