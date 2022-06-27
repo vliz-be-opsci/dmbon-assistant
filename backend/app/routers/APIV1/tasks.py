@@ -36,13 +36,11 @@ def perform_sshsetup():
     old_wd = os.getcwd()
     try:
         #get current wd
-        log.info(os.getcwd())
         new_wd = os.path.join(old_wd, "app", "shell_scripts")
         os.chdir(new_wd)
-        log.info(os.getcwd())
-        os.chmod("check-gitssh.sh",0o777)
-        sshcheck = sp.run(["sh","check-gitssh.sh"], capture_output=True, text=True, shell=True)
+        sshcheck = sp.run(["sh","check-gitssh.sh"], capture_output=True, text=True)
         rc =  sshcheck.returncode
+        sshcheck.check_returncode()
         log.info(sshcheck.stdout)
         log.info(sshcheck.stderr)
         log.info(f'return code for sshcheck: {rc}')
@@ -52,7 +50,7 @@ def perform_sshsetup():
         log.error("Error performing ssh setup")
         log.error(e)
         os.chdir(old_wd)
-        raise HTTPException(status_code=500, detail="Error performing ssh setup")
+        raise HTTPException(status_code=500, detail = {"data": e})
     
 
 @router.post('/adduserdata', status_code=200)

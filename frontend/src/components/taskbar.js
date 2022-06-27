@@ -26,7 +26,7 @@ function TaskBar(props) {
     setTaskrunning(true);
     axios.get(BASE_URL_SERVER+'apiv1/tasks/'+ TaskRequest)
       .then(res => {
-        console.log(res.data.data);
+        console.log(res.data);
         setTaskResponse(res.data.data);
         setTaskrunning(false);
         setTaskcompleted(true);
@@ -34,7 +34,6 @@ function TaskBar(props) {
       }
       )
       .catch(error => {
-        console.log(error);
         setTaskfailed(true);
         setTaskrunning(false);
         setTaskResponse(error.message);
