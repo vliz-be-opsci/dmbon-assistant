@@ -17,5 +17,14 @@
         "uuid": "12bdff989e96494da9f6fc50db026377",
         "seed_dependencies": [],
         "parent_space": "osd_test"
+    },
+    "788195bb52c148468d7a444cf58986d3": {
+        "name": "space_test_OSD_profilecrate",
+        "repo_url": "https://github.com/vliz-be-opsci/test_OSD_profilecrate",
+        "logo_url": null,
+        "description": "Seed profile space_test_OSD_profilecrate of the space OSD",
+        "uuid": "788195bb52c148468d7a444cf58986d3",
+        "seed_dependencies": [],
+        "parent_space": "OSD"
     }
 }

@@ -223,3 +223,94 @@ html {
   width: 100%;
   padding: 7px;
 }
+
+.form_userdata {
+  border: 1px solid #006582;
+  background-color: #00658250;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.form_userdata > div > div >  input {
+  background-color: #00658250;
+  border: 1px solid #006582;
+  color: #006582;
+}
+
+.form_userdata > div > div >  input:focus {
+  background-color: #00658250;
+  border: 1px solid #006582;
+  color: #006582;
+}
+
+.form_userdata > div > div >  input:hover {
+  background-color: #00658250;
+  border: 1px solid #006582;
+  color: #006582;
+}
+
+.form_userdata > button {
+  background-color: #006582;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  margin: auto;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.form_userdata > button:hover {
+  background-color: #2c3e50;
+  color: white;
+  box-shadow: 0px 0px 5px #2c3e50;
+}
+
+.form_userdata > button:focus {
+  background-color: #2c3e50;
+  color: white;
+  box-shadow: 0px 0px 5px #2c3e50;
+}
+
+.form_userdata > button:active {
+  transform: translateY(3px);
+}
+
+.hidden {
+  display: none;
+}
+
+.shown {
+  display: block;
+}
+
+.modalbutton:enabled {
+  background-color: #006582;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  margin: auto;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.modalbutton:enabled:hover {
+  background-color: #2c3e50;
+  color: white;
+  box-shadow: 0px 0px 5px #2c3e50;
+}
+.modalbutton:enabled:focus {
+  background-color: #2c3e50;
+  color: white;
+  box-shadow: 0px 0px 5px #2c3e50;
+}
+.modalbutton:enabled:active {
+  transform: translateY(3px);
+}
+.modalbutton:disabled {
+  background-color: #2c3e50;
+  color: white;
+  box-shadow: 0px 0px 5px #2c3e50;
+}

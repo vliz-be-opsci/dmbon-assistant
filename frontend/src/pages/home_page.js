@@ -2,16 +2,116 @@ import '../css/home_page.css';
 import {useEffect, useState} from 'react';
 import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
+import axios from 'axios';
 import Footer from '../components/footer';
-import { Modal } from 'react-bootstrap';
+import { Form, FloatingLabel,Modal } from 'react-bootstrap';
 import {NEW_USER} from '../App.js';
+import {MdSchedule, MdError} from 'react-icons/md';
+import {BsFillCheckCircleFill} from 'react-icons/bs';
+import TaskBar from '../components/taskbar';
+import {BASE_URL_SERVER} from '../App.js';
+import $ from 'jquery';
+import ReactLoading from 'react-loading';
+import "../css/taskbar.css";
+
 function HomePage() {
 
 //define all constants first
   //All the functions here
     const [show, setShow] = useState(NEW_USER);
+    const [setupready, setSetupReady] = useState(true);
+    const [username, setUsername] = useState('');
+    const [ORCID, setORCID] = useState('');
+    const [PerformTaskForm, setPerformTaskForm] = useState(false);
+    const [Taskcompleted, setTaskcompleted] = useState(false);
+    const [Taskfailed, setTaskfailed] = useState(false);
+    const [Taskrunning, setTaskrunning] = useState(false);
+    const [TaskResponse, setTaskResponse] = useState("");
+    const [SSHsetupsuccess, setSSHsetupsuccess] = useState(false);
+    const [Userdatasetupsucess, setUserdatasetupsucess] = useState(false);
+    const [Folderstructuresetupsucess, setFolderstructuresetupsucess] = useState(false);
   //child component that will determine wether or not a modal should be displayed for user setup
- 
+    
+    const TaskIcon = () => {
+        if(Taskcompleted){
+        return <BsFillCheckCircleFill color="green" size={40}/>
+        }
+        else if(Taskfailed){
+        return <MdError size={40} color="red"/>
+        }
+        else if(Taskrunning){
+        //return circular loading icon from reactloading
+        return <ReactLoading type="spinningBubbles" color="orange" height={'40px'} width={'40px'} />
+        }
+        else{
+        return <MdSchedule size={40} color="#006582"/>
+        }
+    }
+
+    // child component to determine the text to display according to the task status
+    const TaskRow = () => {
+        if(Taskcompleted){
+        return <div className='taskrow success'><TaskIcon></TaskIcon><p>{TaskResponse}</p></div>
+        }
+        else if(Taskfailed){
+        return <div className='taskrow error'><TaskIcon></TaskIcon><p>{TaskResponse}</p></div>
+        }
+        else if(Taskrunning){
+        return <div className='taskrow running'><TaskIcon></TaskIcon><p>Adding Userdata</p></div>
+        }
+        else{
+        return <div className='taskrow pending'><TaskIcon></TaskIcon><p>Adding Userdata</p></div>
+        }
+    }
+    
+    function handleChange(event) {
+        console.log(event.target.name)
+        if(event.target.name == "selectusername"){setUsername(event.target.value);}
+        if(event.target.name == "selectorcid"){setORCID(event.target.value);}
+    }
+
+    const adduserdata = async () => {
+        console.log("adduserdata");
+        /*add hidden class to the div with id form_user*/
+        $("#form_user").addClass("hidden");
+        setPerformTaskForm(true);
+        /* make datamodal to send in post request*/
+        const topost = { name: username ,
+            orcid: ORCID
+             };
+        /* perform post axios request to adduserdata*/ 
+        await axios.post(BASE_URL_SERVER + 'apiv1/tasks/adduserdata', topost)
+        .then(function (response) {
+            console.log(response);
+            setTaskResponse(response.data.data);
+            setTaskcompleted(true);
+            if (SSHsetupsuccess && Folderstructuresetupsucess) {setSetupReady(false);}
+        }
+        )
+        .catch(function (error) {
+            console.log(error);
+            setTaskResponse(error.message);
+            setTaskfailed(true);
+        }
+        );
+    };
+
+    
+
+    //child component that will show status of axios request to post userdata
+    const TaskFormUserdata = () => {
+        if(PerformTaskForm){
+            return (
+                <>
+                <TaskRow></TaskRow>
+                </>
+            )
+        }
+        else{
+            return null;
+        }
+    }
+
     return (
         <>
         <div>
@@ -60,21 +160,38 @@ function HomePage() {
             </Modal.Header>
             <Modal.Body>
                 <p>
-                    Please set up your account.
-                    The button below will take you to the datacrates page (for now).
+                    Set up the DMBON assistent by filling in the form below.
                 </p>
-                <p>The following aspects need to be added in the init setup of the webtop client</p>
-                <ol>
-                    <li>GIT ssh account setup and check</li>
-                    <li>check if all the right json files are present eg : projects, spaces, profiles.json </li>
-                    <li>check if the right folder structure is present in the webtop client</li>
-                    <li>Personal info setup like ORCID and other info if neccesary</li>
-                    <li>Initial test of the user ssh by getting the test space, profile and datacrate from vliz-opsci guthub space</li>
-                    <li>if all is good then set .env variable to false so that setup is completed</li>
-                </ol>
+                <TaskBar TaskRequest = "foldersetup" TaskDescription="Setting up folder structure for first usage" TypeRequest="get" targetsuccess = {setFolderstructuresetupsucess}/>
+                <TaskBar TaskRequest = "sshsetup" TaskDescription="Setting up GIT ssh key" TypeRequest="get"  targetsuccess = {setSSHsetupsuccess}/>
+                <div className='form_userdata' id='form_user'>
+                    <Form.Group>
+                        <FloatingLabel
+                        controlId="floatingInput"
+                        label="Name User"
+                        className="mb-3"
+                        >
+                        <Form.Control type="text" placeholder="" name="selectusername" onChange={handleChange}/>
+                        </FloatingLabel>
+                    </Form.Group>
+                    <Form.Group>
+                        <FloatingLabel
+                        controlId="floatingInput"
+                        label="ORCID user, leave empty if none"
+                        className="mb-3"
+                        >
+                        <Form.Control type="text" placeholder="" name="selectorcid" onChange={handleChange}/>
+                        </FloatingLabel>
+                    </Form.Group>
+                    <br />
+                    <button className="large"  onClick={adduserdata}>
+                    add userdata
+                    </button>
+                </div>
+                <TaskFormUserdata ></TaskFormUserdata>
             </Modal.Body>
             <Modal.Footer>
-                <button className="btn btn-primary" onClick={() => {
+                <button disabled={setupready} className="btn modalbutton large" onClick={() => {
                     window.location.href = "/spaces";
                 }
                 }>
