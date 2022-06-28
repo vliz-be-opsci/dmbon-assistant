@@ -1,3 +1,7 @@
 #! /bin/bash
 
-ls -al
+echo "path is $PATH"
+which ssh
+echo "exit code == $?"
+/usr/bin/ssh
+echo $?

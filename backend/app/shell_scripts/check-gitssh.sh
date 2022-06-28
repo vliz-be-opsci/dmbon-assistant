@@ -27,7 +27,7 @@ log "regex=${successregex}"
 if  [[ ${response} =~ ${successregex} ]]; then
   accountname=${BASH_REMATCH[1]}
   echo "Looking Good. Well Done!" 
-  echo "Apparently the service @${gitserv} connects you to this account: ${accountname}"
+  echo "${accountname}"
 else
   fail "Sorry. The configuration is not done correctly. Try connect-sshkey.sh again." 
 fi

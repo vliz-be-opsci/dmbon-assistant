@@ -233,6 +233,13 @@ html {
   border-radius: 5px;
 }
 
+.form_userdata > h4 {
+  color: #006582;
+  margin-bottom: 0;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
 .form_userdata > div > div >  input {
   background-color: #00658250;
   border: 1px solid #006582;

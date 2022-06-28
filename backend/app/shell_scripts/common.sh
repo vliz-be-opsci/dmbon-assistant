@@ -12,7 +12,6 @@ function fail {          # fail(msg, exitcode) {}
 function checkwhich {    # checkwhich(cmdname, extra_msg) {}
   cmdname=${1}
   msg="Cannot find cmd ${cmdname}. ${2}" 
-
   cmdpath=$(which $cmdname)
   if [[ "$?" -ne "0" ]]; then
     fail $msg
@@ -49,7 +48,6 @@ function checkdeps {    # checkdeps() {}
   assert_folder ${sshfolder}
   log "all dependencies are ok"
 }
-
 
 # main prelude execution for all scripts sourcing this one
 

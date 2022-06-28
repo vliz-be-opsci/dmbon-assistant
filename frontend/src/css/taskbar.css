@@ -38,21 +38,21 @@
 }
 
 .running {
-    background-color: #ff980050;
-    border: 1px solid #ff9800;
-}
-
-.running p {
-    color: orange;
-    font-weight: bold;
-}
-
-.pending {
     background-color: #00668250;
     border: 1px solid #006582;
 }
 
-.pending p {
+.running p {
     color:  #006582;
+    font-weight: bold;
+}
+
+.pending {
+    background-color: #00000019;
+    border: 1px solid darkgrey;
+}
+
+.pending p {
+    color:  darkgrey;
     font-weight: bold;
 }

@@ -30,87 +30,8 @@ function HomePage() {
     const [SSHsetupsuccess, setSSHsetupsuccess] = useState(false);
     const [Userdatasetupsucess, setUserdatasetupsucess] = useState(false);
     const [Folderstructuresetupsucess, setFolderstructuresetupsucess] = useState(false);
-  //child component that will determine wether or not a modal should be displayed for user setup
-    
-    const TaskIcon = () => {
-        if(Taskcompleted){
-        return <BsFillCheckCircleFill color="green" size={40}/>
-        }
-        else if(Taskfailed){
-        return <MdError size={40} color="red"/>
-        }
-        else if(Taskrunning){
-        //return circular loading icon from reactloading
-        return <ReactLoading type="spinningBubbles" color="orange" height={'40px'} width={'40px'} />
-        }
-        else{
-        return <MdSchedule size={40} color="#006582"/>
-        }
-    }
-
-    // child component to determine the text to display according to the task status
-    const TaskRow = () => {
-        if(Taskcompleted){
-        return <div className='taskrow success'><TaskIcon></TaskIcon><p>{TaskResponse}</p></div>
-        }
-        else if(Taskfailed){
-        return <div className='taskrow error'><TaskIcon></TaskIcon><p>{TaskResponse}</p></div>
-        }
-        else if(Taskrunning){
-        return <div className='taskrow running'><TaskIcon></TaskIcon><p>Adding Userdata</p></div>
-        }
-        else{
-        return <div className='taskrow pending'><TaskIcon></TaskIcon><p>Adding Userdata</p></div>
-        }
-    }
-    
-    function handleChange(event) {
-        console.log(event.target.name)
-        if(event.target.name == "selectusername"){setUsername(event.target.value);}
-        if(event.target.name == "selectorcid"){setORCID(event.target.value);}
-    }
-
-    const adduserdata = async () => {
-        console.log("adduserdata");
-        /*add hidden class to the div with id form_user*/
-        $("#form_user").addClass("hidden");
-        setPerformTaskForm(true);
-        /* make datamodal to send in post request*/
-        const topost = { name: username ,
-            orcid: ORCID
-             };
-        /* perform post axios request to adduserdata*/ 
-        await axios.post(BASE_URL_SERVER + 'apiv1/tasks/adduserdata', topost)
-        .then(function (response) {
-            console.log(response);
-            setTaskResponse(response.data.data);
-            setTaskcompleted(true);
-            if (SSHsetupsuccess && Folderstructuresetupsucess) {setSetupReady(false);}
-        }
-        )
-        .catch(function (error) {
-            console.log(error);
-            setTaskResponse(error.message);
-            setTaskfailed(true);
-        }
-        );
-    };
-
-    
-
-    //child component that will show status of axios request to post userdata
-    const TaskFormUserdata = () => {
-        if(PerformTaskForm){
-            return (
-                <>
-                <TaskRow></TaskRow>
-                </>
-            )
-        }
-        else{
-            return null;
-        }
-    }
+    const [Continuebuttontext, setContinuebuttontext] = useState("Complete setup first");
+    const taskpayload = []
 
     return (
         <>
@@ -162,40 +83,15 @@ function HomePage() {
                 <p>
                     Set up the DMBON assistent by filling in the form below.
                 </p>
-                <TaskBar TaskRequest = "foldersetup" TaskDescription="Setting up folder structure for first usage" TypeRequest="get" targetsuccess = {setFolderstructuresetupsucess}/>
-                <TaskBar TaskRequest = "sshsetup" TaskDescription="Setting up GIT ssh key" TypeRequest="get"  targetsuccess = {setSSHsetupsuccess}/>
-                <div className='form_userdata' id='form_user'>
-                    <Form.Group>
-                        <FloatingLabel
-                        controlId="floatingInput"
-                        label="Name User"
-                        className="mb-3"
-                        >
-                        <Form.Control type="text" placeholder="" name="selectusername" onChange={handleChange}/>
-                        </FloatingLabel>
-                    </Form.Group>
-                    <Form.Group>
-                        <FloatingLabel
-                        controlId="floatingInput"
-                        label="ORCID user, leave empty if none"
-                        className="mb-3"
-                        >
-                        <Form.Control type="text" placeholder="" name="selectorcid" onChange={handleChange}/>
-                        </FloatingLabel>
-                    </Form.Group>
-                    <br />
-                    <button className="large"  onClick={adduserdata}>
-                    add userdata
-                    </button>
-                </div>
-                <TaskFormUserdata ></TaskFormUserdata>
+                <TaskBar TaskRequest = "foldersetup" TaskDescription="Setting up folder structure for first usage" TypeRequest="get" targetsuccess = {setFolderstructuresetupsucess} TaskPayload={taskpayload}/>
+                <TaskBar TaskRequest = "sshcheck" TaskDescription="Checking if ssh key exists and is connected" TypeRequest="get"  targetsuccess = {setSSHsetupsuccess} TaskPayload={taskpayload}/>
             </Modal.Body>
             <Modal.Footer>
                 <button disabled={setupready} className="btn modalbutton large" onClick={() => {
                     window.location.href = "/spaces";
                 }
                 }>
-                    Set Up Account
+                    {Continuebuttontext}
                 </button>
             </Modal.Footer>
         </Modal>
