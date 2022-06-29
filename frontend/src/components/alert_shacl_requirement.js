@@ -268,7 +268,7 @@ function AlertShaclReq(props) {
                                     <tr>
                                         <td style={{"width":"6%"}}><ToggleButton severity={severity_error} onClick={() => addPredicate()}></ToggleButton></td>
                                         <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
-                                        <td colSpan="2" style={{"width":"100%"}}><a target="_blank" href={'/spaces/'+SpaceId+'/all_files/'+href_button_node_value}>{button_node_value}</a></td>
+                                        <td colSpan="2" style={{"width":"100%"}}><a target="_blank" href={'/Datacrates/'+SpaceId+'/all_files/'+href_button_node_value}>{button_node_value}</a></td>
                                     </tr>
                                 </table>
                             </Form>
