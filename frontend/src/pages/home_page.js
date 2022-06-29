@@ -33,6 +33,20 @@ function HomePage() {
     const [Continuebuttontext, setContinuebuttontext] = useState("Complete setup first");
     const taskpayload = []
 
+    //check if SSH setup is done and if folder structure is done
+    const checkifsetupdone = () => {
+        if(SSHsetupsuccess && Folderstructuresetupsucess){
+            setContinuebuttontext("Continue");
+            setSetupReady(false);
+        }
+    }
+
+    useEffect(() => {
+        checkifsetupdone();
+    }
+    ,[SSHsetupsuccess, Folderstructuresetupsucess]);
+
+
     return (
         <>
         <div>

@@ -117,37 +117,46 @@ def perform_sshcheck():
         os.chdir(old_wd)
         #take the last echo as a new variable
         accountname = sshcheck.stdout.splitlines()[-1]
-        
+        log.debug(f'accountname: {accountname}')
         #open user_data.json and check if the following keys exist [author, git_login, ORCID]
         with open(Locations().join_abs_path('user_data.json')) as data_file:
             data = json.load(data_file)
             log.info(data)
-            
-        for key in ['author', 'git_login', 'ORCID']:
-            if key not in data:
-                return {
-                    'data':'ssh-check successfull', 
-                    'next_task': {
-                        'TaskRequest': 'adduserdata', 
-                        'TaskDescription': 'Add user data', 
-                        'TypeRequest': 'post', 
-                        'Payload': [
-                            {
-                               "label": "author",
-                               "type": "string",
-                               "description": "Name user, will be used as author for all commits"
-                            },
-                            {
-                                "label": "ORCID",
-                                "type": "string",
-                                "description": "ORCID user, leave empty if you don't have one"          
-                                }
-                        ]
-                    }
-                }
-
         
-        return {'data':'SSH key all setup', 'next_task': None}
+        if len(accountname) > 0:
+            #add the accountname to the user_data.json
+            data['git_login'] = accountname
+        
+            #save the user_data.json
+            with open(Locations().join_abs_path('user_data.json'), 'w') as outfile:
+                json.dump(data, outfile)
+                
+            for key in ['author', 'git_login', 'ORCID']:
+                if key not in data:
+                    return {
+                        'data':'ssh-check successfull', 
+                        'next_task': {
+                            'TaskRequest': 'adduserdata', 
+                            'TaskDescription': 'Add user data', 
+                            'TypeRequest': 'post', 
+                            'Payload': [
+                                {
+                                "label": "author",
+                                "type": "string",
+                                "description": "Name user, will be used as author for all commits"
+                                },
+                                {
+                                    "label": "ORCID",
+                                    "type": "string",
+                                    "description": "ORCID user, leave empty if you don't have one"          
+                                }
+                            ]
+                        }
+                    }
+            return {'data':'SSH key and user info all setup', 'next_task': None}
+        else:
+            return {'data':'SSH key all setup', 'next_task': None}    
+        
     except Exception as e:
         log.error("Error performing ssh setup")
         log.error(e)
@@ -158,5 +167,25 @@ def perform_sshcheck():
 
 @router.post('/adduserdata', status_code=200)
 def post_user_data(item:UserDataModel):
-    time.sleep(2)
-    return {"data":"successfully added userdata",'next_task': None}
+    
+    #open op the user_data.json and check if the following keys exist [author, git_login, ORCID]
+    with open(Locations().join_abs_path('user_data.json')) as data_file:
+        data = json.load(data_file)
+        log.info(data)
+    
+    
+    log.debug("post_user_data")
+    
+    # go over data in items and update the user_data.json
+    for key, value in item:
+        # check if value is not empty and not of type Null
+        if value is not None and value != "":
+            data[key] = value
+            log.info(data)
+        else:
+            log.info(f'{key} is empty')
+    #write data to user_data.json
+    with open(Locations().join_abs_path('user_data.json'), 'w') as outfile:
+        json.dump(data, outfile)
+    
+    return {"data":"successfully added userdata",'next_task': None}                     

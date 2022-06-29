@@ -17,6 +17,7 @@ function TaskBar(props) {
   const [Taskfailed, setTaskfailed] = useState(false);
   const [Taskrunning, setTaskrunning] = useState(false);
   const [TaskRequest, setTaskRequest] = useState(props.TaskRequest);
+  const [TaskType, setTaskType] = useState(props.TypeRequest);
   const [TaskDescription, setTaskDescription] = useState(props.TaskDescription);
   const [TaskPayload, setTaskPayload] = useState(props.TaskPayload);
   const [TaskResponse, setTaskResponse] = useState("");
@@ -25,23 +26,34 @@ function TaskBar(props) {
   const [UserfilledInpayload, setUserfilledInpayload] = useState({});
   //const to perform axios request here
   const PerformTask = async (props) => {
-    if(lasttask != TaskRequest){
+      try {
+        const payload = props.Payload;
+        const task = props.Task;
+        axiosperformance({"Task": task, "Payload": payload});
+      } catch (error) {
+        const payload = TaskPayload;
+        const task = TaskRequest;
+        axiosperformance({"Task":task, "Payload": payload});
+      }
+    }
+
+  const axiosperformance = async (props) => {
+    const payload = props.Payload;
+    const task = props.Task;
+    console.log(Object.keys(payload).length);
+    console.log(task);
+    setTaskfailed(false);
       //check if there is a payload
-      if(TaskPayload.length > 0){
+      if(payload.length > 0 || Object.keys(payload).length > 0){
         // check if all fields are filled in
-        console.log(UserfilledInpayload);
-        if(Object.keys(UserfilledInpayload).length == TaskPayload.length){
-          alert("Payload is not empty");
-          setTaskPayload([]);
-        }
-      }else{
+        console.log(payload);
         setLasttask(TaskRequest);
         setLoading(true);
         console.log(TaskRequest);
         console.log(TaskPayload);
         /*axiosRetry(axios, {retries: 3});*/
         setTaskrunning(true);
-        axios.get(BASE_URL_SERVER+'apiv1/tasks/'+ TaskRequest)
+        axios.post(BASE_URL_SERVER+'apiv1/tasks/'+ task, payload)
           .then(res => {
             console.log(res.data);
             setTaskResponse(res.data.data);
@@ -57,7 +69,44 @@ function TaskBar(props) {
               setTaskcompleted(false);
               setTaskRequest(res.data.next_task.TaskRequest);
               if(res.data.next_task.Payload.length == 0){
-                payloadtaskexecute();
+                PerformTask({"Task": res.data.next_task.TaskRequest, "Payload": res.data.next_task.Payload});
+              }
+            }else{
+              console.log("no next task");
+              targetsuccess(true);
+            }
+          }
+          )
+          .catch(error => {
+            setTaskfailed(true);
+            setTaskrunning(false);
+            setTaskResponse(error.message);
+          }
+          );
+      }else{
+        setLasttask(TaskRequest);
+        setLoading(true);
+        console.log(TaskRequest);
+        console.log(TaskPayload);
+        /*axiosRetry(axios, {retries: 3});*/
+        setTaskrunning(true);
+        axios.get(BASE_URL_SERVER+'apiv1/tasks/'+ task)
+          .then(res => {
+            console.log(res.data);
+            setTaskResponse(res.data.data);
+            setTaskrunning(false);
+            setTaskcompleted(true);
+            // check if the res.data.next_task is null
+            console.log(res.data.next_task);
+            if(res.data.next_task != null){
+              console.log("going for next task")
+              setTaskrunning(false);
+              setTaskDescription(res.data.next_task.TaskDescription);
+              setTaskPayload(res.data.next_task.Payload);
+              setTaskcompleted(false);
+              setTaskRequest(res.data.next_task.TaskRequest);
+              if(res.data.next_task.Payload.length == 0){
+                PerformTask({"Task": res.data.next_task.TaskRequest, "Payload": res.data.next_task.Payload});
               }
             }else{
               console.log("no next task");
@@ -72,17 +121,7 @@ function TaskBar(props) {
           }
           );
         }
-      }
-    }
-
-  // function that will handle a payloaded axios request
-  const payloadtaskexecute = async (props) => {
-    setLoading(true);
-    console.log(props);
-    console.log(TaskRequest);
-    console.log(TaskPayload);
   }
-
 
   const handleChange = (event) => {
     // loop over all the payload labels
@@ -97,8 +136,9 @@ function TaskBar(props) {
       userpayload[TaskPayload[i].label] = value;
       // add the value to the UserfilledInpayload
     }
-    setUserfilledInpayload(userpayload);
-    payloadtaskexecute(userpayload);
+    setUserfilledInpayload([]);
+    setTaskPayload([]);
+    PerformTask({"Task": TaskRequest, "Payload": userpayload});
   }
   // child component to determine the icon to display according to the task status 
   const TaskIcon = () => {
