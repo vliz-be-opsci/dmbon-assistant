@@ -16,6 +16,14 @@ router = APIRouter(
 )
 
 old_wd = os.getcwd()
+if os.name == 'nt':
+    use_shell = True
+else:
+    use_shell = False
+
+#make boolean variable that is true when operating system is windows and else is false
+log.debug(f"current os is: {os.name}")
+
 ### define class profiles for the api ###
 class UserDataModel(BaseModel):
     author: str = Field(None, description = "Name of the user, this will be used as author in datacrates")
@@ -33,6 +41,8 @@ def perform_foldersetup():
     # get the folder of this file 
     folder_file = os.path.dirname(os.path.realpath(__file__))
     log.info(old_wd)
+    log.debug(f"current os is: {os.name}")
+    
     #creat the following structure in the backend 
     # folder : old_wd > app > webtop-work-space
     # folder : old_wd > app > webtop-work-space > spaces
@@ -94,7 +104,7 @@ def perform_sshcheck():
     try:
         new_wd = os.path.join(old_wd, "app", "shell_scripts")
         os.chdir(new_wd)
-        convertscripts = sp.run(["dos2unix","*.sh"], stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
+        convertscripts = sp.run(["dos2unix","*.sh"], stdout=sp.PIPE, stderr=sp.PIPE, shell=use_shell)
         if convertscripts.returncode == 0:
             log.info("convert scripts to unix done")
         log.info(convertscripts.stdout.decode("utf-8"))
@@ -108,7 +118,7 @@ def perform_sshcheck():
         #get current wd
         new_wd = os.path.join(old_wd, "app", "shell_scripts")
         os.chdir(new_wd)
-        sshcheck = sp.run(["bash","check-gitssh.sh"], capture_output=True, text=True, shell=True)
+        sshcheck = sp.run(["bash","check-gitssh.sh"], capture_output=True, text=True, shell=use_shell)
         rc =  sshcheck.returncode
         sshcheck.check_returncode()
         log.info(sshcheck.stdout)
@@ -179,10 +189,7 @@ def post_user_data(item:UserDataModel):
     with open(Locations().join_abs_path('user_data.json')) as data_file:
         data = json.load(data_file)
         log.info(data)
-    
-    
     log.debug("post_user_data")
-    
     # go over data in items and update the user_data.json
     for key, value in item:
         # check if value is not empty and not of type Null
@@ -203,7 +210,7 @@ def make_ssh_key():
     try:
         new_wd = os.path.join(old_wd, "app", "shell_scripts")
         os.chdir(new_wd)
-        make_ssh_key = sp.run(["bash","make-git-sshkey.sh"], capture_output=True, text=True, shell=True)
+        make_ssh_key = sp.run(["bash","make-git-sshkey.sh"], capture_output=True, text=True, shell=use_shell)
         rc = make_ssh_key.returncode
         log.debug(f'return code for make_ssh_key: {rc}')
         output = make_ssh_key.stdout
@@ -227,7 +234,7 @@ def connect_ssh_key():
         #perform subprocess to connect the ssh key "../shell_scripts/connect-sshkey.sh"
         new_wd = os.path.join(old_wd, "app", "shell_scripts")
         os.chdir(new_wd)
-        connect_ssh_key = sp.run(["bash","connect-sshkey.sh"], capture_output=True, text=True, shell=True)
+        connect_ssh_key = sp.run(["bash","connect-sshkey.sh"], capture_output=True, text=True, shell=use_shell)
         rc = connect_ssh_key.returncode
         output = connect_ssh_key.stdout
         log.debug(output)
