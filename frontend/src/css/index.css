@@ -321,3 +321,30 @@ html {
   color: white;
   box-shadow: 0px 0px 5px #2c3e50;
 }
+
+.connectcheck {
+  background-color: #4caf4f50;
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+  border-radius: 5px;
+  padding: 5px;
+  margin: auto;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.connectcheck:hover {
+  background-color: #4CAF50;
+  color: white;
+  box-shadow: 0px 0px 5px #4CAF50;
+}
+
+.connectcheck:focus {
+  background-color: #4caf4fa8;
+  color: white;
+  box-shadow: 0px 0px 5px #4CAF50;
+}
+
+.connectcheck:active {
+  transform: translateY(3px);
+}

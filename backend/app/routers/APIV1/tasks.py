@@ -155,7 +155,14 @@ def perform_sshcheck():
                     }
             return {'data':'SSH key and user info all setup', 'next_task': None}
         else:
-            return {'data':'SSH key all setup', 'next_task': None}    
+            return {'data':'SSH key all setup', 
+                    'next_task': {
+                            'TaskRequest': 'make_ssh_key', 
+                            'TaskDescription': 'Making ssh key', 
+                            'TypeRequest': 'get', 
+                            'Payload': []
+                        }
+                    }    
         
     except Exception as e:
         log.error("Error performing ssh setup")
@@ -188,4 +195,90 @@ def post_user_data(item:UserDataModel):
     with open(Locations().join_abs_path('user_data.json'), 'w') as outfile:
         json.dump(data, outfile)
     
-    return {"data":"successfully added userdata",'next_task': None}                     
+    return {"data":"successfully added userdata",'next_task': None}         
+
+@router.get('/make_ssh_key', status_code=200)   
+def make_ssh_key():
+    #perform a subrocess to setup the ssh keys "../shell_scripts/make-git-sshkey.sh"
+    try:
+        new_wd = os.path.join(old_wd, "app", "shell_scripts")
+        os.chdir(new_wd)
+        make_ssh_key = sp.run(["bash","make-git-sshkey.sh"], capture_output=True, text=True, shell=True)
+        rc = make_ssh_key.returncode
+        log.debug(f'return code for make_ssh_key: {rc}')
+        output = make_ssh_key.stdout
+        error = make_ssh_key.stderr
+        os.chdir(old_wd)
+        return {'data':output,
+                'next_task': {
+                            'TaskRequest': 'connect_ssh_key', 
+                            'TaskDescription': 'Connect SSH key', 
+                            'TypeRequest': 'get', 
+                            'Payload': []
+                        }
+                }
+    except Exception as e:
+        os.chdir(old_wd)
+        raise HTTPException(status_code=500, detail={"data": e})
+
+@router.get('/connect_ssh_key', status_code=200)
+def connect_ssh_key():
+    try:
+        #perform subprocess to connect the ssh key "../shell_scripts/connect-sshkey.sh"
+        new_wd = os.path.join(old_wd, "app", "shell_scripts")
+        os.chdir(new_wd)
+        connect_ssh_key = sp.run(["bash","connect-sshkey.sh"], capture_output=True, text=True, shell=True)
+        rc = connect_ssh_key.returncode
+        output = connect_ssh_key.stdout
+        log.debug(output)
+        error = connect_ssh_key.stderr
+        os.chdir(old_wd)
+        
+        return_output = ""
+        find_elements = ["KEY_USER_LOCATION", "INSTRUCTION_URL", "REGISTER_URL", "KEY_USER_NAME", "TO_PASTE_TEXT"]
+        variables = {}
+        for element in find_elements:
+            splittext = "###"+element+"###"
+            variables[element] = output.split(splittext)[-1].split("###")[0]
+        
+        log.debug(variables)
+        
+        return_output += f"<p>To connect your SSH key, please visit the following URL:</p>"
+        return_output += f"<p><a href='{variables['REGISTER_URL']}'>{variables['REGISTER_URL']}</a></p>"
+        return_output += f"<p>Then, copy the following text and paste it into the SSH key field:</p>"
+        return_output += f"<p><code> ---- </code></p>"
+        return_output += f"<p><code>{variables['TO_PASTE_TEXT']}</code></p>"
+        return_output += f"<p><code> ---- </code></p>"
+        return_output += f"<p>After this is done, click on the ssh-check button.</p>"
+        return_output += f"<a href='.'><button class='large connectcheck'>ssh-check</button></a>"
+        
+        return {'data':return_output, 
+                'next_task': None
+                }
+    except Exception as e:
+        os.chdir(old_wd)
+        raise HTTPException(status_code=500, detail={"data": e})
+    
+@router.get('/finishsetup', status_code=200)
+def finishsetup():
+    try:
+        #open the setup.json file and change complete to true
+        with open(Locations().join_abs_path('setup.json')) as data_file:
+            data = json.load(data_file)
+        data['complete'] = True
+        with open(Locations().join_abs_path('setup.json'), 'w') as outfile:
+            json.dump(data, outfile)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"data": e})
+    
+@router.get('/checkcompletestatus', status_code=200)
+def checkcompletestatus():
+    #open the setup.json file and check if the complete is set to true
+    with open(Locations().join_abs_path('setup.json'), 'r') as data_file:
+        data = json.load(data_file)
+    
+    if data['complete'] == True:
+        return {'data':'setup is complete'}
+    else:
+        raise HTTPException(status_code=500, detail={"data": "setup is not complete"})
+    

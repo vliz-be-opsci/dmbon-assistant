@@ -5,7 +5,6 @@ import "animate.css/animate.min.css";
 import axios from 'axios';
 import Footer from '../components/footer';
 import { Form, FloatingLabel,Modal } from 'react-bootstrap';
-import {NEW_USER} from '../App.js';
 import {MdSchedule, MdError} from 'react-icons/md';
 import {BsFillCheckCircleFill} from 'react-icons/bs';
 import TaskBar from '../components/taskbar';
@@ -18,7 +17,7 @@ function HomePage() {
 
 //define all constants first
   //All the functions here
-    const [show, setShow] = useState(NEW_USER);
+    const [show, setShow] = useState(false);
     const [setupready, setSetupReady] = useState(true);
     const [username, setUsername] = useState('');
     const [ORCID, setORCID] = useState('');
@@ -41,7 +40,37 @@ function HomePage() {
         }
     }
 
+    //axios request get to tasks/checkcompletestatus 
+    const checkcompletestatus = async () => {
+        await axios.get(BASE_URL_SERVER+'apiv1/tasks/checkcompletestatus')
+        .then(res => {
+            console.log(res.data);
+        })
+        .catch(error => {
+            setShow(true);
+        }
+        )
+    }
+
+
+    //perform axios get request to tasks/finishsetup
+    const finishsetup = async () => {
+        try {
+            const response = await axios.get(BASE_URL_SERVER+'apiv1/tasks/finishsetup');
+            console.log(response.data);
+            setSSHsetupsuccess(true);
+            setUserdatasetupsucess(true);
+            setFolderstructuresetupsucess(true);
+            setSetupReady(false);
+            checkifsetupdone();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
     useEffect(() => {
+        checkcompletestatus();
         checkifsetupdone();
     }
     ,[SSHsetupsuccess, Folderstructuresetupsucess]);
@@ -89,7 +118,7 @@ function HomePage() {
             </section>
             <Footer />
         </div>
-        <Modal show = {show}>
+        <Modal show = {show} size="lg">
             <Modal.Header>
                 <Modal.Title>Welcome to the site new user!</Modal.Title>
             </Modal.Header>
@@ -102,7 +131,8 @@ function HomePage() {
             </Modal.Body>
             <Modal.Footer>
                 <button disabled={setupready} className="btn modalbutton large" onClick={() => {
-                    window.location.href = "/spaces";
+                    finishsetup();
+                    window.location.href = "/";
                 }
                 }>
                     {Continuebuttontext}

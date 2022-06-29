@@ -43,12 +43,9 @@ else
   fi
 fi
 
-echo
-echo "Config Ready. (for key in ${keyfile})"
-echo "Instructions to connect your ssh-key to the git service at ${gitserv}"
-echo
-echo "Surf to ${register_url} and verify if the ssh key for ${keyuser} is available." 
-echo "If not register it on that page, by pasting the section between (not including) the '----' lines below." 
-echo -e "----\n$(cat ${keyfile}.pub)\n----"
-echo "After this, please verify the setup with check-gitssh.sh" 
-
+echo "###KEY_USER_LOCATION### ${keyfile})"
+echo "###INSTRUCTION_URL### ${gitserv}"
+echo "###REGISTER_URL### ${register_url}"
+echo "###KEY_USER_NAME### ${gituser}"
+echo "###TO_PASTE_TEXT###"
+echo $(cat ${keyfile}.pub) 

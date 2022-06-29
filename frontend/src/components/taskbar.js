@@ -183,7 +183,7 @@ function TaskBar(props) {
       )
     }else{
       if(Taskcompleted){
-        return <div className='taskrow success'><TaskIcon></TaskIcon><p>{TaskResponse}</p></div>
+        return <div className='taskrow success'><TaskIcon></TaskIcon><p> <div dangerouslySetInnerHTML={{__html: TaskResponse}}></div></p></div>
       }
       else if(Taskfailed){
         return <div className='taskrow error'><TaskIcon></TaskIcon><p><p>{TaskDescription}</p>{TaskResponse}</p></div>
