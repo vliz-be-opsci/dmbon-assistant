@@ -1,0 +1,34 @@
+.success {
+    background-color: #3c763d20;
+    border-color: #3c763d;
+    color: #3c763d;
+}
+
+.error {
+    background-color: #a9444220;
+    border-color: #a94442;
+    color: #a94442;
+}
+
+.pending {
+    background-color: #0d284115;
+    border-color: #0d2841;
+    color: #0d2841;
+}
+
+.running {
+    background-color: #337ab715;
+    border-color: #337ab7;
+    color: #337ab7;
+    
+}
+
+.task {
+    border-radius: 5px;
+    border: 1px solid;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-overflow: ellipsis;
+}
+

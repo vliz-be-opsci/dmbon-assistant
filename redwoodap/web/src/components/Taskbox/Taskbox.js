@@ -1,8 +1,10 @@
-const Taskbox = () => {
+import './Taskbox.css'
+
+const Taskbox = ({type, name, description}) => {
   return (
-    <div>
-      <h2>{'Taskbox'}</h2>
-      <p>{'Find me in ./web/src/components/Taskbox/Taskbox.js'}</p>
+    <div className={"task "+ type}>
+      <h2>{name}</h2>
+      <p>{description}</p>
     </div>
   )
 }

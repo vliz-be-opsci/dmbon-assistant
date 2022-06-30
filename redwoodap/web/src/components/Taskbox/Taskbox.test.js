@@ -8,7 +8,19 @@ import Taskbox from './Taskbox'
 describe('Taskbox', () => {
   it('renders successfully', () => {
     expect(() => {
-      render(<Taskbox />)
+      render(<Taskbox 
+        Task={{
+          type: 'success',
+          name: 'Task 1',
+          description: 'This is a task'
+        }}
+      />)
     }).not.toThrow()
+    expect(document.querySelector('h2')).toBeInTheDocument()
+    expect(document.querySelector('p')).toBeInTheDocument()
+    expect(document.querySelector('div')).toHaveClass('task success')
+    expect(document.querySelector('div')).toHaveClass('task')
+    expect(screen.getByText('Task 1')).toBeInTheDocument()
+    expect(screen.getByText('This is a task')).toBeInTheDocument()
   })
 })
