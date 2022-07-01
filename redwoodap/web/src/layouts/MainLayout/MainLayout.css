@@ -1,7 +1,8 @@
 /* add 2 background layers that are transparent and have the colors of #3c763d and #a94442 */
 .main {
     background: linear-gradient(to bottom, #1a94aa, #08004e);
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     width: 90vw;
     margin: 0 auto;
     border-radius: 5px;
@@ -10,6 +11,6 @@
 .childcontainer {
     width: 90%;
     margin: 0 auto;
-    background-color: #EEEEEEDD;
+    background-color: #EEEEEEAA;
     padding: 20px;
 }
