@@ -24,7 +24,7 @@ from fastapi.openapi.docs import (
 import app.ro_crate_reader_functions as ro_read
 #import shacl_helper as shclh
 
-from .routers.APIV1.router import router 
+from .routers.APIV1.router import router
 
 #app.include_router(profiles.router)
 
@@ -34,7 +34,7 @@ from app.model.location import Locations
 
 root_loc = os.environ.get("DMBON_FAST_API_ROOT_WORKSPACE",os.path.join("app","webtop-work-space"))
 root_loc = root_loc if os.path.isabs(root_loc) else os.path.join(os.getcwd(),root_loc)
-locs = Locations(root=root_loc)  
+locs = Locations(root=root_loc)
 log.debug(f"locations root == {locs}")
 
 ### Custom API look ###
@@ -49,7 +49,9 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:3000",
-    "http://192.168.16.168:3000"
+    "http://192.168.16.168:3000",
+    "http://localhost:8910",
+    "http://192.168.16.168:8910"
 ]
 
 app.add_middleware(
@@ -69,7 +71,7 @@ def enable_test_logging():
         log.info(f"Logging enabled according to config in {logconf}")
         print(logconf)
 
-Locations(root=os.path.join(os.getcwd(),"app","webtop-work-space"))  
+Locations(root=os.path.join(os.getcwd(),"app","webtop-work-space"))
 enable_test_logging()
 
 def custom_openapi():
@@ -126,7 +128,7 @@ class SpaceModel(BaseModel):
 class FileModel(BaseModel):
     name     : str = Field(None, description = "Name of the file that will be added, can be filepath")
     content  : str = Field(None, description = "Filepath that needs to be added to the space, can also be a directory or url")
-    
+
 class AnnotationModel(BaseModel):
     URI_predicate_name : str = Field(None, description = "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates.\
                                                 for more info about the allowed predicates, use TODO: insert api call for predicates here.")
@@ -146,7 +148,7 @@ class DeleteContentModel(BaseModel):
 
 #TODO: function that reads into the roprofile rocrate metadata and finds the conforms to part ;
 #  1: gets the shacl or other constraint files.
-#  2: reciprocly go through all rocrate conform to untill all contraints are gathered. 
+#  2: reciprocly go through all rocrate conform to untill all contraints are gathered.
 #  3: combines all the contraints into 1 contraint file and return this in a folder that is a sibling of the project folder.
 
 #TODO: function that searches for the typechanger for mimetypes when adding new files to the rocrate , be it either from url or from local system
@@ -192,11 +194,11 @@ async def check_path_availability(tocheckpath,space_id):
             tocheckpath = os.path.join(tocheckpath,str(space_id))
             returnmessage = "Space created in existing folder: " + str(os.path.join(tocheckpath))
             return [returnmessage,tocheckpath]
-        
+
 
 @app.get('/', tags=["test"], status_code=418)
 def home():
-    return {'Message':'Waddup OpSci, docs can be found in the /docs route'}      
+    return {'Message':'Waddup OpSci, docs can be found in the /docs route'}
 
 ### Custom API look ###
 
