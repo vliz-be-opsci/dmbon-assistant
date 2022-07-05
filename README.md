@@ -4,6 +4,11 @@
 webtop appliction consisting of a backend powered by fast-api and a react frontend
 
 ## for people without docker:
+
+### for windows users (linux users can skip this step)
+Install git and git bash following the steps of this link
+ [ git-bash installation ](https://www.stanleyulili.com/git/how-to-install-git-bash-on-windows/)
+
 run following commands in terminal of the root project directory:
 ```
 sh ./dmbon-assistant start
