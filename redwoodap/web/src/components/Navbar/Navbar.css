@@ -44,6 +44,11 @@
     flex: 1;
 }
 
+.active {
+    background-color: #1a94aa50;
+    border-radius: 5px;
+}
+
 
 .hamburger {
     border: 0;
@@ -88,15 +93,23 @@
         top: 60px;
         left: 0;
         width: 100%;
-        height: calc(50vh - 77px);
-        background-color: white;
+        height: calc(100vh - 77px);
         border-top: 1px solid black;
         z-index: 1;
     }
     .navigation-menu li {
         width: 100%;
-        margin: 0;
+        margin-left: -0.5rem;
+        background-color: white;
     }
+
+    .navigation-menu li :hover {
+        font-size: 45px;
+        color: #283b8b;
+        background-color: aliceblue;
+
+    }
+
     .navigation-menu li a {
         color: black;
         width: 100%;
@@ -104,8 +117,5 @@
         align-items: center;
         display: flex;
         justify-content: center;
-    }
-    .navigation-menu li a:hover {
-        color: #283b8b;
     }
 }
