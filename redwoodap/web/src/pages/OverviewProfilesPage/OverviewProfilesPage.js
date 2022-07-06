@@ -2,29 +2,67 @@ import { useState, useEffect } from 'react'
 
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
-
 //import getProfile from 'src/utils/AxiosRequestsHandlers'
 import { getAllProfiles } from 'src/utils/AxiosRequestsHandlers'
-
+import { isURL } from 'src/utils/HelperFunctions'
+import { getAllSpaces } from "src/utils/AxiosRequestsHandlers"
 const OverviewProfilesPage = () => {
   const [profiles, setProfiles] = useState([])
+  const [spaces, setSpaces] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  //child function that will get url from spacename
+  getAllSpaces().then((response) => {
+    setSpaces(response.data)
+    },
+    (error) => {
+      console.log(error)
+      setErrorMessage(error.response);
+      setIsLoading(false);
+      setError(true);
+    }
+  )
+
+  //function that will return a a href of the url of the space
+  const getSpaceURL = (space_name) => {
+    for (let i = 0; i < spaces.length; i++) {
+      if (spaces[i].name === space_name) {
+        const space_uuid = spaces[i].uuid
+        return(
+          <Link to={routes.specificSpace({ space_id: String(space_uuid) })}>
+            {space_name}
+          </Link>
+        )
+      }
+    }
+    return space_name
+  }
+
 
   useEffect(() => {
     getAllProfiles()
       .then((response) => {
-        setProfiles(response.data)
-        setIsLoading(false)
+        setProfiles(response.data);
+        setIsLoading(false);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
+        setErrorMessage(error.response);
+        setIsLoading(false);
+        setError(true);
       })
   }, [])
 
   //render here
   if (isLoading) {
     return <div>Loading...</div>
-  } else {
+  }
+  if(error){
+    return(AxiosError(errorMessage))
+  }
+   else {
     return (
       <div>
         <MetaTags>
@@ -41,9 +79,13 @@ const OverviewProfilesPage = () => {
           </thead>
           <tbody>
             {profiles.map((profile) => (
-              <tr key={profile.id}>
-                <td>{profile.name}</td>
-                <td>{profile.parent_space}</td>
+              <tr key={profile.uuid}>
+                <td>
+                  <Link to={routes.specificProfile({ profile_id: String(profile.uuid) })}>
+                    {profile.name}
+                  </Link>
+                </td>
+                <td>{getSpaceURL(profile.parent_space)}</td>
               </tr>
             ))}
           </tbody>

@@ -1,83 +1,95 @@
+/*define constants here */
+:root {
+  --primary-color-table: #FFF;
+  --secondary-color-table: #1a94aa50;
+  --hover-color-table: #1a94aaAA;
+  --primary-color-text: #000;
+  --secondary-color-text: #fff;
+  --border-color-table: #116270;
+  --button-primary-color: #006582;
+  --button-hover-color: #2c3e50;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
-  ul {
-    list-style-type: none;
-    margin: 1rem 0;
-    padding: 0;
-  }
-  li {
-    display: inline-block;
-    margin: 0 1rem 0 0 ;
-  }
-  h1 > a {
-    text-decoration: none;
-    color: black;
-  }
-  button, input, label, textarea {
-    display: block;
-    outline: none;
-  }
-  label {
-    margin-top: 1rem;
-  }
-  .error {
-    color: red;
-  }
-  input.error, textarea.error {
-    border: 1px solid red;
-  }
-  .form-error {
-    color: red;
-    background-color: lavenderblush;
-    padding: 1rem;
-    display: inline-block;
-  }
-  .form-error ul {
-    list-style-type: disc;
-    margin: 1rem;
-    padding: 1rem;
-  }
-  .form-error li {
-    display: list-item;
-  }
-  .flex-between {
-    display: flex;
-    justify-content: space-between;
-  }
-  .flex-between button {
-    display: inline;
-  }
+ul {
+  list-style-type: none;
+  margin: 1rem 0;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 1rem 0 0 ;
+}
+h1 > a {
+  text-decoration: none;
+  color: black;
+}
+button, input, label, textarea {
+  display: block;
+  outline: none;
+}
+label {
+  margin-top: 1rem;
+}
+.error {
+  color: red;
+}
+input.error, textarea.error {
+  border: 1px solid red;
+}
+.form-error {
+  color: red;
+  background-color: lavenderblush;
+  padding: 1rem;
+  display: inline-block;
+}
+.form-error ul {
+  list-style-type: disc;
+  margin: 1rem;
+  padding: 1rem;
+}
+.form-error li {
+  display: list-item;
+}
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+.flex-between button {
+  display: inline;
+}
 
   /* striped .table_vliz with rounded borders and main color #6cb2c5 and secondary color #006582 */
 .table_vliz {
   border-collapse: collapse;
   border-spacing: 0;
-  border: 1px solid #006582;
-  background-color: #6cb2c5;
-  color: white;
+  border: 1px solid var(--border-color-table);
+  background-color: var(--primary-color-table);
+  color: var(--primary-color-text);
   width: 100%;
   margin: auto;
 }
 
 /* .table_vliz rows and columns have borders between them with color #006582 */
 .table_vliz > thead > tr {
-  border-bottom: 3px solid #006582;
+  border-bottom: 3px solid var(--border-color-table);
   height: 40px;
 }
 
 /* .table_vliz is striped with color #5d9fb1 */
 .table_vliz > tbody > tr:nth-child(odd) {
-  background-color: #5d9fb1;
+  background-color: var(--secondary-color-table);
 }
 
 /* row .table_vliz hover has color #5d9fb1 */
 .table_vliz > tbody > tr:hover {
-  background-color: #5d9fb1;
+  background-color: var(--hover-color-table);
 }
 
 .button_vliz {
-  background-color: #006582;
+  background-color: var(--border-color-table);
   border: none;
   color: white;
   padding: 15px 32px;
@@ -91,24 +103,24 @@ body {
 }
 
 .button_vliz:hover {
-  background-color: #2c3e50;
+  background-color: var(--button-hover-color);
   color: white;
-  box-shadow: 0px 0px 5px #2c3e50;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
 }
 
 .button_vliz:focus{
-  background-color: #2c3e50;
+  background-color: var(--button-hover-color);
   color: white;
-  box-shadow: 0px 0px 5px #2c3e50;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
 }
 
 .button_vliz:active {
   transform: translateY(3px);
 }
 
-/* buttons in .table_vliz have color #006582 */
+/* buttons in .table_vliz have color var(--border-color-table) */
 .table_vliz > tbody > tr > td > button {
-  background-color: #006582;
+  background-color: var(--border-color-table);
   color: white;
   border: none;
   border-radius: 5px;
@@ -120,7 +132,7 @@ body {
 }
 
 .table_vliz > tbody > tr > td > a > button {
-  background-color: #006582;
+  background-color: var(--border-color-table);
   color: white;
   border: none;
   border-radius: 5px;
@@ -130,36 +142,36 @@ body {
 }
 
 .table_vliz > tbody > tr > td > a > button:hover {
-  background-color: #2c3e50;
+  background-color: var(--button-hover-color);
   color: white;
-  box-shadow: 0px 0px 5px #2c3e50;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
 }
 
 .table_vliz > tbody > tr > td > a > button:focus {
-  background-color: #2c3e50;
+  background-color: var(--button-hover-color);
   color: white;
-  box-shadow: 0px 0px 5px #2c3e50;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
 }
 
-/* buttons in .table_vliz hover have color #2c3e50 and a shadow*/
+/* buttons in .table_vliz hover have color var(--button-hover-color) and a shadow*/
 .table_vliz > tbody > tr > td > button:hover {
-  background-color: #2c3e50;
+  background-color: var(--button-hover-color);
   color: white;
-  box-shadow: 0px 0px 5px #2c3e50;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
 }
 
 .table_vliz > tbody > tr > td > button:focus {
-  background-color: #2c3e50;
+  background-color: var(--button-hover-color);
   color: white;
-  box-shadow: 0px 0px 5px #2c3e50;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
 }
 
-/* links in .table_vliz have color #2c3e50 when focussed and hovered over*/
+/* links in .table_vliz have color var(--button-hover-color) when focussed and hovered over*/
 .table_vliz > tbody > tr > td > a:hover {
-  color: #2c3e50;
+  color: var(--button-hover-color);
 }
 .table_vliz > tbody > tr > td > a:focus {
-  color: #2c3e50;
+  color: var(--button-hover-color);
 }
 
 /*buttons in .table_vliz have click animation as if pressed*/
@@ -168,13 +180,13 @@ body {
 }
 
 .table_vliz > thead > tr > th {
-  border-bottom: 3px solid #006582;
-  border-left : 1px solid #006582;
+  border-bottom: 3px solid var(--border-color-table);
+  border-left : 1px solid var(--border-color-table);
 }
 
 .table_vliz > tbody > tr > td {
   padding: 0.5rem;
-  border-left: 1px solid #006582;
+  border-left: 1px solid var(--border-color-table);
 }
 
 .no-overflow {
@@ -185,9 +197,9 @@ body {
 
 /*links in .table_vliz have color white */
 .table_vliz > tbody > tr > td > a {
-  color: white;
+  color: var(--primary-color-text);
 }
 
 .table_vliz > tbody > tr {
-  border-bottom: 1px solid #006582;
+  border-bottom: 1px solid var(--border-color-table);
 }
