@@ -19,6 +19,9 @@ const Routes = () => {
         <Route path="/profiles/{profile_id}" page={SpecificProfilePage} name="specificProfile" />
         <Route path="/datacrates" page={OverviewDatacratesPage} name="overviewDatacrates" />
         <Route path="/datacrates/{datacrate_id}" page={SpecificDatacratePage} name="specificDatacrate" />
+        <Route path="/datacrates/{datacrate_id}/content" page={SpecificDatacrateContentPage} name="specificDatacrateContent" />
+        <Route path="/datacrates/{datacrate_id}/git" page={SpecificDatacrateGitPage} name="specificDatacrateGit" />
+        <Route path="/datacrates/{datacrate_id}/settings" page={SpecificDatacrateSettingsPage} name="specificDatacrateSettings" />
         <Route path="/about" page={AboutPage} name="about" />
         <Route path="/" page={HomePage} name="home" />
         <Route path="/settings" page={SettingsPage} name="settings" />
