@@ -1,0 +1,23 @@
+/* background gradient 45% angled, #fff, #1a94aaAA */
+.loader {
+  border: 3px solid;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    border-image: linear-gradient(0deg, #1a94aa50, #006582) 1;
+  }
+  25% {
+    border-image: linear-gradient(90deg, #1a94aa50, #006582) 1;
+  }
+  50% {
+    border-image: linear-gradient(180deg, #1a94aa50, #006582) 1;
+  }
+  75% {
+    border-image: linear-gradient(270deg, #1a94aa50, #006582) 1;
+  }
+  100% {
+    border-image: linear-gradient(360deg, #1a94aa50, #006582) 1;
+  }
+}

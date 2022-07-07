@@ -160,3 +160,13 @@ export const deleteAnnotationFile = (id, file_id, annotation_id) => {
 export const deleteAnnotationAll = (id, annotation) => {
     return axios.delete(`${api_url}/spaces/${id}/annotation/`, annotation);
 }
+
+//get shacl report for specific datacrate
+export const getShaclReport = (id) => {
+    return axios.get(`${api_url}/spaces/${id}/annotation/shacl_report`);
+}
+
+//get shacl terms for specific datacrate
+export const getShaclTerms = (id) => {
+    return axios.get(`${api_url}/spaces/${id}/annotation/terms`);
+}

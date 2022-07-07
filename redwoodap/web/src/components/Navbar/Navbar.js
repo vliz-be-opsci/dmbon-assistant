@@ -29,7 +29,7 @@ const Navbar = () => {
     if (isdatacrate) {
       return (
         <ul>
-          <li className="left active">
+          <li className="left activee">
             <Link to={routes.overviewDatacrates()}>
               <GiCargoCrate></GiCargoCrate>
             </Link>
@@ -60,7 +60,7 @@ const Navbar = () => {
               <GiCargoCrate></GiCargoCrate>
             </Link>
           </li>
-          <li className="left active">
+          <li className="left activee">
             <Link to={routes.overviewProfiles()}>
               <GoSettings></GoSettings>
             </Link>
@@ -91,7 +91,7 @@ const Navbar = () => {
               <GoSettings></GoSettings>
             </Link>
           </li>
-          <li className="left active">
+          <li className="left activee">
             <Link to={routes.overviewSpaces()}>
               <RiOrganizationChart></RiOrganizationChart>
             </Link>
@@ -132,7 +132,7 @@ const Navbar = () => {
     } else {
       return (
         <ul>
-          <li className="active">
+          <li className="activee">
             <Link to={routes.settings()}>
               <FaCog></FaCog>
             </Link>
@@ -143,7 +143,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="navigation">
+    <nav className="navigatione">
       <Link className="brand-name" to={routes.home()}>
         DMBON assistant
       </Link>
@@ -168,7 +168,7 @@ const Navbar = () => {
       </button>
       <div
         className={
-          isNavExpanded ? 'navigation-menu expanded' : 'navigation-menu'
+          isNavExpanded ? 'navigatione-menu expanded' : 'navigatione-menu'
         }
       >
         <NavbarOptions />

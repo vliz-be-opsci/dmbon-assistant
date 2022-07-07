@@ -1,10 +1,10 @@
-.navigation {
+.navigatione {
     height: 60px;
     width: 100%;
     display: flex;
     align-items: center;
     position: relative;
-    padding: 0.5rem 0rem;
+    padding: 1rem 0rem;
     background-color: #fff;
     border-radius: 0.25rem;
     color: black;
@@ -17,33 +17,28 @@
     font-size: 1.3rem;
     margin-left: 1rem;
 }
-.navigation-menu {
+.navigatione-menu {
     margin-left: auto;
 }
 
-.navigation-menu ul {
+.navigatione-menu ul {
     display: flex;
     padding: 0;
   }
 
-.navigation-menu li {
+.navigatione-menu li {
     list-style-type: none;
-    margin: 0 1rem;
+    margin: 0.5rem;
     padding: 0.5rem;
     font-size: 2rem;
 }
 
-.navigation-menu li:hover {
-    background-color: #1a94aaAA;
-    border-radius: 5px;
-}
-
-.navigation-menu li:hover a {
+.navigatione-menu li:hover a {
     text-decoration: none;
-    color: white;
+    color: #116270;
 }
 
-.navigation-menu li a {
+.navigatione-menu li a {
     text-decoration: none;
     display: block;
     width: 100%;
@@ -54,9 +49,8 @@
     flex: 1;
 }
 
-.active {
-    background-color: #1a94aa50;
-    border-radius: 5px;
+.navigatione-menu .activee a {
+    color: #1a94aa;
 }
 
 
@@ -86,20 +80,21 @@
 }
 
 @media screen and (max-width: 768px) {
-    .navigation-menu ul {
+    .navigatione-menu ul {
         display: none;
     }
 }
 
 @media screen and (max-width: 768px) {
-    .navigation-menu.expanded ul {
+    .navigatione-menu.expanded ul {
       display: block;
     }
   }
 
 @media screen and (max-width: 768px) {
-    .navigation-menu ul {
+    .navigatione-menu ul {
         position: absolute;
+        background-color: #fff;
         top: 60px;
         left: 0;
         width: 100%;
@@ -107,20 +102,19 @@
         border-top: 1px solid black;
         z-index: 1;
     }
-    .navigation-menu li {
+    .navigatione-menu li {
         width: 100%;
-        margin-left: -0.5rem;
+        margin-left: -0.0rem;
         background-color: white;
     }
 
-    .navigation-menu li :hover {
-        font-size: 45px;
+    .navigatione-menu li :hover {
         color: #283b8b;
         background-color: aliceblue;
 
     }
 
-    .navigation-menu li a {
+    .navigatione-menu li a {
         color: black;
         width: 100%;
         padding: 1.5rem 0;

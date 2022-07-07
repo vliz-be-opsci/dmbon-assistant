@@ -98,7 +98,9 @@ const OverviewDatacratesPage = () => {
             {all_spaces.map((space) => (
               <tr key={space.name}>
                 <td>
-                  {space.storage_path}
+                  <Link to={routes.specificDatacrate({ datacrate_id: String(space.name) })}>
+                    {datacrate_name(space.storage_path)}
+                  </Link>
                 </td>
                 <td>{getProfileName(space.RO_profile)}</td>
               </tr>
