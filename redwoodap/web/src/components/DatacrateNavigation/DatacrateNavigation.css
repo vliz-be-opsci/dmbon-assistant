@@ -8,26 +8,35 @@
 }
 
 .navigation_button {
-  width: 30%;
+  width: 24%;
   margin: auto;
   background-color: #1a94aa50;
+  text-decoration: none;
   border-radius: 5px;
   text-align: center;
   padding: 0.5rem;
   border: 2px solid #1a94aa;
+  min-height: 70px;
+  max-height: 70px;
+  font-size: 1.5rem;
+  color:#1a94aa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 /*center the icons */
-.navigation_button a {
+.navigation_button div svg {
   color:#1a94aa;
   font-size: 50px;
   padding: 0.5rem;
 }
 
-.navigation_button:hover a {
+.navigation_button:hover div svg {
   color: #fff;
 }
 
 .navigation_button:hover {
   background-color: #1a94aa;
-  border: 2px solid #FFFFFF;
+  border: 2px solid #1a94aa;
+  color: #fff
 }

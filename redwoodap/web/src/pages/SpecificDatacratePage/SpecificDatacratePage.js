@@ -1,4 +1,3 @@
-import { Link, routes } from '@redwoodjs/router';
 import { MetaTags } from '@redwoodjs/web';
 import DatacrateContentStatistics from 'src/components/DatacrateContentStatistics/DatacrateContentStatistics';
 import DatacrateGitStatus from 'src/components/DatacrateGitStatus/DatacrateGitStatus';
@@ -11,8 +10,6 @@ const SpecificDatacratePage = ({ datacrate_id }) => {
         title="SpecificDatacrate"
         description="SpecificDatacrate page"
       />
-
-      <h1>SpecificDatacratePage</h1>
       {DatacrateNavigation(datacrate_id)}
       {DatacrateContentStatistics(datacrate_id)}
       {DatacrateGitStatus(datacrate_id)}

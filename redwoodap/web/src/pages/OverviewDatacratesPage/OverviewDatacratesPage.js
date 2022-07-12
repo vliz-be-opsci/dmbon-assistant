@@ -39,8 +39,6 @@ const OverviewDatacratesPage = () => {
     return profile_uuid
   }
 
-
-
   useEffect(() => {
     getAllDatacrates()
       .then(res => {

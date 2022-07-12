@@ -16144,6 +16144,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jquery@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "jquery@npm:3.6.0"
+  checksum: 45a63f8376a8918087c0277b2394dd382fcacff765c41ccbb5009a9336f8c971bf41c6a0519062edc1dff6333d96959c3a3ec55c95eb6c94d5372253d6cbf82f
+  languageName: node
+  linkType: hard
+
 "js-levenshtein@npm:^1.1.6":
   version: 1.1.6
   resolution: "js-levenshtein@npm:1.1.6"
@@ -20244,6 +20251,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-content-loader@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "react-content-loader@npm:6.2.0"
+  peerDependencies:
+    react: ">=16.0.0"
+  checksum: 9e443590614b0544e0717babda33aba71373d059af251f8e21845a2113d559d4cca435ebe87d622ea92470fb17563e20c44bb2b5a14ce2d72786b061ac86696e
+  languageName: node
+  linkType: hard
+
 "react-docgen-typescript@npm:^2.1.1":
   version: 2.2.2
   resolution: "react-docgen-typescript@npm:2.2.2"
@@ -20402,6 +20418,25 @@ __metadata:
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
   checksum: 1d0df3c85af79df720524780f00c064d53a9dd1899d785eddb7264b378026979acbddb58a4b7e06e7d0d12aa1494fd5754562ee55d32907b15601068dae82c27
+  languageName: node
+  linkType: hard
+
+"react-loading-skeleton@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "react-loading-skeleton@npm:3.1.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: e028679337d7af07e5831696ffeec19c6e8db5d90fa337361debb9cc925e45c4cf7e95575c6c5fac201104a368e460d1f1bc1cc6f62961352a1d5c6a79369da1
+  languageName: node
+  linkType: hard
+
+"react-loading@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "react-loading@npm:2.0.3"
+  peerDependencies:
+    prop-types: ^15.6.0
+    react: ">=0.14.0"
+  checksum: f2bd5c5189db49194fb66a5120b4040af01811b80d111abf0f33b658bf4da48aefc45f72381e062606b899c3f93366954cad09c06ba0491bcab6c0538897cfe4
   languageName: node
   linkType: hard
 
@@ -24254,11 +24289,15 @@ __metadata:
     "@storybook/theming": ^6.5.9
     axios: ^0.27.2
     bootstrap: ^5.1.3
+    jquery: ^3.6.0
     prop-types: 15.8.1
     react: 17.0.2
     react-bootstrap: ^2.4.0
+    react-content-loader: ^6.2.0
     react-dom: 17.0.2
     react-icons: ^4.4.0
+    react-loading: ^2.0.3
+    react-loading-skeleton: ^3.1.0
     react-router-dom: ^6.3.0
     zustand: ^4.0.0-rc.1
   languageName: unknown

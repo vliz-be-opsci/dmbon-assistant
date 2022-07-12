@@ -2,6 +2,13 @@
 .loader {
   border: 3px solid;
   animation: spin 1s linear infinite;
+  display: flex;
+  flex: row;
+}
+
+.loader h2 {
+  margin: auto;
+  text-align: center;
 }
 
 @keyframes spin {

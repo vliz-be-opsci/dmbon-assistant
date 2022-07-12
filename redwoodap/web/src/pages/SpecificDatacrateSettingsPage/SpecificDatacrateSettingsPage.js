@@ -1,6 +1,6 @@
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
-
+import DatacrateNavigation from 'src/components/DatacrateNavigation/DatacrateNavigation';
 const SpecificDatacrateSettingsPage = ({ datacrate_id }) => {
   return (
     <>
@@ -8,7 +8,7 @@ const SpecificDatacrateSettingsPage = ({ datacrate_id }) => {
         title="SpecificDatacrateSettings"
         description="SpecificDatacrateSettings page"
       />
-
+      {DatacrateNavigation(datacrate_id)}
       <h1>SpecificDatacrateSettingsPage</h1>
       <p>
         Find me in{' '}

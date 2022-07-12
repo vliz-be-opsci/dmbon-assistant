@@ -69,7 +69,7 @@ input.error, textarea.error {
   border: 1px solid var(--border-color-table);
   background-color: var(--primary-color-table);
   color: var(--primary-color-text);
-  width: 100%;
+  width: 90%;
   margin: auto;
 }
 
@@ -203,4 +203,10 @@ input.error, textarea.error {
 
 .table_vliz > tbody > tr {
   border-bottom: 1px solid var(--border-color-table);
+}
+
+/* center page spinner */
+.pageloader div {
+  margin-left: auto;
+  margin-right: auto;
 }

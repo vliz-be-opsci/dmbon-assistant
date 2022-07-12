@@ -1,6 +1,4 @@
 //3th party imports here
-import { getAllSpaces } from "./AxiosRequestsHandlers"
-
 // this file is for writing helper functions that will be used in other files in the frontend
 
 // function to check if value given is a url => if yes return the value in a <a> tag els return the value
@@ -30,4 +28,16 @@ export const isURL = (value) => {
       return (<a href={value} target="_blank">{value}</a>)
   }
   return value
+}
+
+//function that will extract the last part of a given path and return it
+export const getLastPath = (path) => {
+  if (path === null || path === undefined) {
+    return null
+  }
+  const splitPath = path.split('/')
+  const lastpart =  splitPath[splitPath.length - 1]
+  const splittedWindowspath = lastpart.split('\\')
+  const lastpartWindows = splittedWindowspath[splittedWindowspath.length - 1]
+  return lastpartWindows
 }
