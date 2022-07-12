@@ -4,8 +4,9 @@ import AxiosError from "../AxiosError/AxiosError";
 import LoadingBlock from "../LoadingBlock/LoadingBlock";
 import {VscVmRunning} from 'react-icons/vsc';
 import {MdScreenSearchDesktop} from 'react-icons/md';
-import DatacrateContentFileRow from "../DatacrateContentFileRow/DatacrateContentFileRow";
+import 'react-loading-skeleton/dist/skeleton.css';
 import '../component.css';
+import './DatacrateContentFileTable.css'
 
 const DatacrateContentFileTable = (datacrate_uuid) => {
 
@@ -39,7 +40,17 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       <div className="component">
         <div className="title">File Content</div>
         {DatacrateContent.map(file => (
-          DatacrateContentFileRow(datacrate_uuid,file)
+          <div key={file.folder+"/"+file.file} className="content_item">
+          <div className="actions">
+            <button onClick={() => getOpenFile(datacrate_uuid, file_name)}><VscVmRunning></VscVmRunning></button>
+            <button onClick={() => getOpenFileExplorer(datacrate_uuid,file.file)}><MdScreenSearchDesktop></MdScreenSearchDesktop></button>
+          </div>
+          <div className="file-content">
+            <div className="file-name">{file.file || <Skeleton />}</div>
+            <div className="file-name">{file.file}</div>
+            <div className="file-storage">{file.folder}</div>
+          </div>
+        </div>
         ))}
       </div>
     )

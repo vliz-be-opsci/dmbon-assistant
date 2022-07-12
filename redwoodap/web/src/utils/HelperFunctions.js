@@ -41,3 +41,19 @@ export const getLastPath = (path) => {
   const lastpartWindows = splittedWindowspath[splittedWindowspath.length - 1]
   return lastpartWindows
 }
+
+//function that has a path and str as input => return an array of the last part of the path splitted by the str and then splitted by // and \
+export const getArrayPathSplitted = (path, str) => {
+  if (path === null || path === undefined) {
+    return null
+  }
+  const splitPath = path.split(str)
+  const lastpart =  splitPath[splitPath.length - 1]
+  const splittedWindowspath = lastpart.split('\\')
+  const final_array = [];
+  splittedWindowspath.forEach((part) => {
+    final_array.push(part.split('/'))
+  }
+  )
+  return final_array
+}
