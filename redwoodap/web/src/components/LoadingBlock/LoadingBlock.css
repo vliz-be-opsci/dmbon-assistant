@@ -6,6 +6,24 @@
   flex: row;
 }
 
+.small {
+  width: 100%;
+  min-width: 450px;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 1px;
+  margin-top: 2px;
+}
+
+.normal {
+  width: 100%;
+  min-width: 450px;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 10px;
+}
+
 .loader h2 {
   margin: auto;
   text-align: center;
