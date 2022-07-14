@@ -5,7 +5,9 @@ import { MetaTags } from '@redwoodjs/web'
 import AxiosError from 'src/components/AxiosError/AxiosError'
 import { getAllDatacrates } from 'src/utils/AxiosRequestsHandlers'
 import process from 'process';
-import { getAllProfiles } from 'src/utils/AxiosRequestsHandlers'
+import { getAllProfiles } from 'src/utils/AxiosRequestsHandlers';
+import LoadingBlock from "src/components/LoadingBlock/LoadingBlock";
+import 'src/components/component.css';
 
 const OverviewDatacratesPage = () => {
   //const for spaces from the store
@@ -15,16 +17,7 @@ const OverviewDatacratesPage = () => {
   const [errorMessage, setErrorMessage] = useState('')
   const [all_profiles, setProfiles] = useState([])
 
-  getAllProfiles().then((response) => {
-    setProfiles(response.data)
-    },
-    (error) => {
-      console.log(error)
-      setErrorMessage(error.response);
-      setLoading(false);
-      setError(true);
-    }
-  )
+
 
   const getProfileName = (profile_uuid) => {
     for (let i = 0; i < all_profiles.length; i++) {
@@ -40,6 +33,16 @@ const OverviewDatacratesPage = () => {
   }
 
   useEffect(() => {
+    getAllProfiles().then((response) => {
+      setProfiles(response.data)
+      },
+      (error) => {
+        console.log(error)
+        setErrorMessage(error.response);
+        setLoading(false);
+        setError(true);
+      }
+    )
     getAllDatacrates()
       .then(res => {
         setSpaces(res.data);
@@ -72,7 +75,7 @@ const OverviewDatacratesPage = () => {
 
   //render
   if(loading) {
-    return <div>Loading...</div>
+    return(LoadingBlock("Loading Datacrates..."))
   }
   if (error) {
     return(AxiosError(errorMessage))
@@ -84,6 +87,7 @@ const OverviewDatacratesPage = () => {
           title="OverviewDatacrates"
           description="OverviewDatacrates page"
         />
+        <div className='component'>
         <h1>OverviewDatacratesPage</h1>
         <table className="table_vliz">
           <thead>
@@ -105,6 +109,8 @@ const OverviewDatacratesPage = () => {
             ))}
           </tbody>
         </table>
+        </div>
+
       </>
     )
   }

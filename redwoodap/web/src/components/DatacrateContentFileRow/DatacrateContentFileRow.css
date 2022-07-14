@@ -14,16 +14,19 @@ span {
 .actions {
   display: flex;
   flex: row;
+  min-width: 20%;
 }
 
 .actions > button {
-  margin-right: 0.5rem;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
   color: white;
   border: none;
   border-radius: 5px;
   padding: 5px;
   min-width: 50px;
   min-height:50px;
+  justify-content: space-between;
   background-color: var(--border-color-table);
 }
 
@@ -44,6 +47,9 @@ span {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  text-align: center;
+  min-width: 80%;
+  margin-right: 0.25rem;
 }
 
 .file-content > .file-name {

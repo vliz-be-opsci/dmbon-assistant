@@ -6,6 +6,8 @@ import { MetaTags } from '@redwoodjs/web'
 import { getAllProfiles } from 'src/utils/AxiosRequestsHandlers'
 import { isURL } from 'src/utils/HelperFunctions'
 import { getAllSpaces } from "src/utils/AxiosRequestsHandlers"
+import LoadingBlock from "src/components/LoadingBlock/LoadingBlock";
+import 'src/components/component.css';
 const OverviewProfilesPage = () => {
   const [profiles, setProfiles] = useState([])
   const [spaces, setSpaces] = useState([])
@@ -14,16 +16,6 @@ const OverviewProfilesPage = () => {
   const [errorMessage, setErrorMessage] = useState('')
 
   //child function that will get url from spacename
-  getAllSpaces().then((response) => {
-    setSpaces(response.data)
-    },
-    (error) => {
-      console.log(error)
-      setErrorMessage(error.response);
-      setIsLoading(false);
-      setError(true);
-    }
-  )
 
   //function that will return a a href of the url of the space
   const getSpaceURL = (space_name) => {
@@ -42,6 +34,16 @@ const OverviewProfilesPage = () => {
 
 
   useEffect(() => {
+    getAllSpaces().then((response) => {
+      setSpaces(response.data)
+      },
+      (error) => {
+        console.log(error)
+        setErrorMessage(error.response);
+        setIsLoading(false);
+        setError(true);
+      }
+    )
     getAllProfiles()
       .then((response) => {
         setProfiles(response.data);
@@ -57,7 +59,7 @@ const OverviewProfilesPage = () => {
 
   //render here
   if (isLoading) {
-    return <div>Loading...</div>
+    return(LoadingBlock("Loading Profiles..."))
   }
   if(error){
     return(AxiosError(errorMessage))
@@ -68,28 +70,29 @@ const OverviewProfilesPage = () => {
         <MetaTags>
           <title>Overview Profiles</title>
         </MetaTags>
-        <h1>Overview Profiles</h1>
-
-        <table className="table_vliz">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Parent Space</th>
-            </tr>
-          </thead>
-          <tbody>
-            {profiles.map((profile) => (
-              <tr key={profile.uuid}>
-                <td>
-                  <Link to={routes.specificProfile({ profile_id: String(profile.uuid) })}>
-                    {profile.name}
-                  </Link>
-                </td>
-                <td>{getSpaceURL(profile.parent_space)}</td>
+        <div className='component'>
+          <h1>Overview Profiles</h1>
+          <table className="table_vliz">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Parent Space</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {profiles.map((profile) => (
+                <tr key={profile.uuid}>
+                  <td>
+                    <Link to={routes.specificProfile({ profile_id: String(profile.uuid) })}>
+                      {profile.name}
+                    </Link>
+                  </td>
+                  <td>{getSpaceURL(profile.parent_space)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   }

@@ -3,7 +3,9 @@ import { MetaTags } from '@redwoodjs/web'
 import { useState, useEffect } from 'react'
 import { getAllSpaces } from 'src/utils/AxiosRequestsHandlers'
 import AxiosError from 'src/components/AxiosError/AxiosError'
-import { string } from 'prop-types'
+import { string } from 'prop-types';
+import LoadingBlock from "src/components/LoadingBlock/LoadingBlock";
+import 'src/components/component.css';
 const OverviewSpacesPage = () => {
 
   const [spaces, setSpaces] = useState([])
@@ -29,7 +31,7 @@ const OverviewSpacesPage = () => {
 
 
   if(loading) {
-    return <div>Loading...</div>
+    return(LoadingBlock("Loading spaces..."))
   }
   if(error){
     return (AxiosError(errorMessage))
@@ -38,28 +40,29 @@ const OverviewSpacesPage = () => {
     return (
       <>
         <MetaTags title="OverviewSpaces" description="OverviewSpaces page" />
-
-        <h1>OverviewSpacesPage</h1>
-        <table className='table_vliz'>
-          <thead>
-            <tr>
-              <th>name</th>
-              <th>uuid</th>
-            </tr>
-          </thead>
-          <tbody>
-            {spaces.map((space) => (
-              <tr key={space.uuid}>
-                <td>
-                  <Link to={routes.specificSpace({ space_id: String(space.uuid) })}>
-                    {space.name}
-                  </Link>
-                </td>
-                <td>{space.uuid}</td>
+        <div className="component">
+          <h1>OverviewSpacesPage</h1>
+          <table className='table_vliz'>
+            <thead>
+              <tr>
+                <th>name</th>
+                <th>uuid</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {spaces.map((space) => (
+                <tr key={space.uuid}>
+                  <td>
+                    <Link to={routes.specificSpace({ space_id: String(space.uuid) })}>
+                      {space.name}
+                    </Link>
+                  </td>
+                  <td>{space.uuid}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </>
     )
   }
