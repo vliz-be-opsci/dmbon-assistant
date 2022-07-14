@@ -110,7 +110,9 @@ class RoCrateGitBase():
         """ get predicates from all ids
         """
         self.delete_hashtag_from_begin_id()
+        path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
         md = self._read_metadata_datacrate()
+        data = self._read_metadata_datacrate()
         log.debug(md)
         all_files = []
         for dictionaries in md["@graph"]:
@@ -124,6 +126,80 @@ class RoCrateGitBase():
             if file != "ro-crate-metadata.json" and file != './':
                 if "." in file:
                     files_attributes[file]= {}
+                    
+                    #get the shacl validation results
+                    barebones_json = {
+                            "@context": 
+                                { 
+                                "schema": "http://schema.org/" , 
+                                "ex": "http://example.org/ns#"
+                                },
+                            "@graph": []
+                            }
+    
+                    for item in data["@graph"]:
+                        if item["@id"] == file:
+                            item_dict = {}
+                            item_dict["@id"] = item["@id"]
+                            item_dict["@type"] = "schema:" + item["@type"]
+                            for key, value in item.items():
+                                if key == "@type":
+                                    continue
+                                else:
+                                    item_dict["schema:" + key] = value
+                            barebones_json["@graph"].append(item_dict)
+                    
+                    shacl_file = open(path_shacl, "rb").read()
+                    sh = Graph().parse(data=shacl_file, format="turtle")
+                    r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, data_graph_format="json-ld", serialize_report_graph="json-ld")
+                    r_decoded = r[1].decode("utf-8")
+                    
+                    datag = []
+                    for item in data["@graph"]:
+                        if item["@id"] == file:
+                            log.debug(f'found item with id {file}')
+                            for key, value in item.items():
+                                dict_predicates = {}
+                                dict_predicates["predicate"] = key
+                                dict_predicates["value"] = value
+                                datag.append(dict_predicates)
+                                
+                    log.debug(f"data: {datag}")
+                    
+                    green = 2
+                    orange = 0
+                    red = 0
+
+                    for item in datag:
+                        if item["predicate"] != "@type" and item["predicate"] != "@id":
+                            green+=1
+                            
+                    validation_report_json  = json.loads(r_decoded)        
+
+                    # check the report for the number of violations for the item 
+                    for item in validation_report_json:
+                        log.debug(f' validation report item: {item}')
+                        try:
+                            if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
+                                for key, value in item.items():
+                                    if key == "http://www.w3.org/ns/shacl#focusNode":
+                                        name_focusnode = value[0]["@id"].split("/")[-1]
+                            if name_focusnode == file:
+                                for key, value in item.items():
+                                    if "resultSeverity" in key == "http://www.w3.org/ns/shacl#resultSeverity":
+                                        if value[0]["@id"].split("#")[-1] == "Violation":
+                                            red+=1
+                                        if value[0]["@id"].split("#")[-1] == "Warning":
+                                            orange+=1
+                        except:
+                            pass
+                    log.debug(f' green: {green}, orange: {orange}, red: {red}')
+                    percentage_red = math.ceil((red/(red+green+orange))*100)
+                    percentage_orange = math.ceil((orange/(red+green+orange))*100)
+                    percentage_green = math.ceil((green/(red+green+orange))*100)
+                    summary = {"green": percentage_green, "orange": percentage_orange, "red": percentage_red}
+                    files_attributes[file]["summary"] = summary
+                    
                     #TODO use uri templates and rename /file/ to /resource/ 
                     # urit = "os.getenv('BASE_URL_SERVER') + 'apiv1/' + 'spaces/{uuid}/annotation/resource/{rid}'"
                     # uritemplates(urit).expand(dict(uuid=self.uuid, rid=file))
@@ -134,6 +210,8 @@ class RoCrateGitBase():
                             if item == "@id" and value==file:
                                 for item_save, value_save in dictionaries.items():
                                     files_attributes[file][item_save] = value_save
+                
+                
         log.debug(f'All predicates from all files from project : {files_attributes}')
         return {"data":files_attributes}
     
