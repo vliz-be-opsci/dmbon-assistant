@@ -5,6 +5,7 @@ from rocrate.rocrate import ROCrate
 import logging
 import stat
 import shutil
+import subprocess
 from subprocess import call
 import app.shacl_helper as shclh
 from rdflib import Graph
@@ -224,6 +225,20 @@ class RoCrateGitBase():
                 item["@id"] = item["@id"][1:]
         #write the metadata
         self._write_metadata_datacrate(data)
+        
+    def get_git_history(self):
+        #get the metadata
+        data = self._read_metadata_datacrate()
+        location_space = Locations().get_workspace_location_by_uuid(space_uuid=self.uuid)
+        command = ['git']
+        # command.append('--git-dir=C:/develop/GitHub/AzureDevopsWordPlayground/.git')
+        command.append('log')
+        command.append(
+            "--pretty=format:{\"refs\" : \"%D\",  \"hash\": \"%H\",  \"hashAbbrev\" : \"%h\",  \"parents\" : \"%P\",  \"author\": {    \"name\": \"%aN\",    \"email\": \"%aE\",    \"timestamp\": \"%aD\"  },  \"subject\": \"%s\"},")
+        process = subprocess.Popen(command, cwd=location_space, stdout=subprocess.PIPE)
+        result = process.communicate()[0].decode('utf-8')
+        #write the metadata
+        return {"data":result}
     
     def get_predicates_by_id(self,file_id=str):
         """ get predicates from a given id

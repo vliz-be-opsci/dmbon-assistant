@@ -4,7 +4,10 @@ from pydantic import BaseModel, Field
 import os, json, git
 from datetime import datetime
 import re
+from app.model.location import Locations
+from app.model.space import Space
 import logging
+from fastapi.responses import JSONResponse
 log=logging.getLogger(__name__)
 
 router = APIRouter(
@@ -24,7 +27,7 @@ class GitCommitMessageModel(BaseModel):
 @router.get('/status/', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     toreturn =[]
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -105,7 +108,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
 @router.post('/{command}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)"), item:GitCommitMessageModel):
     toreturn =[]
-    with open(os.path.join(os.getcwd(),"app","webtop-work-space","spaces.json"), "r+") as file:
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
@@ -155,3 +158,24 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
             raise HTTPException(status_code=500, detail=e)
         origin.pull()
         return {"data":"{} successfull".format(str(command))}
+    
+
+@router.get('/history/', status_code=200)
+def get_git_history(*,space_id: str = Path(None,description="space_id name")):
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    try:
+        space_object = Space.load(uuid=space_id)
+        prerreturn = space_object.get_git_history()
+        log.info(f"prereturn of get predicates by id: {prerreturn}")
+        if "error" in prerreturn.keys():
+            return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
+        return prerreturn
+    except Exception as e:
+        log.error(e)
+        log.exception(e)
+        raise HTTPException(status_code=500, detail=e)
