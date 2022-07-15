@@ -94,6 +94,11 @@ export const getGitStatus = (id) => {
   return axios.get(`${api_url}/spaces/${id}/git/status/`);
 }
 
+//get git history from a specific datacrate
+export const getGitHistory = (id) => {
+  return axios.get(`${api_url}/spaces/${id}/git/history/`);
+}
+
 //post git command to a specific datacrate
 export const postGitCommand = (id, command) => {
   return axios.post(`${api_url}/spaces/${id}/git/${command}`);

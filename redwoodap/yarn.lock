@@ -2209,6 +2209,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gitgraph/core@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@gitgraph/core@npm:1.5.0"
+  checksum: fb94f55005857eccd80f62ff522cd7448662e031c61d49cd193b095f101cbea10be9a77dd049b8e82edac6357fb9084506f06d0f0866ea3e5718a250855ce100
+  languageName: node
+  linkType: hard
+
+"@gitgraph/react@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@gitgraph/react@npm:1.6.0"
+  dependencies:
+    "@gitgraph/core": 1.5.0
+  peerDependencies:
+    react: ">= 16.8.0"
+  checksum: 6deed9d6d8dbe64c3745684e36862d13ef27b2242ba35b4392ba590f93a22250ec9352a0af53b0df7745cd54b83071b3e12bacd57e096af26f4e3041fb38ed72
+  languageName: node
+  linkType: hard
+
 "@graphql-codegen/cli@npm:2.6.2":
   version: 2.6.2
   resolution: "@graphql-codegen/cli@npm:2.6.2"
@@ -24299,6 +24317,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web@workspace:web"
   dependencies:
+    "@gitgraph/react": ^1.6.0
     "@redwoodjs/forms": 2.0.0
     "@redwoodjs/router": 2.0.0
     "@redwoodjs/web": 2.0.0
