@@ -6,6 +6,9 @@ backend/app/webtop-work-space/
 !backend/app/webtop-work-space/cache/filler.txt
 !backend/app/webtop-work-space/spaces/description.txt
 backend/dmbonbackend.log
+backend/backend.pid
+backend/package-lock.json
 backend/app/webtop-work-space/spaces.json
 backend/app/webtop-work-space/spaces.json
 backend/app/webtop-work-space/spaces.json
+frontend/frontend.pid
