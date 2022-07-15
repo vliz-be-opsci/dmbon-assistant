@@ -1,4 +1,4 @@
-import git, os, json
+import git, os, json, re
 from abc import abstractmethod
 from .location import Locations
 from rocrate.rocrate import ROCrate
@@ -15,6 +15,59 @@ from base64 import decode
 import uuid as uuidmake
 
 log=logging.getLogger(__name__)
+
+def refs_should_be_omitted(ref: str):
+    """
+    Determine if a ref should be completely omitted from json output, we do not want
+    to show origin
+    @param ref: string containing the ref
+    @return: True if this ref should be omitted from the list
+    """
+    return ref.startswith("origin/")
+
+
+def adjust_ref(ref: str):
+    """
+    Refs should be adjusted, as an example HEAD -> should be removed
+    @param ref: string containing the ref
+    @return: correct ref string value to be passed to GitGraph.js library
+    """
+    if ref.startswith("HEAD"):
+        return ref.split(" -> ")[1]
+    return ref
+
+def fix_parents(commit):
+    """
+    We need to generate a parent list that is a list not a single string space separated
+    @param commit:  commit parsed from json, it is a dictionary
+    """
+    parents = commit["parents"]
+    if ' ' in parents:
+        splitted_parents = parents.split(' ')
+        commit["parents"] = splitted_parents
+    else:
+        commit["parents"] = [parents]
+
+
+def fix_ref(commit):
+    """
+    Fix refs of the commit, this is needed because refs are comma separated in raw json
+    output of git log
+    @param commit: commit parsed from json, it is a dictionary
+    """
+    splitted_refs = commit["refs"].split(",")
+    newref = ""
+
+    for ref in splitted_refs:
+        # omit every origin refs (need to generalize)
+        ref = ref.strip()
+        if ref and not refs_should_be_omitted(ref):
+            newref += adjust_ref(ref)
+
+    if newref:
+        commit["refs"] = [newref]
+    else:
+        commit["refs"] = []
 
 def on_rm_error(func, path, exc_info):
     #from: https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
@@ -227,18 +280,42 @@ class RoCrateGitBase():
         self._write_metadata_datacrate(data)
         
     def get_git_history(self):
-        #get the metadata
-        data = self._read_metadata_datacrate()
-        location_space = Locations().get_workspace_location_by_uuid(space_uuid=self.uuid)
+        location_space = self.storage_path
+        log.debug(f'location_space: {location_space}')
         command = ['git']
         # command.append('--git-dir=C:/develop/GitHub/AzureDevopsWordPlayground/.git')
         command.append('log')
         command.append(
             "--pretty=format:{\"refs\" : \"%D\",  \"hash\": \"%H\",  \"hashAbbrev\" : \"%h\",  \"parents\" : \"%P\",  \"author\": {    \"name\": \"%aN\",    \"email\": \"%aE\",    \"timestamp\": \"%aD\"  },  \"subject\": \"%s\"},")
         process = subprocess.Popen(command, cwd=location_space, stdout=subprocess.PIPE)
-        result = process.communicate()[0].decode('utf-8')
+        json_data = process.communicate()[0].decode('utf-8')
+        # remember that we pass a list of objects, the output of git log parametrized
+        json_data = json_data.rstrip(',')  # First of all remove trailing quotes
+        s = "[" + json_data + "]"  # Convert into an array
+        while True:
+            try:
+                full_data = json.loads(s)   # try to parse...
+                break                    # parsing worked -> exit loop
+            except Exception as e:
+                # "Expecting , delimiter: line 34 column 54 (char 1158)"
+                # position of unexpected character after '"'
+                unexp = int(re.findall(r'\(char (\d+)\)', str(e))[0])
+                # position of unescaped '"' before that
+                unesc = s.rfind(r'"', 0, unexp)
+                s = s[:unesc] + r'\"' + s[unesc+1:]
+                # position of correspondig closing '"' (+2 for inserted '\')
+                closg = s.find(r'"', unesc + 2)
+                s = s[:closg] + r'\"' + s[closg+1:]
+
+        # Now we need to start making fixing, first fix is simply change the refs into an array
+        # gitgraph library does not seems to be able to render more than one refs, so we simply
+        # create an array with the whole list of branches.
+        for commit in full_data:
+            fix_ref(commit)
+            fix_parents(commit)
+
         #write the metadata
-        return {"data":result}
+        return {"data":full_data}
     
     def get_predicates_by_id(self,file_id=str):
         """ get predicates from a given id
