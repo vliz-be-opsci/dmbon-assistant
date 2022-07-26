@@ -14,7 +14,7 @@ from datetime import datetime
 from aiohttp import ClientSession
 from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
-from collections import MutableMapping
+from collections.abc import MutableMapping
 from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.docs import (
     get_redoc_html,

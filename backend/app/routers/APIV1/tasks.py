@@ -70,6 +70,14 @@ def perform_foldersetup():
             with open(os.path.join(old_wd,"app","webtop-work-space","spaces.json"), "w") as f:
                 f.write("{}")
             log.info("spaces.json file created")
+            
+        if os.path.exists(os.path.join(old_wd,"app","webtop-work-space","setup.json")):
+            log.info("setup.json file exists")
+        else:  
+            with open(os.path.join(old_wd,"app","webtop-work-space","setup.json"), "w") as f:
+                f.write("{}")
+            log.info("setup.json file created")
+        
         if os.path.exists(os.path.join(old_wd,"app","webtop-work-space","profiles.json")):
             log.info("profiles.json file exists")
         else:
@@ -202,7 +210,12 @@ def post_user_data(item:UserDataModel):
     with open(Locations().join_abs_path('user_data.json'), 'w') as outfile:
         json.dump(data, outfile)
     
-    return {"data":"successfully added userdata",'next_task': None}         
+    return {"data":"successfully added userdata",'next_task': {
+                            'TaskRequest': 'finishsetup', 
+                            'TaskDescription': 'finishing setup', 
+                            'TypeRequest': 'get', 
+                            'Payload': []
+                        }}         
 
 @router.get('/make_ssh_key', status_code=200)   
 def make_ssh_key():
