@@ -9,3 +9,4 @@ backend/dmbonbackend.log
 backend/app/webtop-work-space/spaces.json
 backend/app/webtop-work-space/spaces.json
 backend/app/webtop-work-space/spaces.json
+*.json
