@@ -41,7 +41,6 @@ class AnnotationsModel(BaseModel):
 ### api paths ###
 
 ### space resource annotation ###
-
 @router.get('/', status_code=200)
 def get_all_resources_annotation(*,space_id: str = Path(None,description="space_id name")):
     
