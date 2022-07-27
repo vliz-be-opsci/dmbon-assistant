@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 import os, json, shutil, git, uuid, subprocess, stat
 from aiohttp import ClientSession
 import validators
+from os import listdir
 import logging
 log=logging.getLogger(__name__)
 #all diff subroutes
@@ -38,6 +39,8 @@ class SpaceModel(BaseModel):
 
 ### define helper functions for the api ###
 
+
+
 def complete_metadata_crate(source_path_crate):
     try:
         ## get all the file_ids with their metadata ##
@@ -50,7 +53,6 @@ def complete_metadata_crate(source_path_crate):
         for node in datao['@graph']:
             if node['@type'] != 'File':
                 node_ids.append(node)
-        
                  
         #check if the ids from relation are present in the json file
         all_meta_ids_data = []
@@ -68,11 +70,13 @@ def complete_metadata_crate(source_path_crate):
         
         log.debug(f"all metadata ids of data: {all_meta_ids_data}")
         
+        #for all metadata ids check if they have a parent folder, if so then add this one tp the real_name of the file and repeat until you are at the root
+        
+        
         #make pre meta ids
         all_ids_pre_new_doc = []
         for id in datao['@graph']:
             all_ids_pre_new_doc.append(id['@id'])
-        
         
         ## start from fresh file with metadata template  ##
         with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'ro-crate-metadata.json')) as json_file:
@@ -86,34 +90,68 @@ def complete_metadata_crate(source_path_crate):
         
         ## add data to the fresh file ##
         relation = []
-        for root, dirs, files in os.walk(source_path_crate, topdown=False):   
+        for root, dirs, files in os.walk(source_path_crate, topdown=False): 
+            
+            for diro in dirs:
+              if ' ' in diro:
+                  os.rename(os.path.join(root, diro), os.path.join(root, diro.replace(' ', '_')))
             if ".git" not in root:
-                log.info(f'root == {root}')
+                #log.info(f'root == {root}')
                 for name in files:
-                    log.info(f'file == {name}')
+                    
+                    #if the name contains a " " then replace it with "_"
+                    if " " in name:
+                        #replace the " " with "_" on the file system
+                        os.rename(os.path.join(root, name), os.path.join(root, name.replace(" ", "_")))
+                        name = name.replace(" ", "_")
+                    #log.info(f'file == {name}')
                     if name != ".git":
                         if root.split(source_path_crate)[-1] == "":
                             parent_folder = ""
                             relative_path = "./"
                         else:
                             relative_path = root.split(source_path_crate)[-1]
+                            
+                            #check if the relative path contains any " " , if so replace it with "_"
+                            try:
+                                if " " in relative_path:
+                                    relative_path = relative_path.replace(" ", "_")
+                            except Exception as e:
+                                log.error(f"error: {e}")
                             parent_folder = relative_path.split(os.path.sep)[-1]
-                        relation.append({'parent_folder':parent_folder,"relative_path":relative_path,"name":name})
+                            full_name = os.path.join(relative_path, name)
+                            #replace \\ by / and check if first char is . , if not add .
+                            full_name = full_name.replace("\\", "/")
+                            #escape the / in the name 
+                            full_name = full_name.replace("/", "+")
+                        relation.append({'parent_folder':parent_folder,"relative_path":relative_path,"name":full_name})
+                        log.debug({'parent_folder':parent_folder,"relative_path":relative_path,"name":full_name})
+        
+        #add all the files that are in the root of the source_path_crate to the data
+        onlyfiles = [f for f in listdir(source_path_crate) if os.path.isfile(os.path.join(source_path_crate, f))]
+        for onlyfile in onlyfiles:
+            # if onlyfile doesn't start with './', add it to the relation
+            if onlyfile[0] != ".":
+                relation.append({'parent_folder':"","relative_path":"./","name":onlyfile})
+                log.debug({'parent_folder':"","relative_path":"./","name":onlyfile})
+        
         all_ids = []
         for x in relation:
             #log.debug(x)
             all_ids.append(x["name"])
-        
         #check if the ids from relation are present in the json file
         all_meta_ids = []
         for id in data['@graph']:
             all_meta_ids.append(id['@id'])
             #log.debug(id['@id'])
         for i in all_ids: 
+            
+            
+            #TODO when I delete stuff from the ro-crate-metdata.json, the folders don't come back to the root , find a way to hange this for when the user decides to mess with the ro-crate-metadata.json
+            
             if i not in all_meta_ids:
                 #log.debug("not present: "+ i)
                 #check if parent is present in the file
-                
                 def add_folder_path(path_folder):
                     toaddppaths = path_folder.split("\\")
                     previous = "./"
@@ -134,7 +172,6 @@ def complete_metadata_crate(source_path_crate):
                             previous = './'
                         else:
                             previous = toadd+"/"
-                            
                                 
                 for checkparent in relation:
                     if checkparent['name'] == i:
@@ -143,6 +180,8 @@ def complete_metadata_crate(source_path_crate):
                                 #make the parent_folder in ids
                                 data['@graph'].append({'@id':checkparent['parent_folder']+"/", '@type':"Dataset", 'hasPart':[]})
                                 #check if folder has no parent
+                                log.info(f"checkparent['parent_folder'] == {checkparent['parent_folder']}")
+                                log.debug(checkparent['relative_path'].split("\\"))
                                 if len(checkparent['relative_path'].split("\\")) == 2:
                                     checkparentpath = checkparent['relative_path'].split("\\")
                                     log.debug(f"splitted relative path: {checkparentpath}")
@@ -182,10 +221,10 @@ def complete_metadata_crate(source_path_crate):
             if ids["@id"][0] == "#":
                 log.info(ids["@id"])
                 ids["@id"] = ids["@id"][1:]
-                log.info(ids["@id"])
             for tocheck_id in all_meta_ids_data:
-                log.info(ids['@id'])
-                if ids['@id'] in str(tocheck_id.keys()):
+                #log.info("checking part of graph: "+ids["@id"])
+                if ids['@id'] == str(tocheck_id.keys()):
+                    log.info(f"found {ids['@id']} in {tocheck_id.keys()}")
                     log.info(tocheck_id)
                     for dict_single_metadata in tocheck_id[ids['@id']]:
                         for key_dict_single_meta, value_dcit_sinle_meta in dict_single_metadata.items():
@@ -224,18 +263,14 @@ def complete_metadata_crate(source_path_crate):
 
         data["@graph"] = new_graph
         
-        
-        
         #write the rocrate file back 
         with open(os.path.join(source_path_crate, 'ro-crate-metadata.json'), 'w') as json_file:
             json.dump(data, json_file)
-
         return data
     
     except Exception as e:
         log.error(f"error: {e}")
         log.exception(e)
-        
         
 def check_space_name(spacename):
     with open(Locations().join_abs_path('spaces.json'), "r+")as file:

@@ -101,11 +101,23 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
             space_folder = data[space_id]['storage_path']
             #TODO: this wil only work if the file is in the root of the datacrate, find way to make it work for non root files
             #TODO: find a way to make this work for non windows systems
+            
+            #replace the + in the filen bu the os.path.sep()
+            log.debug(file_id)
+            file_id = file_id.replace('+',os.path.sep)
+            log.debug(file_id)
+            if os.path.sep not in file_id:
+                showFileExplorer(space_folder+os.path.sep+file_id)
+            else:
+                showFileExplorer(space_folder+file_id)
+            '''
             #find the file_id in the space_folder by looping over the folders and files in the space_folder
             for (dirpath, dirnames, filenames) in os.walk(space_folder):
                 for filen in filenames:
                     if filen == file_id:
                         showFileExplorer(os.path.join(dirpath,filen))
+            '''
+            
             #os.startfile(os.path.join(space_folder,file_id), "open")
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
@@ -210,8 +222,6 @@ async def add_new_references(*,space_id: str = Path(None,description="space_id n
         try:
             crate.write_crate(space_folder)
         except Exception as e:
-            
-            
             log.error(f"crate write error :{e}")
             log.exception(e)
             
@@ -265,7 +275,6 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
                             del data['@graph'][i]['hasPart'][parto]
                 except:
                     pass
-            
             #write the rocrate file back 
             with open(os.path.join(space_folder, 'ro-crate-metadata.json'), 'w') as json_file:
                 json.dump(data, json_file)
