@@ -93,8 +93,8 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
             
     return toreturn
 
-@router.get('/file/{file_id}')
-def open_file_content_external(*,space_id: str = Path(None,description="space_id name"),file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
+@router.get('/{path_spec:path}')
+def open_file_content_external(*,space_id: str = Path(None,description="space_id name"), path_spec: str = Path(None,description="content path (relative to crate pointing to file or folder) to get the info from")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -104,7 +104,8 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
             
             #replace the + in the filen bu the os.path.sep()
             log.debug(file_id)
-            file_id = file_id.replace('+',os.path.sep)
+            log.info("performing os.path.join on file_id")
+            file_id = file_id.replace('/',os.path.sep)
             log.debug(file_id)
             if os.path.sep not in file_id:
                 showFileExplorer(space_folder+os.path.sep+file_id)
@@ -120,6 +121,7 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
             
             #os.startfile(os.path.join(space_folder,file_id), "open")
         except Exception as e:
+            log.error(e)
             raise HTTPException(status_code=404, detail="Space not found")
     return "file opened successfully"
 
@@ -283,6 +285,7 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
     repo.git.add(all=True)
     return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
 '''
+'''
 @router.get('/{path_folder:path}')
 def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
@@ -306,3 +309,4 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
                 log.info(f"{dirpath}/{filen}")
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
+'''

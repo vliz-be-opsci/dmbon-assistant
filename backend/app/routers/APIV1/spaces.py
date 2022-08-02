@@ -39,7 +39,19 @@ class SpaceModel(BaseModel):
 
 ### define helper functions for the api ###
 
+forward_slash_replace = "%2F"
 
+#function that will replace the ´%2F in the path with / and the first %2F with ./
+def replace_forward_slash(path):
+    path = path.replace(forward_slash_replace, "/")
+    #replace first / with /./ if first char isn't .
+    if path[0] != ".":
+        #if the first char is not a /, replace it with ./
+        if path[0] != "/":
+            path = "./" + path
+        else:
+            path = path.replace("/", "./", 1)
+    return path
 
 def complete_metadata_crate(source_path_crate):
     try:
@@ -53,6 +65,12 @@ def complete_metadata_crate(source_path_crate):
         for node in datao['@graph']:
             if node['@type'] != 'File':
                 node_ids.append(node)
+                
+        #TODO perform a check here in all the node_ids to see if the part['@id] is a url, if so ten add the part to the dta['@graph]
+        '''
+        for i in node_ids:
+            data['@graph'].append(i)
+        '''
                  
         #check if the ids from relation are present in the json file
         all_meta_ids_data = []
@@ -71,8 +89,6 @@ def complete_metadata_crate(source_path_crate):
         log.debug(f"all metadata ids of data: {all_meta_ids_data}")
         
         #for all metadata ids check if they have a parent folder, if so then add this one tp the real_name of the file and repeat until you are at the root
-        
-        
         #make pre meta ids
         all_ids_pre_new_doc = []
         for id in datao['@graph']:
@@ -83,10 +99,6 @@ def complete_metadata_crate(source_path_crate):
             data = json.load(json_file)
             
         log.debug(f"data from rocrate: {data}")
-        
-        #add all the node ids to the data
-        for i in node_ids:
-            data['@graph'].append(i)
         
         ## add data to the fresh file ##
         relation = []
@@ -111,7 +123,6 @@ def complete_metadata_crate(source_path_crate):
                             relative_path = "./"
                         else:
                             relative_path = root.split(source_path_crate)[-1]
-                            
                             #check if the relative path contains any " " , if so replace it with "_"
                             try:
                                 if " " in relative_path:
@@ -119,13 +130,16 @@ def complete_metadata_crate(source_path_crate):
                             except Exception as e:
                                 log.error(f"error: {e}")
                             parent_folder = relative_path.split(os.path.sep)[-1]
+                            added_relative_path = relative_path.replace(os.path.sep, "/")
                             full_name = os.path.join(relative_path, name)
                             #replace \\ by / and check if first char is . , if not add .
                             full_name = full_name.replace("\\", "/")
                             #escape the / in the name 
-                            full_name = full_name.replace("/", "+")
-                        relation.append({'parent_folder':parent_folder,"relative_path":relative_path,"name":full_name})
-                        log.debug({'parent_folder':parent_folder,"relative_path":relative_path,"name":full_name})
+                            full_name = full_name.replace("/", forward_slash_replace)
+                            log.debug(f"full name: {full_name}")
+                        relation.append({'parent_folder':added_relative_path,"relative_path":relative_path,"name":full_name})
+                        log.debug({'parent_folder':added_relative_path,"relative_path":relative_path,"name":full_name})
+        
         
         #add all the files that are in the root of the source_path_crate to the data
         onlyfiles = [f for f in listdir(source_path_crate) if os.path.isfile(os.path.join(source_path_crate, f))]
@@ -145,33 +159,40 @@ def complete_metadata_crate(source_path_crate):
             all_meta_ids.append(id['@id'])
             #log.debug(id['@id'])
         for i in all_ids: 
-            
-            
             #TODO when I delete stuff from the ro-crate-metdata.json, the folders don't come back to the root , find a way to hange this for when the user decides to mess with the ro-crate-metadata.json
-            
             if i not in all_meta_ids:
                 #log.debug("not present: "+ i)
                 #check if parent is present in the file
                 def add_folder_path(path_folder):
                     toaddppaths = path_folder.split("\\")
+                    
+                    #make list that loops over the toaddpaths and adds the next element to the previous one 
+                    complete_path = ""
+                    all_paths = []
+                    for toadd in toaddppaths:
+                        complete_path  = complete_path + toadd + "/"
+                        all_paths.append(complete_path)
+                    
+                    log.debug(f"all paths: {all_paths}")
+                    
                     previous = "./"
-                    for toadd in toaddppaths:         
-                        if str(toadd+"/") not in all_meta_ids:
-                            if toadd != "":
-                                data['@graph'].append({'@id':toadd+"/", '@type':"Dataset", 'hasPart':[]})
+                    for toadd in all_paths:         
+                        if str(toadd) not in all_meta_ids:
+                            if toadd != "/":
+                                data['@graph'].append({'@id':toadd, '@type':"Dataset", 'hasPart':[]})
                                 # add ro right haspart
                                 for ids in data['@graph']:
                                     if ids['@id'] == previous:
                                         try:
-                                            ids['hasPart'].append({'@id':toadd+"/"})
+                                            ids['hasPart'].append({'@id':toadd})
                                         except:
                                             ids['hasPart'] = []
-                                            ids['hasPart'].append({'@id':toadd+"/"})
-                                all_meta_ids.append(str(toadd+"/"))
-                        if toadd == "":
+                                            ids['hasPart'].append({'@id':toadd})
+                                all_meta_ids.append(str(toadd))
+                        if toadd == "/":
                             previous = './'
                         else:
-                            previous = toadd+"/"
+                            previous = toadd
                                 
                 for checkparent in relation:
                     if checkparent['name'] == i:
@@ -245,6 +266,8 @@ def complete_metadata_crate(source_path_crate):
         new_graph = []
         seen_ids = []
         for ids in data['@graph']:
+            #replace the forward_slash_replace with a /
+            ids['@id'] = replace_forward_slash(ids['@id'])
             if ids['@id'] not in seen_ids:
                 seen_ids.append(ids['@id'])
                 
@@ -253,6 +276,7 @@ def complete_metadata_crate(source_path_crate):
                     new_hasparts = []
                     seen_hasparts = []
                     for haspart in ids['hasPart']:
+                        haspart['@id'] = replace_forward_slash(haspart['@id'])
                         if haspart['@id'] in seen_hasparts:
                             log.info("duplicate id found in hasparts of id: "+ haspart["@id"] + ids['@id'])
                         else:
