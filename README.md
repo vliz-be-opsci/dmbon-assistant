@@ -1,5 +1,57 @@
 [![On_Push_Testing](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml/badge.svg?branch=main)](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml)
 
+# Data management assistant
+Data management for Biodiversity Observation Networks (DMBON-assistant) is a case study of a more general data management framework and webtop application that supports scientists by providing a consistent and streamlined dataflow within and between organizations. 
+It lowers the barrier for collaborative efforts by making data more accessible and searchable, enabling more complex search queries on open datasets.
+
+[//]: <> (EXPLAIN HOW TO READ THIS DOCUMENT)
+## Reading this README
+Explain how to read this file, include a Table of Contents 
+
+### Table of contents
+
+- [Motivation](#motivation)
+- [How does it work?](#how-does-it-work)
+- [Installation](#installation)
+  - [On Windows](#on-windows)
+  - [On Linux](#on-linus)
+  - [On Mac OS](#on-mac-os)
+  - [Getting started](#getting-started)
+- [Contributing](#contributing)
+
+## Motivation
+Sound scientific results are derived from good data. While few people disagree with this statement, the current methods of both storing and accessing historical data are severely hampering novel scientific discoveries. 
+On one end, data of published studies are permanently lost (Vines et al., [2014](https://doi.org/10.1016/j.cub.2013.11.014)) or researchers forget the details requires to make use of the data (Whitlock et al. [2010](https://doi.org/10.1086/650340)).
+On the other end, losing access to data (and their metadata) makes it impossible to reproduce scientific results or perform critical meta-analyses.
+Therefore, automated streamlining of data management plans (DMPs) is necessary for improving data preservation and accesibility.
+DMBON-assistant is an open source webtop application designed to provide this automisation and thereby enables consistent and streamlined data management.
+
+##### Metadata 
+One critical, but often overlooked, feature that greatly increases the longevity of datasets is [metadata](https://en.wikipedia.org/wiki/Metadata) (Leipzig et al. [2021](https://doi.org/10.1016/j.patter.2021.100322)), i.e. 'data that provides information about other data'. 
+Metadata often encodes how to interpret the actual data, e.g. descriptions of meaning of columns in a table, and is thus often necessary for meta-analyses.
+While sharing primary data is becoming increasingly more common (even though the process is not streamlined, see, e.g. Alsheikh-Ali et al., [2011](https://doi.org/10.1371/journal.pone.0024357) and Baker, [2015](https://doi.org/10.1038/533452a)), extensive efforts are often needed to gain access to metadata even when data is openly available (Tedersoo et al., [2021](https://doi.org/10.1038/s41597-021-00981-0)).
+DMBON-assistant aims to alleviate this issue by forcing its users to provide sufficient metadata needed to correctly interpret the data.
+
+## How does it work?
+Explain the general premise of DMBON-assistant
+
+[//]: <> (INSTALLATION)
+## Installation
+#### On Windows
+(Thorough Windows installation instructions)
+#### On Linux
+(Thorough Linux system installation instructions)
+#### On Mac OS?
+(Thorough MacOS system installation instructions?)
+
+### Getting started
+How to quickly get started using DMBon-assistant, using a very simple usecase.
+
+[//]: <> (HOW TO CONTRIBUTE)
+## Contributing
+Please find our [CONTRIBUTION guidelines](CONTRIBUTING.md) for more details on the process of contributing.
+
+
 # dmbon-assistant
 webtop appliction consisting of a backend powered by fast-api and a react frontend
 
