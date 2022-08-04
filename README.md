@@ -1,8 +1,19 @@
+<!--
+    This file is intended to provide useful start-page content - as all README.md files should provide!
+-->
+
 [![On_Push_Testing](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml/badge.svg?branch=main)](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml)
 
 # Data management assistant
 Data management for Biodiversity Observation Networks (DMBON-assistant) is a case study of a more general data management framework and webtop application that supports scientists by providing a consistent and streamlined dataflow within and between organizations. 
 It lowers the barrier for collaborative efforts by making data more accessible and searchable, enabling more complex search queries on open datasets.
+
+[//]: <> (CLEARLY EXPLAIN WHO THIS PROJECT IS FOR)
+#### Who is it for?
+This project is intended for academics, policy makers, and the general public. 
+Academics are encouraged to share their research in a streamlined fashion that makes their research discoverable and easily citable.
+Policy makers benefit from this tool through lowering the barrier for extensive meta-analysis that can shed light on previously unreported correlations. 
+Finally, the general public benefits from open science by making academic research more easily accesible, which incentivizes open source projects such as this one.
 
 [//]: <> (EXPLAIN HOW TO READ THIS DOCUMENT)
 ## Reading this README
@@ -19,6 +30,7 @@ Explain how to read this file, include a Table of Contents
   - [Getting started](#getting-started)
 - [Contributing](#contributing)
 
+
 ## Motivation
 Sound scientific results are derived from good data. While few people disagree with this statement, the current methods of both storing and accessing historical data are severely hampering novel scientific discoveries. 
 On one end, data of published studies are permanently lost (Vines et al., [2014](https://doi.org/10.1016/j.cub.2013.11.014)) or researchers forget the details requires to make use of the data (Whitlock et al. [2010](https://doi.org/10.1086/650340)).
@@ -32,8 +44,13 @@ Metadata often encodes how to interpret the actual data, e.g. descriptions of me
 While sharing primary data is becoming increasingly more common (even though the process is not streamlined, see, e.g. Alsheikh-Ali et al., [2011](https://doi.org/10.1371/journal.pone.0024357) and Baker, [2015](https://doi.org/10.1038/533452a)), extensive efforts are often needed to gain access to metadata even when data is openly available (Tedersoo et al., [2021](https://doi.org/10.1038/s41597-021-00981-0)).
 DMBON-assistant aims to alleviate this issue by forcing its users to provide sufficient metadata needed to correctly interpret the data.
 
+[//]: <> (PROVIDE A GENERAL OVERVIEW OF HOW THE TOOL FUNCTION)
 ## How does it work?
 Explain the general premise of DMBON-assistant
+
+- greatly simplifies generation of FAIR research objects 
+- ensures correspondence with established data management plans
+- ensures fast and easy indexation and discovery of research objects through automatic semantic uplifting
 
 [//]: <> (INSTALLATION)
 ## Installation
@@ -46,6 +63,12 @@ Explain the general premise of DMBON-assistant
 
 ### Getting started
 How to quickly get started using DMBon-assistant, using a very simple usecase.
+
+#### General usage
+Explain the general workflow that users should adhere to
+
+### Best practices
+Highlight best practices (i.e. **DO**s & **DONT**s). Do not be too restrictive!
 
 [//]: <> (HOW TO CONTRIBUTE)
 ## Contributing
