@@ -109,19 +109,19 @@ export const getContent = (id) => {
   return axios.get(`${api_url}/spaces/${id}/content/`);
 }
 
-//post content to specific datacrate
+//post content to specific datacrate  => deprecated
 export const postContent = (id, content) => {
   return axios.post(`${api_url}/spaces/${id}/content/`, content);
 }
 
-//delete content from specific datacrate
+//delete content from specific datacrate => deprecated
 export const deleteContent = (id,) => {
   return axios.delete(`${api_url}/spaces/${id}/content/`);
 }
 
 // get call to open file from datacrate in external window
 export const getOpenFile = (id, file_id) => {
-  return axios.get(`${api_url}/spaces/${id}/content/file/${file_id}`);
+  return axios.get(`${api_url}/spaces/${id}/content/${file_id}`);
 }
 
 // get call to open datacrate in file_exporer
@@ -134,7 +134,7 @@ export const postAddReference = (id, reference) => {
   return axios.post(`${api_url}/spaces/${id}/content/reference`, reference);
 }
 
-// get request to get folder info of specific datacrate
+// get request to get folder info of specific datacrate => deprecated
 export const getFolderInfo = (id, path_folder) => {
   return axios.get(`${api_url}/spaces/${id}/content/${path_folder}`);
 }
@@ -161,7 +161,7 @@ export const getAnnotationsFile = (id, file_id) => {
 
 // delete annotation for specific file in datacrate
 export const deleteAnnotationFile = (id, file_id, annotation_id) => {
-  return axios.delete(`${api_url}/spaces/${id}/annotation/file/${file_id}/${annotation_id}`);
+  return axios.delete(`${api_url}/spaces/${id}/annotation/file/${annotation_id}/${file_id}`);
 }
 
 // delete all annotations for specific datacrate

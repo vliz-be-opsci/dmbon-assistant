@@ -5,12 +5,11 @@ import './DatacrateContentFileRow.css';
 import { getOpenFile, getOpenFileExplorer } from 'src/utils/AxiosRequestsHandlers';
 import ProgressBarContent from '../ProgressBar/ProgressBar';
 
-const DatacrateContentFileRow = (file_to_render, datacrate_uuid, info, setshow, setcontent) => {
-
-  console.log(info);
+const DatacrateContentFileRow = (file_to_render, datacrate_uuid, info, setshow, setcontent, setdatacrateContent) => {
 
   // function here that sets show to true and content to info and file_to_render
   const makeModal = () => {
+    setdatacrateContent({});
     setshow(true);
     setcontent({"info":info, "file_name":file_to_render});
   }
@@ -29,8 +28,6 @@ const DatacrateContentFileRow = (file_to_render, datacrate_uuid, info, setshow, 
       </div>
     </div>
   )
-
-
 }
 
 export default DatacrateContentFileRow

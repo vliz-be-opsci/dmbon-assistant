@@ -1,6 +1,7 @@
 import { useState, useEffect} from "react";
-import { getAllAnnotations} from "src/utils/AxiosRequestsHandlers";
+import { getAllAnnotations, getAnnotationsFile} from "src/utils/AxiosRequestsHandlers";
 import AxiosError from "../AxiosError/AxiosError";
+import axios from "axios";
 import {Modal} from "react-bootstrap";
 import LoadingBlock from "../LoadingBlock/LoadingBlock";
 import DatacrateContentFileRow from "../DatacrateContentFileRow/DatacrateContentFileRow";
@@ -16,8 +17,10 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [error, setError] = useState(false);
   const [showmodal, setShowmodal] = useState(false);
   const [modalContent, setModalContent] = useState({});
+  const [specificFileContent, setSpecificFileContent] = useState({});
 
   useEffect(() => {
+
     getAllAnnotations(datacrate_uuid).then(res => {
       setDatacrateContent(res.data.data);
       console.log(res.data.data);
@@ -31,28 +34,62 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     );
   }, [datacrate_uuid]);
 
+  //useeffect that triggers when modalcontent is updated that will fetch the specific file content
+  useEffect(() => {
+    if(modalContent.file_name){
+      console.log(modalContent.file_name);
+      getAnnotationsFile(datacrate_uuid, encodeURIComponent(modalContent.file_name)).then(res => {
+        console.log(res.data);
+        setSpecificFileContent(res.data);
+      }).catch(err => {
+        console.log(err);
+      }
+      );
+    }
+  }
+  , [modalContent]);
+
   //function that returns the modal
   const MakeModal = () => {
     //check if modalContent contains the keys "info" and "file_name"
     if(modalContent.hasOwnProperty("info") && modalContent.hasOwnProperty("file_name")){
-      return(
-      <Modal show={showmodal} onHide={() => setShowmodal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{modalContent.file_name}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="modal-content">
-            <div className="modal-content-title">File Name</div>
-            <div className="modal-content-value">{modalContent.file_name}</div>
-            <div className="modal-content-title">File Size</div>
-            <div className="modal-content-value">{modalContent.info.summary.green}</div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <button onClick={() => setShowmodal(false)}>Close</button>
-        </Modal.Footer>
-      </Modal>
-      )
+      //check if the length of oject.keys(specificFileContent) is  > 0
+      console.log(specificFileContent);
+      console.log(Object.keys(specificFileContent));
+      if(Object.keys(specificFileContent).length > 0){
+        return(
+          <Modal show={showmodal} fullscreen={true} onHide={() => setShowmodal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>{modalContent.file_name}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="modal-content">
+                <div className="modal-content-title">File Name</div>
+                <div className="modal-content-value">{modalContent.file_name}</div>
+                <div className="modal-content-title">File Size</div>
+                <div className="modal-content-value">{modalContent.info.summary.green}</div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button onClick={() => setShowmodal(false)}>Close</button>
+            </Modal.Footer>
+          </Modal>
+          )
+      }else{
+        return(
+          <Modal show={showmodal} fullscreen={true} onHide={() => setShowmodal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>{modalContent.file_name}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {LoadingBlock("Loading specific file content...")}
+            </Modal.Body>
+            <Modal.Footer>
+              <button onClick={() => setShowmodal(false)}>Close</button>
+            </Modal.Footer>
+          </Modal>
+        )
+      }
     }else{
       return(<></>)
     }
@@ -73,7 +110,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       <div className="component">
         <div className="title">File Content</div>
         {Object.keys(DatacrateContent).map((key) => {
-          return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal,setModalContent);
+          return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
         }
         )}
       </div>
