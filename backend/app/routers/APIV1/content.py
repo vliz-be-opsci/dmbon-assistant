@@ -92,6 +92,25 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
                         toreturn.append({"file":entry["@id"],"folder":"/", "type":entry["@type"]})
             
     return toreturn
+@router.get('/openexplorer')
+def open_file_explorer(*,space_id: str = Path(None,description="space_id name")):
+    log.debug(space_id)
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        log.debug(data)
+        log.debug(space_id)
+        try:
+            space_folder = data[space_id]['storage_path']
+            log.debug(space_folder)
+            
+            formatted_space_folder = space_folder.replace("/","\\")
+            log.debug(formatted_space_folder)
+            string_command = 'explorer "' + formatted_space_folder + '"'
+            log.debug(string_command)
+            subprocess.Popen(string_command)
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    return "file-explorer opened successfully"
 
 @router.get('/{path_spec:path}')
 def open_file_content_external(*,space_id: str = Path(None,description="space_id name"), path_spec: str = Path(None,description="content path (relative to crate pointing to file or folder) to get the info from")):
@@ -103,14 +122,11 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
             #TODO: find a way to make this work for non windows systems
             
             #replace the + in the filen bu the os.path.sep()
-            log.debug(file_id)
+            log.debug(path_spec)
             log.info("performing os.path.join on file_id")
-            file_id = file_id.replace('/',os.path.sep)
-            log.debug(file_id)
-            if os.path.sep not in file_id:
-                showFileExplorer(space_folder+os.path.sep+file_id)
-            else:
-                showFileExplorer(space_folder+file_id)
+            path_spec = path_spec.replace('/',os.path.sep)
+            log.debug(path_spec)
+            showFileExplorer(space_folder+os.path.sep+path_spec)
             '''
             #find the file_id in the space_folder by looping over the folders and files in the space_folder
             for (dirpath, dirnames, filenames) in os.walk(space_folder):
@@ -125,21 +141,7 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
             raise HTTPException(status_code=404, detail="Space not found")
     return "file opened successfully"
 
-@router.get('/openexplorer')
-def open_file_explorer(*,space_id: str = Path(None,description="space_id name")):
-    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-        data = json.load(file)
-        try:
-            space_folder = data[space_id]['storage_path']
-            log.debug(space_folder)
-            formatted_space_folder = space_folder.replace("/","\\")
-            log.debug(formatted_space_folder)
-            string_command = 'explorer "' + formatted_space_folder + '"'
-            log.debug(string_command)
-            subprocess.Popen(string_command)
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-    return "file-explorer opened successfully"
+
 '''
 @router.post('/', status_code=202)
 async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  

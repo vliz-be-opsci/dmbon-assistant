@@ -178,7 +178,7 @@ class RoCrateGitBase():
         files_attributes = {}
         for file in all_files:
             if file != "ro-crate-metadata.json" and file != './':
-                if "." in file:
+                if "." in file and file.split("/")[-1] != "":
                     files_attributes[file]= {}
                     
                     #get the shacl validation results
@@ -202,7 +202,7 @@ class RoCrateGitBase():
                                 else:
                                     item_dict["schema:" + key] = value
                             barebones_json["@graph"].append(item_dict)
-                    
+                    log.debug(barebones_json)
                     shacl_file = open(path_shacl, "rb").read()
                     sh = Graph().parse(data=shacl_file, format="turtle")
                     r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, data_graph_format="json-ld", serialize_report_graph="json-ld")
@@ -237,7 +237,9 @@ class RoCrateGitBase():
                             if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                                 for key, value in item.items():
                                     if key == "http://www.w3.org/ns/shacl#focusNode":
-                                        name_focusnode = value[0]["@id"].split("/")[-1]
+                                        name_focusnode = "./"+value[0]["@id"].split("backend/")[-1]
+                                        log.info(f'name_file: {file}')
+                                        log.info(f'name_focusnode: {name_focusnode}')
                             if name_focusnode == file:
                                 for key, value in item.items():
                                     if "resultSeverity" in key == "http://www.w3.org/ns/shacl#resultSeverity":
@@ -324,10 +326,11 @@ class RoCrateGitBase():
         """
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
-        log.info(f"metadata of the space: {data}")
+        #log.info(f"metadata of the space: {data}")
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
         log.info(path_shacl)
-        
+        #check if file_id starts with . ar with / => if it does delete it and add ./ in from of the file_id
+        log.debug(f'file_id: {file_id}')
         barebones_json = {
                 "@context": 
                     { 
@@ -383,7 +386,7 @@ class RoCrateGitBase():
                 if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                     for key, value in item.items():
                         if key == "http://www.w3.org/ns/shacl#focusNode":
-                            name_focusnode = value[0]["@id"].split("/")[-1]
+                            name_focusnode = "./"+value[0]["@id"].split("backend/")[-1]
                 if name_focusnode == file_id:
                     for key, value in item.items():
                         if "resultSeverity" in key == "http://www.w3.org/ns/shacl#resultSeverity":
@@ -557,13 +560,17 @@ class RoCrateGitBase():
         """
         self.delete_hashtag_from_begin_id()
         #try and get the same result by using rocrate
+        log.info(f"toadd_dict: {toadd_dict}")
         data = self._read_metadata_datacrate()
+        log.info(f"metadata of the space: {data}")
         for entity in data["@graph"]:
-            log.info(f"Crate data entities: {entity._jsonld}")
-            for annotationfile in toadd_dict:
-                uri_name  = annotationfile.URI_predicate_name
-                value_uri = annotationfile.value
-                entity[uri_name] = value_uri
+            log.info(f"entity: {entity}")
+            #log.info(f"Crate data entities: {entity._jsonld}")
+            if entity["@id"] != "./ro-crate-metadata.json" and entity["@type"] != "Dataset":
+                for annotationfile in toadd_dict:
+                    uri_name  = annotationfile.URI_predicate_name
+                    value_uri = annotationfile.value
+                    entity[uri_name] = value_uri
         self._write_metadata_datacrate(data)
     
     def delete_predicates_all(self,todelete_dict=dict):
@@ -574,7 +581,7 @@ class RoCrateGitBase():
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         for entity in data["@graph"]:
-            log.info(f"Crate data entities: {entity._jsonld}")
+            #log.info(f"Crate data entities: {entity._jsonld}")
             for annotationfile in todelete_dict:
                 uri_name  = annotationfile.URI_predicate_name
                 entity.pop(uri_name, None)
@@ -586,6 +593,7 @@ class RoCrateGitBase():
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         
+        log.debug(f"file_id: {file_id}")       
         new_uuid_blank_node = uuidmake.uuid4().hex
         #go over each file in the graph to see if the @id is the same as the file_id
         for item in data["@graph"]:

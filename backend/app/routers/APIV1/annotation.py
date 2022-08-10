@@ -62,30 +62,8 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
         raise HTTPException(status_code=500, detail=e)
     return toreturn
 
-@router.post('/file/{file_id}', status_code=200)
-def make_resource_annotation_single_file(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: AnnotationsModel):
-    ## get the current metadata.json ##
-    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-        data = json.load(file)
-        try:
-            space_folder = data[space_id]['storage_path']
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-    try:
-        #read in ROCrate metadata file
-        space_object = Space.load(uuid=space_id)
-        log.debug(space_object)
-        prerreturn = space_object.add_predicates_by_id(toadd_dict_list=item.Annotations, file_id=file_id)
-        if "error" in prerreturn.keys():
-            return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
-        return prerreturn
-    except Exception as e:
-        log.error(e)
-        log.exception(e)
-        raise HTTPException(status_code=500, detail=e)
-    
 #have call to make blank node in file id 
-@router.post('/file/{file_id}/blanknode', status_code=200)
+@router.post('/file/blanknode/{file_id:path}', status_code=200)
 def make_resource_annotation_single_file_blanknode(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: BlankModel):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -106,7 +84,32 @@ def make_resource_annotation_single_file_blanknode(*,space_id: str = Path(None,d
         log.exception(e)
         raise HTTPException(status_code=500, detail=e)
 
-@router.delete('/file/{file_id}/{predicate}', status_code=200)
+@router.post('/file/{file_id:path}', status_code=200)
+def make_resource_annotation_single_file(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: AnnotationsModel):
+    ## get the current metadata.json ##
+    log.info(file_id)
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    try:
+        #read in ROCrate metadata file
+        space_object = Space.load(uuid=space_id)
+        log.debug(space_object)
+        prerreturn = space_object.add_predicates_by_id(toadd_dict_list=item.Annotations, file_id=file_id)
+        if "error" in prerreturn.keys():
+            return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
+        return prerreturn
+    except Exception as e:
+        log.error(e)
+        log.exception(e)
+        raise HTTPException(status_code=500, detail=e)
+    
+
+
+@router.delete('/file/{predicate}/{file_id:path}', status_code=200)
 def delete_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), predicate: str = Path(None,description="To delete predicate from the file annotations")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -126,8 +129,9 @@ def delete_resource_annotation(*,space_id: str = Path(None,description="space_id
         log.exception(e)
         raise HTTPException(status_code=500, detail=e)
 
-@router.get('/file/{file_id}', status_code=200)
+@router.get('/file/{file_id:path}', status_code=200)
 def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
+    log.info(file_id)
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:

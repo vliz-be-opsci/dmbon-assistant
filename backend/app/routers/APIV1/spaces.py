@@ -72,6 +72,7 @@ def complete_metadata_crate(source_path_crate):
             data['@graph'].append(i)
         '''
                  
+                 
         #check if the ids from relation are present in the json file
         all_meta_ids_data = []
         for id in datao['@graph']:
