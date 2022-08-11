@@ -1,10 +1,15 @@
 import { useState, useEffect} from "react";
-import { getAllAnnotations, getAnnotationsFile} from "src/utils/AxiosRequestsHandlers";
+import { useParams } from 'react-router-dom';
+import { getAllAnnotations, getAnnotationsFile, postAnnotationFile, deleteAnnotationFile} from "src/utils/AxiosRequestsHandlers";
 import AxiosError from "../AxiosError/AxiosError";
-import axios from "axios";
 import {Modal} from "react-bootstrap";
+
+
 import LoadingBlock from "../LoadingBlock/LoadingBlock";
 import DatacrateContentFileRow from "../DatacrateContentFileRow/DatacrateContentFileRow";
+import AnnotationTable from "../AnnotationTable/AnnotationTable";
+import AnnotationValidationErrorOverview from "../AnnotationValidationErrorOverview/AnnotationValidationErrorOverview";
+import ProgressBarContent from '../ProgressBar/ProgressBar';
 import 'react-loading-skeleton/dist/skeleton.css';
 import '../component.css';
 import './DatacrateContentFileTable.css'
@@ -16,8 +21,64 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [showmodal, setShowmodal] = useState(false);
+  const [showAnnotationErrors, setShowAnnotationErrors] = useState(true);
   const [modalContent, setModalContent] = useState({});
   const [specificFileContent, setSpecificFileContent] = useState({});
+  const [PredicateAnnotation, setPredicateAnnotation] = useState("");
+  const [ValueAnnotation, setValueAnnotation] = useState("");
+  const [AddingAnnotation, setAddingAnnotation] = useState(false);
+  const [DeletingAnnotation, setDeletingAnnotation] = useState(false);
+
+  console.log(`predicate annotation is ${PredicateAnnotation}`);
+  console.log(`dtatacratecontent is ${DatacrateContent}`);
+
+  //useEffect that gets triggered by a change in DeleteAnnotation, if deleteAnnotationFile is false then it will get annotations for the file and set the state of DatacrateContent to the annotations
+  useEffect(() => {
+    if(!DeletingAnnotation){
+      if(modalContent.file_name){
+        console.log(modalContent.file_name);
+        getAnnotationsFile(datacrate_uuid, encodeURIComponent(modalContent.file_name)).then(res => {
+          console.log(res.data);
+          setSpecificFileContent(res.data);
+          // set the DatarcateContent.file.summary to res.data.summary
+          let file_name = modalContent.file_name;
+          //loop through keys of DatacrateContent and if the key is file_name then set the summary to the summary of the file
+          for(let key in DatacrateContent){
+            if(key === file_name){
+              DatacrateContent[key]["summary"] = res.data.summary;
+            }
+          }
+
+        }).catch(err => {
+          console.log(err);
+        }
+        );
+      }
+    }
+  }, [DeletingAnnotation]);
+
+
+  //useffect that gets triggered by a change in AddingAnnotation, if adding annotation is false it will get annotations for file and set the state to the annotations
+  useEffect(() => {
+    if(!AddingAnnotation){
+      if(modalContent.file_name){
+        console.log(modalContent.file_name);
+        getAnnotationsFile(datacrate_uuid, encodeURIComponent(modalContent.file_name)).then(res => {
+          console.log(res.data);
+          setSpecificFileContent(res.data);
+          let file_name = modalContent.file_name;
+          for(let key in DatacrateContent){
+            if(key === file_name){
+              DatacrateContent[key]["summary"] = res.data.summary;
+            }
+          }
+        }).catch(err => {
+          console.log(err);
+        }
+        );
+      }
+    }
+  } , [AddingAnnotation]);
 
   useEffect(() => {
 
@@ -60,19 +121,43 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
         return(
           <Modal show={showmodal} fullscreen={true} onHide={() => setShowmodal(false)}>
             <Modal.Header closeButton>
-              <Modal.Title>{modalContent.file_name}</Modal.Title>
+              <Modal.Title>
+                {modalContent.file_name}
+                <ProgressBarContent content={specificFileContent.summary} />
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <div className="modal-content">
-                <div className="modal-content-title">File Name</div>
-                <div className="modal-content-value">{modalContent.file_name}</div>
-                <div className="modal-content-title">File Size</div>
-                <div className="modal-content-value">{modalContent.info.summary.green}</div>
-              </div>
+              {
+              AnnotationValidationErrorOverview(
+                 specificFileContent.shacl_requirements,
+                 showAnnotationErrors,
+                 setShowAnnotationErrors,
+                 specificFileContent.data,
+                 datacrate_uuid,
+                 modalContent.file_name,
+                 postAnnotationFile,
+                 setAddingAnnotation
+                )
+              }
+              <br></br>
+              {
+              AnnotationTable(
+                 specificFileContent.data,
+                 PredicateAnnotation,
+                 setPredicateAnnotation,
+                 ValueAnnotation,
+                 setValueAnnotation,
+                 postAnnotationFile,
+                 deleteAnnotationFile,
+                 datacrate_uuid,
+                 modalContent.file_name,
+                 setAddingAnnotation,
+                 setDeletingAnnotation,
+                )
+              }
+              <br></br>
+
             </Modal.Body>
-            <Modal.Footer>
-              <button onClick={() => setShowmodal(false)}>Close</button>
-            </Modal.Footer>
           </Modal>
           )
       }else{
@@ -84,9 +169,6 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
             <Modal.Body>
               {LoadingBlock("Loading specific file content...")}
             </Modal.Body>
-            <Modal.Footer>
-              <button onClick={() => setShowmodal(false)}>Close</button>
-            </Modal.Footer>
           </Modal>
         )
       }
@@ -94,7 +176,6 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       return(<></>)
     }
   }
-
   //DatacrateContentFileRow(file, file.file, datacrate_uuid)
 
   //return renders
@@ -114,7 +195,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
         }
         )}
       </div>
-      <MakeModal />
+      {MakeModal()}
       </>
     )
   }

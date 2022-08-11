@@ -194,6 +194,23 @@ input.error, textarea.error {
   border-left: 1px solid var(--border-color-table);
 }
 
+.table_vliz > tbody > tr > td > input[type="text"] {
+  width: 90%;
+  border: 1px solid var(--border-color-table);
+  border-radius: 5px;
+  padding: 2px;
+  margin: auto;
+  margin-left: 5px;
+  min-width: 50px;
+  min-height:30px;
+}
+
+.table_vliz > tbody > tr > td > input[type="text"]:focus {
+  border: 2px solid var(--primary-color-text);
+  background-color: var(--border-color-table);
+  color: var(--secondary-color-text);
+}
+
 .no-overflow {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -213,4 +230,8 @@ input.error, textarea.error {
 .pageloader div {
   margin-left: auto;
   margin-right: auto;
+}
+
+.fullwidth {
+  width: 100%;
 }
