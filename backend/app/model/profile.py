@@ -43,7 +43,7 @@ class Profile(RoCrateGitBase):
             #function to download all the initial repo
             self.clone_repo(repo_url= self.repo_url)
             seed_dependencies = Profile.detect_dependencies(self)
-            log.debug(f"all seed dependencies for to make profile: {seed_dependencies}")
+            #log.debug(f"all seed dependencies for to make profile: {seed_dependencies}")
             
             #self.location_init_repo = self._download_repo(repo_url = self.repo_url)
             #self.get_rocrate_metadata_git_urls(rocrate_metadata_location= os.path.join(self.location_init_repo,"ro-crate-metadata.json"))
@@ -83,9 +83,9 @@ class Profile(RoCrateGitBase):
         #  use self.location() to find information ?? 
         seed_crates = self.find_parts(SEED_DEPENDENCY_MARKER_URI)
         # for sc in seed_creates  make SeedCrate(sc.repo_uri == sc.id?) .... sc.update_content
-        for sc in seed_crates: 
+        #for sc in seed_crates: 
             #for now the sc is assumed to be the git repo url and thus nothing happens here yet
-            log.debug(f"seedcrate url: {sc}")
+            #log.debug(f"seedcrate url: {sc}")
         return seed_crates
       
     @staticmethod
@@ -120,7 +120,7 @@ class Profile(RoCrateGitBase):
     @staticmethod
     def _write_profiles(profiles_dict: dict):
         with open(Locations().join_abs_path('profiles.json'), 'w') as json_file:
-            log.debug(f"towritedict: {profiles_dict}")
+            #log.debug(f"towritedict: {profiles_dict}")
             json.dump(profiles_dict, json_file)
     
 class SeedCrate(RoCrateGitBase):
@@ -148,7 +148,7 @@ class SeedCrate(RoCrateGitBase):
         #TODO: have exception for NOneType input
         try:
             seeds_dict = {url: SeedCrate(url) for url in set_urls}
-            log.debug(f"All seedcrate urls : {set_urls}")
+            #log.debug(f"All seedcrate urls : {set_urls}")
             return seeds_dict
         except:
             return({})

@@ -20,11 +20,11 @@ def on_rm_error(func, path, exc_info):
     
 def setup(**kwargs):
     #clean the given cache
-    log.info(f"setting up :{kwargs}")
+    #log.info(f"setting up :{kwargs}")
     
 def teardown():
     #clean cache again
-    log.info("tearing down")
+    #log.info("tearing down")
     
 #test to see if a profile cna be corectly made
 

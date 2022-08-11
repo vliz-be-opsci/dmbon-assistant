@@ -42,7 +42,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         repo = git.Repo(os.path.join(space_folder,"repo"))
     
     #perform a fetch on the git repo
-    log.info("Fetching remote")
+    #log.info("Fetching remote")
     repo.git.fetch()
     
     ahead = 0
@@ -64,8 +64,8 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     diff_list = repo.index.diff(None)
     try:
         diff = str(repo.git.diff('origin')).splitlines()
-        log.info("before null")
-        log.info(diff)
+        #log.info("before null")
+        #log.info(diff)
     except Exception as e:
         log.error(e)
         log.exception(e)
@@ -73,21 +73,21 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     hcommit = repo.head.commit
     #diff_list = hcommit.diff()
     difff_list = repo.index.diff(None,ignore_blank_lines=True, ignore_space_at_eol=True,create_patch=True)
-    log.debug(difff_list)
+    #log.debug(difff_list)
     i = 0
     for diff in diff_list:
         try:
             toappend = {}
-            log.info(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
+            #log.info(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
             toappend["change_type"] = diff.change_type
             # Returns true if it is a new file
-            log.info(diff.new_file) 
+            #log.info(diff.new_file) 
             toappend["newfile"] = diff.new_file
             # Print the old file path
-            log.info(diff.a_path)
+            #log.info(diff.a_path)
             toappend["a_path"] = diff.a_path
             # Print the new file path. If the filename (or path) was changed it will differ
-            log.info(diff.b_path) 
+            #log.info(diff.b_path) 
             toappend["b_path"] = diff.b_path
             toappend["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")
             # text of diff make unified diff first 
@@ -171,7 +171,7 @@ def get_git_history(*,space_id: str = Path(None,description="space_id name")):
     try:
         space_object = Space.load(uuid=space_id)
         prerreturn = space_object.get_git_history()
-        log.info(f"prereturn of get predicates by id: {prerreturn}")
+        #log.info(f"prereturn of get predicates by id: {prerreturn}")
         if "error" in prerreturn.keys():
             return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
         return prerreturn

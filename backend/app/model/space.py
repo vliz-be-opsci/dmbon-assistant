@@ -31,12 +31,12 @@ class Space(RoCrateGitBase):
         if uuid is None:
             self.uuid = uuidmake.uuid4().hex
             #check if remote url was  given, if yes then only init the repo and not copy files 
-            log.debug(remote_url)
+            #log.debug(remote_url)
             self.workspace_path = Locations().get_workspace_location_by_uuid(self.uuid)
             os.mkdir(self.workspace_path)
             if remote_url is None or remote_url == "": 
                 seed_dependencies = self.ro_profile.seed_dependencies
-                log.debug(seed_dependencies)
+                #log.debug(seed_dependencies)
                 #TODO: get all the seed_dependencies from the given profile uuid
                 self.make_repo()
                 repos_to_copy_over = [self.ro_profile.repo_url]
@@ -47,7 +47,7 @@ class Space(RoCrateGitBase):
                     self._copy_files_to_workspace(repo_url=repo)
             else:
                 seed_dependencies = self.ro_profile.seed_dependencies
-                log.debug(f"all seed dependencies: {seed_dependencies}")
+                #log.debug(f"all seed dependencies: {seed_dependencies}")
                 #TODO: get all the seed_dependencies from the given profile uuid
                 
                 #TODO: Add a check on the created repo to see if the repo is not empty => if empty then copy over all the files from the seed repos else don't do anything
@@ -57,7 +57,7 @@ class Space(RoCrateGitBase):
                 for seed_repo in seed_dependencies.keys(): #TODO check if this is just a list of repos or if it is a dict of repos
                     repos_to_copy_over.append(seed_repo)
                 #copy over all the files from the repos
-                log.debug(f"All repoes to copy over: {repos_to_copy_over}")
+                #log.debug(f"All repoes to copy over: {repos_to_copy_over}")
                 for repo in repos_to_copy_over:
                     self._copy_files_to_workspace(repo_url=repo)
             #TODO: add the new metadata to the spaces.json file
@@ -135,10 +135,10 @@ class Space(RoCrateGitBase):
         """copy all the files from a given repo url to the workspace folder"""
         #convert repo url to folder of the repo 
         repo_location = Locations().get_repo_location_by_url(repo_url)
-        log.debug(repo_location)
+        #log.debug(repo_location)
         #init the workspacemanager
         workspace_manager = WorkSpaceManager(workspace_path=self.workspace_path)
-        log.debug(f"Current workspace path: {self.workspace_path}")
+        #log.debug(f"Current workspace path: {self.workspace_path}")
         # go over each file in the given folder and check if its not part of the .git folder -> copy over to the given self.storage_path
         for subdir, dirs, files in os.walk(repo_location):
             for file in files:
@@ -164,7 +164,7 @@ class WorkSpaceManager():
         self.workspace_path = workspace_path
     
     def check_write_constraints(self,filepath):
-        log.debug(f"filepath to check : {filepath}")
+        #log.debug(f"filepath to check : {filepath}")
         if filepath.endswith(".ttl"):
             #check if combined_file_name is already present in the workspace folder, if not make it , if yes then append to the file
             fileout  = os.path.join(self.workspace_path,"all_constraints.ttl")

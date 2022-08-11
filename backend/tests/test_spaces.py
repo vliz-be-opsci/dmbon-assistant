@@ -19,11 +19,11 @@ def on_rm_error(func, path, exc_info):
     os.unlink(path)
     
 def clean_root(root_folder):
-    log.debug("calling in setup")
+    #log.debug("calling in setup")
     try:
         shutil.rmtree(root_folder, onerror=on_rm_error)
         shutil.copytree(os.path.join(os.getcwd(),"tests","setup_workspace"),root_folder)
-        log.debug("setup completed")
+        #log.debug("setup completed")
     except Exception as e:
         log.error(f"error during test setup:{e}")
         log.exception(e)
@@ -42,18 +42,18 @@ def test_make_space_success(root_folder):
     """
     test_space_name = "iets_nieuws"
     
-    log.debug(f"Locations={Locations().root}")
+    #log.debug(f"Locations={Locations().root}")
     addedspace = Space(
         storage_path=Locations().join_abs_path(test_space_name),
         ro_profile="0123456",
     )
-    log.info(f"space added info : {addedspace}")
+    #log.info(f"space added info : {addedspace}")
     #check if addespace exists
     assert addedspace is not None , "space should exist"
     
     #check if space is indeed in the right location
     space_path_exists = Locations().join_abs_path(test_space_name)
-    log.debug(f"checking if path exists space: {space_path_exists}")
+    #log.debug(f"checking if path exists space: {space_path_exists}")
     assert os.path.exists(space_path_exists)
     
     #check if space is added to spaces.json
@@ -64,7 +64,7 @@ def test_make_space_success(root_folder):
         
     # check if workspace exists
     workspace_path_exists = Locations().join_abs_path("spaces",addedspace.uuid)
-    log.debug(f"checking if path exists workspace: {workspace_path_exists}")
+    #log.debug(f"checking if path exists workspace: {workspace_path_exists}")
     assert(os.path.exists(workspace_path_exists))
     
     # try to load in space 
@@ -75,9 +75,9 @@ def test_make_space_success(root_folder):
 def test_load_space_success(root_folder):
     """ test to see if a space can be correctly loaded
     """
-    log.debug(f"Locations={Locations().root}")
+    #log.debug(f"Locations={Locations().root}")
     loadedspace = Space.load(uuid='0123456789')
-    log.info(f"space info : {loadedspace}")
+    #log.info(f"space info : {loadedspace}")
     #check if space exists
     assert loadedspace is not None
     #check if info about the space is correct
@@ -85,7 +85,7 @@ def test_load_space_success(root_folder):
 def test_make_space_fail(root_folder):
     """ test to see if a space can be correctly failed 
     """
-    log.debug(f"Locations={Locations().root}")
+    #log.debug(f"Locations={Locations().root}")
     #TODO: the space seems to be made before the non existing profile error comes up
     with pytest.raises(KeyError) as ke:
         addedspace = Space(
@@ -94,7 +94,7 @@ def test_make_space_fail(root_folder):
             )
     #check if space folder exists
     space_path_exists = Locations().join_abs_path("should_not_exist")
-    log.debug(f"checking if path exists space: {space_path_exists}")
+    #log.debug(f"checking if path exists space: {space_path_exists}")
     assert os.path.exists(space_path_exists) == False
 
 if __name__ == "__main__":

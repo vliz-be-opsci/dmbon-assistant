@@ -53,9 +53,9 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
 
     try:
         space_object = Space.load(uuid=space_id)
-        log.debug(space_object)
+        #log.debug(space_object)
         toreturn = space_object.get_predicates_all()
-        log.debug(toreturn)
+        #log.debug(toreturn)
     except Exception as e:
         log.error(e)
         log.exception(e)
@@ -75,7 +75,7 @@ def make_resource_annotation_single_file_blanknode(*,space_id: str = Path(None,d
         space_object = Space.load(uuid=space_id)
         #have a call to make blank node in file id
         prerreturn = space_object.create_blank_node_by_id(file_id=file_id, node_type=item.node_type, uri_predicate=item.URI_predicate_name)
-        log.info(prerreturn)
+        #log.info(prerreturn)
         if "error" in prerreturn.keys():
             return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
         return prerreturn
@@ -87,7 +87,7 @@ def make_resource_annotation_single_file_blanknode(*,space_id: str = Path(None,d
 @router.post('/file/{file_id:path}', status_code=200)
 def make_resource_annotation_single_file(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: AnnotationsModel):
     ## get the current metadata.json ##
-    log.info(file_id)
+    #log.info(file_id)
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -97,7 +97,7 @@ def make_resource_annotation_single_file(*,space_id: str = Path(None,description
     try:
         #read in ROCrate metadata file
         space_object = Space.load(uuid=space_id)
-        log.debug(space_object)
+        #log.debug(space_object)
         prerreturn = space_object.add_predicates_by_id(toadd_dict_list=item.Annotations, file_id=file_id)
         if "error" in prerreturn.keys():
             return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
@@ -120,7 +120,7 @@ def delete_resource_annotation(*,space_id: str = Path(None,description="space_id
     try:
         space_object = Space.load(uuid=space_id)
         prerreturn = space_object.delete_predicates_by_id(to_delete_predicate=predicate, file_id=file_id)
-        log.info(prerreturn)
+        #log.info(prerreturn)
         if "error" in prerreturn.keys():
             return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
         return prerreturn
@@ -131,7 +131,7 @@ def delete_resource_annotation(*,space_id: str = Path(None,description="space_id
 
 @router.get('/file/{file_id:path}', status_code=200)
 def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
-    log.info(file_id)
+    #log.info(file_id)
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -140,9 +140,9 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
             raise HTTPException(status_code=404, detail="Space not found")
     try:
         space_object = Space.load(uuid=space_id)
-        log.info(file_id)
+        #log.info(file_id)
         prerreturn = space_object.get_predicates_by_id(file_id=file_id)
-        log.info(f"prereturn of get predicates by id: {prerreturn}")
+        #log.info(f"prereturn of get predicates by id: {prerreturn}")
         if "error" in prerreturn.keys():
             return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
         return prerreturn
@@ -161,9 +161,9 @@ def get_shacl_report(*,space_id: str = Path(None,description="space_id name")):
             raise HTTPException(status_code=404, detail="Space not found")
     try:
         space_object = Space.load(uuid=space_id)
-        log.info(space_object)
+        #log.info(space_object)
         prerreturn = space_object.get_shacl_report()
-        log.info(f"prereturn of get shacl report: {prerreturn}")
+        #log.info(f"prereturn of get shacl report: {prerreturn}")
         if "error" in prerreturn.keys():
             return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
         return prerreturn

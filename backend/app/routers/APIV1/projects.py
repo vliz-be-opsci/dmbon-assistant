@@ -10,7 +10,7 @@ from app.model.project import Project
 from dotenv import load_dotenv
 import os
 env = load_dotenv()
-log.debug(f"all env variables: {env}")
+#log.debug(f"all env variables: {env}")
 BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
 
 router = APIRouter(
@@ -35,10 +35,10 @@ class ProjectModel(BaseModel):
 
 @router.get('/')
 def get_all_projects_info():
-    log.info(f"project get all begin")
+    #log.info(f"project get all begin")
     with open(Locations().join_abs_path('projects.json'), "r+")as file:
         try:
-            log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
+            #log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
             data = json.load(file)
             toreturn = []
             for i,y in data.items():
@@ -56,7 +56,7 @@ def get_all_projects_info():
 
 @router.get('/{project_id}/')
 def get_project_info(project_id: str = Path(None,description="project_id name")):
-    log.info(f"project get begin")
+    #log.info(f"project get begin")
     with open(Locations().join_abs_path('projects.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -69,7 +69,7 @@ def get_project_info(project_id: str = Path(None,description="project_id name"))
 
 @router.delete('/{project_id}/', status_code=202)
 def delete_project(project_id: str = Path(None,description="project_id name")):
-    log.info(f"project delete begin")
+    #log.info(f"project delete begin")
     with open(Locations().join_abs_path('projects.json')) as data_file:
             data = json.load(data_file)
             try:
@@ -84,7 +84,7 @@ def delete_project(project_id: str = Path(None,description="project_id name")):
 
 @router.post('/', status_code=201)
 def add_project(*,item: ProjectModel):
-    log.info(f"project add begin")
+    #log.info(f"project add begin")
     if item.logo != None or item.description != None  or item.url_ro_project != None or item.name != None:
         #add check for the url of the project:
         try:
@@ -106,7 +106,7 @@ def add_project(*,item: ProjectModel):
 
 @router.put('/{project_id}/', status_code=202)
 def update_project(*,project_id: str = Path(None,description="project_id name"), item: ProjectModel):
-    log.info(f"project update begin")
+    #log.info(f"project update begin")
     with open(Locations().join_abs_path('projects.json'), "r+")as file:
         data = json.load(file)
     for project in data.keys():
@@ -118,8 +118,8 @@ def update_project(*,project_id: str = Path(None,description="project_id name"),
                         json.dump(data, file)  
                         return {'Data':'Update successfull'} 
                 else:
-                    log.info(f"project update fail")
-                    log.info(f"supplied body must have following keys: {format(keys)}")
+                    #log.info(f"project update fail")
+                    #log.info(f"supplied body must have following keys: {format(keys)}")
                     keys = dict(item).keys()
                     raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
             except Exception as e:

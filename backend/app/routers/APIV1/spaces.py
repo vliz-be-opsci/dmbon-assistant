@@ -26,7 +26,7 @@ router.include_router(annotation_router, prefix="/{space_id}")
 
 from dotenv import load_dotenv
 env = load_dotenv()
-log.debug(f"all env variables: {env}")
+#log.debug(f"all env variables: {env}")
 BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
 
 ### define class profiles for the api ###
@@ -87,7 +87,7 @@ def complete_metadata_crate(source_path_crate):
             toappend_id[id['@id']] = toappand_data_values
             all_meta_ids_data.append(toappend_id)
         
-        log.debug(f"all metadata ids of data: {all_meta_ids_data}")
+        #log.debug(f"all metadata ids of data: {all_meta_ids_data}")
         
         #for all metadata ids check if they have a parent folder, if so then add this one tp the real_name of the file and repeat until you are at the root
         #make pre meta ids
@@ -99,7 +99,7 @@ def complete_metadata_crate(source_path_crate):
         with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'ro-crate-metadata.json')) as json_file:
             data = json.load(json_file)
             
-        log.debug(f"data from rocrate: {data}")
+        #log.debug(f"data from rocrate: {data}")
         
         ## add data to the fresh file ##
         relation = []
@@ -109,7 +109,7 @@ def complete_metadata_crate(source_path_crate):
               if ' ' in diro:
                   os.rename(os.path.join(root, diro), os.path.join(root, diro.replace(' ', '_')))
             if ".git" not in root:
-                #log.info(f'root == {root}')
+                ##log.info(f'root == {root}')
                 for name in files:
                     
                     #if the name contains a " " then replace it with "_"
@@ -117,7 +117,7 @@ def complete_metadata_crate(source_path_crate):
                         #replace the " " with "_" on the file system
                         os.rename(os.path.join(root, name), os.path.join(root, name.replace(" ", "_")))
                         name = name.replace(" ", "_")
-                    #log.info(f'file == {name}')
+                    ##log.info(f'file == {name}')
                     if name != ".git":
                         if root.split(source_path_crate)[-1] == "":
                             parent_folder = ""
@@ -137,9 +137,9 @@ def complete_metadata_crate(source_path_crate):
                             full_name = full_name.replace("\\", "/")
                             #escape the / in the name 
                             full_name = full_name.replace("/", forward_slash_replace)
-                            log.debug(f"full name: {full_name}")
+                            #log.debug(f"full name: {full_name}")
                         relation.append({'parent_folder':added_relative_path,"relative_path":relative_path,"name":full_name})
-                        log.debug({'parent_folder':added_relative_path,"relative_path":relative_path,"name":full_name})
+                        #log.debug({'parent_folder':added_relative_path,"relative_path":relative_path,"name":full_name})
         
         
         #add all the files that are in the root of the source_path_crate to the data
@@ -148,21 +148,21 @@ def complete_metadata_crate(source_path_crate):
             # if onlyfile doesn't start with './', add it to the relation
             if onlyfile[0] != ".":
                 relation.append({'parent_folder':"","relative_path":"./","name":onlyfile})
-                log.debug({'parent_folder':"","relative_path":"./","name":onlyfile})
+                #log.debug({'parent_folder':"","relative_path":"./","name":onlyfile})
         
         all_ids = []
         for x in relation:
-            #log.debug(x)
+            ##log.debug(x)
             all_ids.append(x["name"])
         #check if the ids from relation are present in the json file
         all_meta_ids = []
         for id in data['@graph']:
             all_meta_ids.append(id['@id'])
-            #log.debug(id['@id'])
+            ##log.debug(id['@id'])
         for i in all_ids: 
             #TODO when I delete stuff from the ro-crate-metdata.json, the folders don't come back to the root , find a way to hange this for when the user decides to mess with the ro-crate-metadata.json
             if i not in all_meta_ids:
-                #log.debug("not present: "+ i)
+                ##log.debug("not present: "+ i)
                 #check if parent is present in the file
                 def add_folder_path(path_folder):
                     toaddppaths = path_folder.split("\\")
@@ -174,7 +174,7 @@ def complete_metadata_crate(source_path_crate):
                         complete_path  = complete_path + toadd + "/"
                         all_paths.append(complete_path)
                     
-                    log.debug(f"all paths: {all_paths}")
+                    #log.debug(f"all paths: {all_paths}")
                     
                     previous = "./"
                     for toadd in all_paths:         
@@ -202,11 +202,11 @@ def complete_metadata_crate(source_path_crate):
                                 #make the parent_folder in ids
                                 data['@graph'].append({'@id':checkparent['parent_folder']+"/", '@type':"Dataset", 'hasPart':[]})
                                 #check if folder has no parent
-                                log.info(f"checkparent['parent_folder'] == {checkparent['parent_folder']}")
-                                log.debug(checkparent['relative_path'].split("\\"))
+                                #log.info(f"checkparent['parent_folder'] == {checkparent['parent_folder']}")
+                                #log.debug(checkparent['relative_path'].split("\\"))
                                 if len(checkparent['relative_path'].split("\\")) == 2:
                                     checkparentpath = checkparent['relative_path'].split("\\")
-                                    log.debug(f"splitted relative path: {checkparentpath}")
+                                    #log.debug(f"splitted relative path: {checkparentpath}")
                                     for ids in data['@graph']:
                                         if ids['@id'] == './':
                                             if {'@id':checkparent['relative_path'].split("\\")[-1]+"/"} not in ids['hasPart']:
@@ -227,10 +227,10 @@ def complete_metadata_crate(source_path_crate):
         
         #add the references to the @graph
         for i in all_ids_pre_new_doc:
-            #log.info(f"meta id i: {i}")
+            ##log.info(f"meta id i: {i}")
             valid=validators.url(i)
             if valid:
-                #log.info(f"valid url: {i}")
+                ##log.info(f"valid url: {i}")
                 #add i to the graph
                 for id in data['@graph']:
                     if id["@id"] == './':
@@ -241,24 +241,24 @@ def complete_metadata_crate(source_path_crate):
         for ids in data['@graph']:
             # check if the first character fo the ids["@id "] is a # , if so remove this char
             if ids["@id"][0] == "#":
-                log.info(ids["@id"])
+                #log.info(ids["@id"])
                 ids["@id"] = ids["@id"][1:]
             for tocheck_id in all_meta_ids_data:
-                #log.info("checking part of graph: "+ids["@id"])
+                ##log.info("checking part of graph: "+ids["@id"])
                 if ids['@id'] == str(tocheck_id.keys()):
-                    log.info(f"found {ids['@id']} in {tocheck_id.keys()}")
-                    log.info(tocheck_id)
+                    #log.info(f"found {ids['@id']} in {tocheck_id.keys()}")
+                    #log.info(tocheck_id)
                     for dict_single_metadata in tocheck_id[ids['@id']]:
                         for key_dict_single_meta, value_dcit_sinle_meta in dict_single_metadata.items():
                             if key_dict_single_meta not in ids.keys():
-                                log.debug(f"key of single file metadata: {key_dict_single_meta}")
+                                #log.debug(f"key of single file metadata: {key_dict_single_meta}")
                                 ids[key_dict_single_meta] = value_dcit_sinle_meta
         
         #remove duplicates
         seen_ids = []
         for ids in data['@graph']:
             if ids['@id'] in seen_ids:
-                log.info("duplicate id found: "+ids['@id'])
+                #log.info("duplicate id found: "+ids['@id'])
                 data['@graph'].remove(ids)
             else:
                 seen_ids.append(ids['@id'])
@@ -279,7 +279,8 @@ def complete_metadata_crate(source_path_crate):
                     for haspart in ids['hasPart']:
                         haspart['@id'] = replace_forward_slash(haspart['@id'])
                         if haspart['@id'] in seen_hasparts:
-                            log.info("duplicate id found in hasparts of id: "+ haspart["@id"] + ids['@id'])
+                            #log.info("duplicate id found in hasparts of id: "+ haspart["@id"] + ids['@id'])
+                            pass
                         else:
                             seen_hasparts.append(haspart['@id'])
                             new_hasparts.append(haspart)
@@ -322,9 +323,9 @@ async def check_path_availability(tocheckpath,space_id):
         try:
             for space,info_space in all_spaces.items():
                 str_space = info_space["storage_path"]
-                log.debug(f"Storage path space:{str_space}")
+                #log.debug(f"Storage path space:{str_space}")
                 str_space_f_path = str("/".join((tocheckpath,str(space_id))))
-                log.debug(f"Storage path with space_id: {str_space_f_path}")
+                #log.debug(f"Storage path with space_id: {str_space_f_path}")
                 if info_space['storage_path'] == str("/".join((tocheckpath,str(space_id)))) or info_space['storage_path'] == str(tocheckpath):
                     raise HTTPException(status_code=400, detail="Given storage path is already in use by another project")
         except:
@@ -342,7 +343,7 @@ async def check_path_availability(tocheckpath,space_id):
 def get_all_spaces():
     with open(Locations().join_abs_path('spaces.json'), "r+")as file:
         try:
-            log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
+            #log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
             data = json.load(file)
             toreturn = []
             for i,y in data.items():
@@ -424,7 +425,7 @@ async def add_space(*,item: SpaceModel):
         toposturl = 'http://localhost:6656/apiv1/profiles/'+str(item.RO_profile)  #TODO : figure out how to not hardcode this <---
         async with ClientSession() as session:
             response = await session.request(method='GET', url=toposturl)
-            log.debug(response.status)
+            #log.debug(response.status)
             if response.status != 200:
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
             if response.status == 200:
@@ -449,7 +450,7 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
             toposturl = 'http://localhost:6656/apiv1/profiles/'+str(item.RO_profile)  #TODO : figure out how to not hardcode this <---
             async with ClientSession() as session:
                 response = await session.request(method='GET', url=toposturl)
-                log.debug(response.status)
+                #log.debug(response.status)
                 if response.status != 200:
                     raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
             data[space_id]= {'storage_path':info["storage_path"],'ro_profile':item.RO_profile}

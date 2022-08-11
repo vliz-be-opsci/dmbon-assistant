@@ -91,7 +91,7 @@ class GitRepoCache():
             git.Repo.clone_from(ssh_url, location)
         except:
             try:
-                log.info(f"deleting existing repo on location {location} for repo :{ssh_url}")
+                #log.info(f"deleting existing repo on location {location} for repo :{ssh_url}")
                 shutil.rmtree(location, onerror=on_rm_error)
                 git.Repo.clone_from(ssh_url, location)    
             except:
@@ -121,7 +121,7 @@ class GitRepoCache():
             os.mkdir((location))
             os.chdir((location))
         except Exception as e:
-            log.info(f"exception occured :{e}")
+            #log.info(f"exception occured :{e}")
             log.exception(e)
         repo = git.Repo.init(os.path.join(location))
         #change current wd to init the rocrate
@@ -167,13 +167,13 @@ class RoCrateGitBase():
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
         md = self._read_metadata_datacrate()
         data = self._read_metadata_datacrate()
-        log.debug(md)
+        #log.debug(md)
         all_files = []
         for dictionaries in md["@graph"]:
             for item, value in dictionaries.items():
                 if item == "@id":
                     all_files.append(value)
-        log.debug(all_files)
+        #log.debug(all_files)
         #foreach file get all the attributes
         files_attributes = {}
         for file in all_files:
@@ -202,7 +202,7 @@ class RoCrateGitBase():
                                 else:
                                     item_dict["schema:" + key] = value
                             barebones_json["@graph"].append(item_dict)
-                    log.debug(barebones_json)
+                    #log.debug(barebones_json)
                     shacl_file = open(path_shacl, "rb").read()
                     sh = Graph().parse(data=shacl_file, format="turtle")
                     r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, data_graph_format="json-ld", serialize_report_graph="json-ld")
@@ -211,14 +211,14 @@ class RoCrateGitBase():
                     datag = []
                     for item in data["@graph"]:
                         if item["@id"] == file:
-                            log.debug(f'found item with id {file}')
+                            #log.debug(f'found item with id {file}')
                             for key, value in item.items():
                                 dict_predicates = {}
                                 dict_predicates["predicate"] = key
                                 dict_predicates["value"] = value
                                 datag.append(dict_predicates)
                                 
-                    log.debug(f"data: {datag}")
+                    #log.debug(f"data: {datag}")
                     
                     green = 2
                     orange = 0
@@ -232,14 +232,14 @@ class RoCrateGitBase():
 
                     # check the report for the number of violations for the item 
                     for item in validation_report_json:
-                        log.debug(f' validation report item: {item}')
+                        #log.debug(f' validation report item: {item}')
                         try:
                             if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                                 for key, value in item.items():
                                     if key == "http://www.w3.org/ns/shacl#focusNode":
                                         name_focusnode = "./"+value[0]["@id"].split("backend/")[-1]
-                                        log.info(f'name_file: {file}')
-                                        log.info(f'name_focusnode: {name_focusnode}')
+                                        #log.info(f'name_file: {file}')
+                                        #log.info(f'name_focusnode: {name_focusnode}')
                             if name_focusnode == file:
                                 for key, value in item.items():
                                     if "resultSeverity" in key == "http://www.w3.org/ns/shacl#resultSeverity":
@@ -249,7 +249,7 @@ class RoCrateGitBase():
                                             orange+=1
                         except:
                             pass
-                    log.debug(f' green: {green}, orange: {orange}, red: {red}')
+                    #log.debug(f' green: {green}, orange: {orange}, red: {red}')
                     percentage_red = math.ceil((red/(red+green+orange))*100)
                     percentage_orange = math.ceil((orange/(red+green+orange))*100)
                     percentage_green = math.ceil((green/(red+green+orange))*100)
@@ -268,7 +268,7 @@ class RoCrateGitBase():
                                     files_attributes[file][item_save] = value_save
                 
                 
-        log.debug(f'All predicates from all files from project : {files_attributes}')
+        #log.debug(f'All predicates from all files from project : {files_attributes}')
         return {"data":files_attributes}
     
     def delete_hashtag_from_begin_id(self):
@@ -283,7 +283,7 @@ class RoCrateGitBase():
         
     def get_git_history(self):
         location_space = self.storage_path
-        log.debug(f'location_space: {location_space}')
+        #log.debug(f'location_space: {location_space}')
         command = ['git']
         # command.append('--git-dir=C:/develop/GitHub/AzureDevopsWordPlayground/.git')
         command.append('log')
@@ -326,11 +326,11 @@ class RoCrateGitBase():
         """
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
-        #log.info(f"metadata of the space: {data}")
+        ##log.info(f"metadata of the space: {data}")
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
-        log.info(path_shacl)
+        #log.info(path_shacl)
         #check if file_id starts with . ar with / => if it does delete it and add ./ in from of the file_id
-        log.debug(f'file_id: {file_id}')
+        #log.debug(f'file_id: {file_id}')
         barebones_json = {
                 "@context": 
                     { 
@@ -360,14 +360,14 @@ class RoCrateGitBase():
         datag = []
         for item in data["@graph"]:
             if item["@id"] == file_id:
-                log.debug(f'found item with id {file_id}')
+                #log.debug(f'found item with id {file_id}')
                 for key, value in item.items():
                     dict_predicates = {}
                     dict_predicates["predicate"] = key
                     dict_predicates["value"] = value
                     datag.append(dict_predicates)
                     
-        log.debug(f"data: {datag}")
+        #log.debug(f"data: {datag}")
         
         green = 2
         orange = 0
@@ -381,7 +381,7 @@ class RoCrateGitBase():
 
         # check the report for the number of violations for the item 
         for item in validation_report_json:
-            log.debug(f' validation report item: {item}')
+            #log.debug(f' validation report item: {item}')
             try:
                 if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                     for key, value in item.items():
@@ -396,7 +396,7 @@ class RoCrateGitBase():
                                 orange+=1
             except:
                 pass
-        log.debug(f' green: {green}, orange: {orange}, red: {red}')
+        #log.debug(f' green: {green}, orange: {orange}, red: {red}')
         percentage_red = math.ceil((red/(red+green+orange))*100)
         percentage_orange = math.ceil((orange/(red+green+orange))*100)
         percentage_green = math.ceil((green/(red+green+orange))*100)
@@ -413,8 +413,6 @@ class RoCrateGitBase():
         #convert the shacl file to have all the properties per node id
         node_properties_dicts = []
         for node_to_check in shacldata:
-            log.info(node_to_check)
-        for node_to_check in shacldata:
             toaddnode = {}
             if node_to_check["target"] is not None:
                 target = node_to_check["target"].split("/")[-1]
@@ -424,7 +422,7 @@ class RoCrateGitBase():
                     toaddnode[target].append({propname.split('/')[-1]: semantic_properties})
                 node_properties_dicts.append(toaddnode)
         
-        log.debug(node_properties_dicts)
+        #log.debug(node_properties_dicts)
                 
         all_predicates = []
         all_recursive_predicates = []
@@ -444,7 +442,7 @@ class RoCrateGitBase():
         if len(all_predicates) == 0:
             return {"error":404,"detail":"Resource not found"}
         
-        log.info(all_files)
+        #log.info(all_files)
         
         return {'data':all_files, 'complex_data':all_recursive_predicates,'summary': summary, 'shacl_requirements': json.loads(r_decoded), 'shacl_original': f_constraints_text}
     
@@ -453,9 +451,9 @@ class RoCrateGitBase():
         """
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
-        log.info(f"metadata of the space: {data}")
+        #log.info(f"metadata of the space: {data}")
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
-        log.info(path_shacl)
+        #log.info(path_shacl)
         
         barebones_json = {
                 "@context": 
@@ -495,7 +493,7 @@ class RoCrateGitBase():
                 dict_predicates["value"] = value
                 datag.append(dict_predicates)
                     
-        log.debug(f"data: {datag}")
+        #log.debug(f"data: {datag}")
         
         
 
@@ -507,7 +505,7 @@ class RoCrateGitBase():
 
         # check the report for the number of violations for the item 
         for item in validation_report_json:
-            log.debug(f' validation report item: {item}')
+            #log.debug(f' validation report item: {item}')
             try:
                 if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                     for key, value in item.items():
@@ -521,7 +519,7 @@ class RoCrateGitBase():
                             orange+=1
             except:
                 pass
-        log.debug(f' green: {green}, orange: {orange}, red: {red}')
+        #log.debug(f' green: {green}, orange: {orange}, red: {red}')
         percentage_red = math.ceil((red/(red+green+orange))*100)
         percentage_orange = math.ceil((orange/(red+green+orange))*100)
         percentage_green = math.ceil((green/(red+green+orange))*100)
@@ -537,8 +535,6 @@ class RoCrateGitBase():
         #convert the shacl file to have all the properties per node id
         node_properties_dicts = []
         for node_to_check in shacldata:
-            log.info(node_to_check)
-        for node_to_check in shacldata:
             toaddnode = {}
             if node_to_check["target"] is not None:
                 target = node_to_check["target"].split("/")[-1]
@@ -548,8 +544,8 @@ class RoCrateGitBase():
                     toaddnode[target].append({propname.split('/')[-1]: semantic_properties})
                 node_properties_dicts.append(toaddnode)
         
-        log.debug(node_properties_dicts)
-        log.info(all_files)
+        #log.debug(node_properties_dicts)
+        #log.info(all_files)
         
         return {'data':all_files, 'summary': summary, 'shacl_requirements': json.loads(r_decoded), 'shacl_original': f_constraints_text}
     
@@ -560,12 +556,12 @@ class RoCrateGitBase():
         """
         self.delete_hashtag_from_begin_id()
         #try and get the same result by using rocrate
-        log.info(f"toadd_dict: {toadd_dict}")
+        #log.info(f"toadd_dict: {toadd_dict}")
         data = self._read_metadata_datacrate()
-        log.info(f"metadata of the space: {data}")
+        #log.info(f"metadata of the space: {data}")
         for entity in data["@graph"]:
-            log.info(f"entity: {entity}")
-            #log.info(f"Crate data entities: {entity._jsonld}")
+            #log.info(f"entity: {entity}")
+            ##log.info(f"Crate data entities: {entity._jsonld}")
             if entity["@id"] != "./ro-crate-metadata.json" and entity["@type"] != "Dataset":
                 for annotationfile in toadd_dict:
                     uri_name  = annotationfile.URI_predicate_name
@@ -581,7 +577,7 @@ class RoCrateGitBase():
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         for entity in data["@graph"]:
-            #log.info(f"Crate data entities: {entity._jsonld}")
+            ##log.info(f"Crate data entities: {entity._jsonld}")
             for annotationfile in todelete_dict:
                 uri_name  = annotationfile.URI_predicate_name
                 entity.pop(uri_name, None)
@@ -593,7 +589,7 @@ class RoCrateGitBase():
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         
-        log.debug(f"file_id: {file_id}")       
+        #log.debug(f"file_id: {file_id}")       
         new_uuid_blank_node = uuidmake.uuid4().hex
         #go over each file in the graph to see if the @id is the same as the file_id
         for item in data["@graph"]:
@@ -607,7 +603,7 @@ class RoCrateGitBase():
                 #add uri predicate to the item with value of nw blacnk node @id
                 item[uri_predicate] = {"@id":new_uuid_blank_node}
                 #write the new graph to the metadata file
-                log.debug(data)
+                #log.debug(data)
                 self._write_metadata_datacrate(data)
                 return new_blank_node
         
@@ -651,13 +647,13 @@ class RoCrateGitBase():
         """
         self.delete_hashtag_from_begin_id()
         path_shacl = os.path.join(Locations().get_workspace_location_by_uuid(space_uuid=self.uuid),"all_constraints.ttl")
-        log.info(path_shacl)
+        #log.info(path_shacl)
         test = shclh.ShapesInfoGraph(path_shacl)
         shacldata = test.full_shacl_graph_dict()
         data = self._read_metadata_datacrate()
 
         data_entities = data['@graph']
-        log.debug(data_entities)
+        #log.debug(data_entities)
         
 
         #convert the chacl file to have all the properties per node id
@@ -727,13 +723,8 @@ class RoCrateGitBase():
             for diff_kind_annotations in all_props:
                 for key_annotation , metadata_annotation in diff_kind_annotations.items():
                     chacl_URI_list.append(key_annotation)
-            log.info(f"chacl_list_printed: {chacl_URI_list}")
+            #log.info(f"chacl_list_printed: {chacl_URI_list}")
             for entity in data_entities:
-                try:
-                    log.info(f"Crate data entities: {entity._jsonld}")
-                except Exception as e:
-                    log.error(f'error when displaying jsonld rocrate data via rocrate python lib: {e}')
-                    log.exception(e)
                 if entity["@id"] == file_id:
                     entity[uri_name]= value_uri
             if uri_name not in chacl_URI_list:

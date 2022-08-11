@@ -9,7 +9,7 @@ log=logging.getLogger(__name__)
 def singleton(class_):
     instances = {}
     def getinstance(*args, **kwargs):
-        log.debug(f"getting instance of {class_}with args == {args} && kwargs == {kwargs}")
+        #log.debug(f"getting instance of {class_}with args == {args} && kwargs == {kwargs}")
         if class_ not in instances:
             instances[class_] = class_(*args, **kwargs)
         return instances[class_]

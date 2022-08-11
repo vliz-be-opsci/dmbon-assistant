@@ -77,7 +77,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
     #open up the rocrate metadata.json file and loop over all the entries in the @graph and add the ids that are not yet in the toreturn["file"] list 
     space_object = Space.load(uuid=space_id)
     metadata = space_object._read_metadata_datacrate()
-    log.info(metadata)
+    #log.info(metadata)
     for entry in metadata['@graph']:
         found = 0
         for item in toreturn:
@@ -94,23 +94,64 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
     return toreturn
 @router.get('/openexplorer')
 def open_file_explorer(*,space_id: str = Path(None,description="space_id name")):
-    log.debug(space_id)
+    #log.debug(space_id)
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
-        log.debug(data)
-        log.debug(space_id)
+        #log.debug(data)
+        #log.debug(space_id)
         try:
             space_folder = data[space_id]['storage_path']
-            log.debug(space_folder)
+            #log.debug(space_folder)
             
             formatted_space_folder = space_folder.replace("/","\\")
-            log.debug(formatted_space_folder)
+            #log.debug(formatted_space_folder)
             string_command = 'explorer "' + formatted_space_folder + '"'
-            log.debug(string_command)
+            #log.debug(string_command)
             subprocess.Popen(string_command)
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     return "file-explorer opened successfully"
+
+@router.post('/reference', status_code=202) #TODO fix broken reference adding
+async def add_new_references(*,space_id: str = Path(None,description="space_id name"), item: ListReferenceModel):  
+    try:
+        
+        with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+            data = json.load(file)
+            try:
+                space_folder = data[space_id]['storage_path']
+            except Exception as e:
+                raise HTTPException(status_code=404, detail="Space not found")
+            
+        datalog = []
+        crate = ROCrate(space_folder)
+        repo = git.Repo(data[space_id]['storage_path'])
+        for reference in item.references:
+            #check if given item.URL is valid
+            valid=validators.url(reference.URL)
+            if valid:
+                #log.debug("add reference to the rocrate")
+                try:
+                    crate.add_file(reference.URL, fetch_remote = False)
+                except Exception as e:
+                    datalog.append({reference.URL:e})
+            else:
+                raise HTTPException(status_code=400, detail="Non valid URL given")
+        try:
+            crate.write_crate(space_folder)
+        except Exception as e:
+            log.error(f"crate write error :{e}")
+            log.exception(e)
+            
+        repo.git.add(all=True)
+        if len(datalog) > 0:
+            raise HTTPException(status_code=400, detail=datalog)
+
+        return {'Data':'all content successfully added to space'}
+    except Exception as e:
+        log.error(f"add_new_references error :{e}")
+        log.exception(e)
+        raise HTTPException(status_code=400, detail=e)
 
 @router.get('/{path_spec:path}')
 def open_file_content_external(*,space_id: str = Path(None,description="space_id name"), path_spec: str = Path(None,description="content path (relative to crate pointing to file or folder) to get the info from")):
@@ -122,10 +163,10 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
             #TODO: find a way to make this work for non windows systems
             
             #replace the + in the filen bu the os.path.sep()
-            log.debug(path_spec)
-            log.info("performing os.path.join on file_id")
+            #log.debug(path_spec)
+            #log.info("performing os.path.join on file_id")
             path_spec = path_spec.replace('/',os.path.sep)
-            log.debug(path_spec)
+            #log.debug(path_spec)
             showFileExplorer(space_folder+os.path.sep+path_spec)
             '''
             #find the file_id in the space_folder by looping over the folders and files in the space_folder
@@ -198,46 +239,7 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
 
     return {'Data':'all content successfully added to space'}
 '''
-@router.post('/reference', status_code=202)
-async def add_new_references(*,space_id: str = Path(None,description="space_id name"), item: ListReferenceModel):  
-    try:
-        
-        with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-            data = json.load(file)
-            try:
-                space_folder = data[space_id]['storage_path']
-            except Exception as e:
-                raise HTTPException(status_code=404, detail="Space not found")
-            
-        datalog = []
-        crate = ROCrate(space_folder)
-        repo = git.Repo(data[space_id]['storage_path'])
-        for reference in item.references:
-            #check if given item.URL is valid
-            valid=validators.url(reference.URL)
-            if valid:
-                log.debug("add reference to the rocrate")
-                try:
-                    crate.add_file(reference.URL, fetch_remote = False)
-                except Exception as e:
-                    datalog.append({reference.URL:e})
-            else:
-                raise HTTPException(status_code=400, detail="Non valid URL given")
-        try:
-            crate.write_crate(space_folder)
-        except Exception as e:
-            log.error(f"crate write error :{e}")
-            log.exception(e)
-            
-        repo.git.add(all=True)
-        if len(datalog) > 0:
-            raise HTTPException(status_code=400, detail=datalog)
 
-        return {'Data':'all content successfully added to space'}
-    except Exception as e:
-        log.error(f"add_new_references error :{e}")
-        log.exception(e)
-        raise HTTPException(status_code=400, detail=e)
 
 '''
 @router.delete('/', status_code=202)
@@ -297,10 +299,10 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
             allpaths = path_folder
             if(path_folder == "/"):
                 space_folder = data[space_id]['storage_path']
-                log.debug(space_folder)
+                #log.debug(space_folder)
             else:
                 space_folder = os.path.join(data[space_id]['storage_path'], path_folder)
-                log.debug(space_folder)
+                #log.debug(space_folder)
 
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
@@ -308,7 +310,7 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
     for (dirpath, dirnames, filenames) in os.walk(space_folder):
         for filen in filenames:
             if '.git' not in dirpath:
-                log.info(f"{dirpath}/{filen}")
+                #log.info(f"{dirpath}/{filen}")
                 toreturn.append({"file":filen,"folder":dirpath})
     return {'Data':toreturn}
 '''

@@ -41,7 +41,7 @@ class Project(RoCrateGitBase):
             #function to download all the initial repo
             self.clone_repo(repo_url= self.repo_url)
             seed_dependencies = Project.detect_profiles(self)
-            log.debug(f"all seed dependencies to make Project: {seed_dependencies}")
+            #log.debug(f"all seed dependencies to make Project: {seed_dependencies}")
             #self.location_init_repo = self._download_repo(repo_url = self.repo_url)
             #self.get_rocrate_metadata_git_urls(rocrate_metadata_location= os.path.join(self.location_init_repo,"ro-crate-metadata.json"))
             self.seed_dependencies = seed_dependencies
@@ -83,7 +83,7 @@ class Project(RoCrateGitBase):
         # for sc in seed_creates  make SeedCrate(sc.repo_uri == sc.id?) .... sc.update_content
         for sc in seed_crates: 
             #for now the sc is assumed to be the git repo url and thus nothing happens here yet
-            log.debug(f"seedcrate url: {sc}")
+            #log.debug(f"seedcrate url: {sc}")
             SeedCrate(sc, name=self.name)
         return seed_crates
       
@@ -119,7 +119,7 @@ class Project(RoCrateGitBase):
     @staticmethod
     def _write_projects(projects_dict: dict):
         with open(Locations().join_abs_path('projects.json'), 'w') as json_file:
-            log.debug(f"towritedict: {projects_dict}")
+            #log.debug(f"towritedict: {projects_dict}")
             json.dump(projects_dict, json_file)
     
 class SeedCrate(RoCrateGitBase):
@@ -157,7 +157,7 @@ class SeedCrate(RoCrateGitBase):
         #TODO: have exception for NOneType input
         try:
             seeds_dict = {url: SeedCrate(url) for url in set_urls}
-            log.debug(f"All seedcrate urls : {set_urls}")
+            #log.debug(f"All seedcrate urls : {set_urls}")
             return seeds_dict
         except:
             return({})

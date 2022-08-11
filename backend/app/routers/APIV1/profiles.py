@@ -10,7 +10,7 @@ from app.model.profile import Profile
 from dotenv import load_dotenv
 import os
 env = load_dotenv()
-log.debug(f"all env variables: {env}")
+#log.debug(f"all env variables: {env}")
 BASE_URL_SERVER = os.getenv('BASE_URL_SERVER')
 
 router = APIRouter(
@@ -35,10 +35,10 @@ class ProfileModel(BaseModel):
 
 @router.get('/')
 def get_all_profiles_info():
-    log.info(f"profile get all begin")
+    #log.info(f"profile get all begin")
     with open(Locations().join_abs_path('profiles.json'), "r+")as file:
         try:
-            log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
+            #log.info(f"env variable base_url_server == {BASE_URL_SERVER}")
             data = json.load(file)
             toreturn = []
             for i,y in data.items():
@@ -61,11 +61,11 @@ def get_all_profiles_info():
 
 @router.get('/{profile_id}/')
 def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
-    log.info(f"profile get begin")
+    #log.info(f"profile get begin")
     with open(Locations().join_abs_path('profiles.json'), "r+") as file:
         data = json.load(file)
         try:
-            log.info(profile_id)
+            #log.info(profile_id)
             toreturn = data[profile_id]
             return toreturn
         except Exception as e:
@@ -75,7 +75,7 @@ def get_profile_info(profile_id: str = Path(None,description="profile_id name"))
 
 @router.delete('/{profile_id}/', status_code=202)
 def delete_profile(profile_id: str = Path(None,description="profile_id name")):
-    log.info(f"profile delete begin")
+    #log.info(f"profile delete begin")
     with open(Locations().join_abs_path('profiles.json')) as data_file:
             data = json.load(data_file)
             try:
@@ -90,7 +90,7 @@ def delete_profile(profile_id: str = Path(None,description="profile_id name")):
 
 @router.post('/', status_code=201)
 def add_profile(*,item: ProfileModel):
-    log.info(f"profile add begin")
+    #log.info(f"profile add begin")
     if item.logo != None or item.description != None  or item.url_ro_profile != None or item.name != None:
         #add check for the url of the profile:
         try:
@@ -112,7 +112,7 @@ def add_profile(*,item: ProfileModel):
 
 @router.put('/{profile_id}/', status_code=202)
 def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
-    log.info(f"profile update begin")
+    #log.info(f"profile update begin")
     with open(Locations().join_abs_path('profiles.json'), "r+")as file:
         data = json.load(file)
     for profile in data.keys():
@@ -124,8 +124,8 @@ def update_profile(*,profile_id: str = Path(None,description="profile_id name"),
                         json.dump(data, file)  
                         return {'Data':'Update successfull'} 
                 else:
-                    log.info(f"profile update fail")
-                    log.info(f"supplied body must have following keys: {format(keys)}")
+                    #log.info(f"profile update fail")
+                    #log.info(f"supplied body must have following keys: {format(keys)}")
                     keys = dict(item).keys()
                     raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
             except Exception as e:
