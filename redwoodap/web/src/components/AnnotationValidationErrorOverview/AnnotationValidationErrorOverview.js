@@ -139,12 +139,3 @@ const AnnotationValidationErrorOverview = (shacl_requirements,showerror, setshow
 }
 
 export default AnnotationValidationErrorOverview
-/*
-<AlertShaclReq
-  constraint_props={violation.constraint_props}
-  severity_error={violation.severity_error}
-  predicate_name={violation.predicate_name}
-  result_message={violation.resultMessage}
-  spacelist_data={spaceList}
-/>
-*/

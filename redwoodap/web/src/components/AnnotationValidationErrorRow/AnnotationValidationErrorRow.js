@@ -1,5 +1,4 @@
 import {GoDiffAdded} from 'react-icons/go';
-import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai';
 import {Alert, Form, Button} from 'react-bootstrap';
 
 const AnnotationValidationErrorRow = (predicate_name,severity_error, constraint_props, result_message, spacelist_data,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation) => {
@@ -10,7 +9,7 @@ const handleChange = (event) => {
 }
 
 //function that perform a axios post request to add predicate to the file
-const addPredicate = async (event) => {
+const addPredicate = async () => {
   console.log("adding predicate");
   console.log(datacrate_uuid);
   console.log(file_name);
