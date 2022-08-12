@@ -1,6 +1,7 @@
 import {GoDiffAdded} from 'react-icons/go';
 import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai';
 import {Alert, Form, Button} from 'react-bootstrap';
+import './AnnotationValidationErrorRow.css'
 
 const AnnotationValidationErrorRow = (predicate_name,severity_error, constraint_props, result_message, spacelist_data,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation) => {
 let predicate_value = ""
@@ -291,7 +292,7 @@ function Alertlogsprops(props) {
   if(severity_error == "Violation"){
       return(
           <>
-              <Alert variant="danger">
+              <Alert className='annotation_alart' variant="danger">
                   {Alertlogsprops({shacl_requirements: constraint_props})}
                   {ResultMessage()}
               </Alert>
@@ -301,7 +302,7 @@ function Alertlogsprops(props) {
   if(severity_error == "Warning"){
       return(
           <>
-              <Alert variant="warning">
+              <Alert className='annotation_alart' variant="warning">
                   {Alertlogsprops({shacl_requirements: constraint_props})}
                   {ResultMessage()}
               </Alert>
@@ -311,7 +312,7 @@ function Alertlogsprops(props) {
   else{
       return(
           <>
-              <Alert variant="info">
+              <Alert className='annotation_alart' variant="info">
                   {Alertlogsprops({shacl_requirements: constraint_props})}
                   {ResultMessage()}
               </Alert>

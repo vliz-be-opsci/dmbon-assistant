@@ -1,6 +1,6 @@
 import {Alert, Button} from 'react-bootstrap';
 import AnnotationValidationErrorRow from '../AnnotationValidationErrorRow/AnnotationValidationErrorRow';
-
+import './AnnotationValidationErrorOverview.css';
 function ButtonShow(showerror,setshowerror) {
   if(showerror){
     return (
@@ -89,7 +89,7 @@ const AnnotationValidationErrorOverview = (shacl_requirements,showerror, setshow
       if (sr[0]["http://www.w3.org/ns/shacl#conforms"][0]["@value"] == false) {
         return (
           <>
-            <Alert variant="danger" dismissible>
+            <Alert className="annotation_alart" variant="danger" >
               <Alert.Heading>Requirements not met</Alert.Heading>
               <p>
                 <b>{ammount_violations} errors have to be fixed to be compliant to the current project. </b>
@@ -122,7 +122,7 @@ const AnnotationValidationErrorOverview = (shacl_requirements,showerror, setshow
       }else{
         return (
           <>
-            <Alert variant="success" onClose={() => setShowAlert(false)} dismissible >
+            <Alert className="annotation_alart" variant="success" onClose={() => setShowAlert(false)} >
               <Alert.Heading>Requirements met</Alert.Heading>
               <p>
                 File is compliant to the current project.
