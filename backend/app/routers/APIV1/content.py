@@ -7,6 +7,7 @@ from rocrate.rocrate import ROCrate
 from pathlib import Path as pads
 import subprocess
 import validators
+import requests
 import glob
 import logging
 log=logging.getLogger(__name__)
@@ -124,7 +125,8 @@ async def add_new_references(*,space_id: str = Path(None,description="space_id n
                 raise HTTPException(status_code=404, detail="Space not found")
             
         datalog = []
-        crate = ROCrate(space_folder)
+        #TODO adding refrences is not working anymore with current rocrate python module
+        #crate = ROCrate(space_folder)
         repo = git.Repo(data[space_id]['storage_path'])
         for reference in item.references:
             #check if given item.URL is valid
@@ -132,13 +134,41 @@ async def add_new_references(*,space_id: str = Path(None,description="space_id n
             if valid:
                 #log.debug("add reference to the rocrate")
                 try:
-                    crate.add_file(reference.URL, fetch_remote = False)
+                    log.info("adding reference to the rocrate")
+                    #get info from url by performing a HEAD request
+                    head_ref = requests.head(reference.URL)
+                    log.info(head_ref.headers)
+                    
+                    #get head_ref.headers['Content-Type'] and if html in there set type = "website" else set type = "file"
+                    # if type is file then get Content-Disposition and if there is a filename then set name = filename else set name = url, and get content length and set ContentSize = content length
+                    if "text/html" in head_ref.headers['Content-Type']:
+                        content_type = "Website"
+                        toaddcrate = {
+                            "@id":reference.URL,
+                            "@type": content_type
+                        }            
+                    else:
+                        toaddcrate = {
+                            "@id":reference.URL,
+                            "@type": "File",
+                            "contentSize": head_ref.headers['Content-Length'],
+                            "fileName": head_ref.headers['Content-Disposition'].split("filename=")[1]   
+                        }
+                    #append toaddcrate to rocratemetadata.json
+                    with open(os.path.join(space_folder, 'ro-crate-metadata.json')) as json_file:
+                        datao = json.load(json_file)
+                    datao['@graph'].append(toaddcrate)
+                    with open(os.path.join(space_folder, 'ro-crate-metadata.json'), 'w') as outfile:
+                        json.dump(datao, outfile)
+                    
+                    #crate.add_file(reference.URL, fetch_remote = False)
                 except Exception as e:
                     datalog.append({reference.URL:e})
             else:
                 raise HTTPException(status_code=400, detail="Non valid URL given")
         try:
-            crate.write_crate(space_folder)
+            log.info("writing rocrate rocrate")
+            #crate.write_crate(space_folder)
         except Exception as e:
             log.error(f"crate write error :{e}")
             log.exception(e)
