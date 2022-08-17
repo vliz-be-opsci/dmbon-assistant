@@ -1,8 +1,9 @@
+import { Link, routes } from '@redwoodjs/router'
 import {GoDiffAdded} from 'react-icons/go';
 import {Alert, Form, Button} from 'react-bootstrap';
 import './AnnotationValidationErrorRow.css'
 
-const AnnotationValidationErrorRow = (predicate_name,severity_error, constraint_props, result_message, spacelist_data,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation) => {
+const AnnotationValidationErrorRow = (predicate_name,severity_error, constraint_props, result_message, spacelist_data,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation,postBlanknodeFile) => {
 let predicate_value = ""
 //function that changes the value of the input
 const handleChange = (event) => {
@@ -41,9 +42,26 @@ const addPredicate = async () => {
 }
 
 //function that perform an axios post request to add a blank node to the metadata file
-const addBlankNode = async () => {
+const addBlankNode = async (e) => {
   //change the frist letter of uri_predicate to uppercase
   console.log("adding blank node");
+  console.log(predicate_name);
+  let formatted_filename = encodeURIComponent(file_name);
+  let payload = {
+    "URI_predicate_name": predicate_name,
+    "node_type": predicate_name
+  }
+  setAddingAnnotation(true);
+  postBlanknodeFile(datacrate_uuid, formatted_filename, payload).then(res => {
+    console.log(res);
+    setAddingAnnotation(false);
+  }
+  ).catch(err => {
+    console.log(err);
+    setAddingAnnotation(false);
+  }
+  );
+
 }
 
 function Alertlogsprops(props) {
@@ -62,7 +80,6 @@ function Alertlogsprops(props) {
             } catch (error) {
                 console.log(error);
             }
-
         }
     }
 
@@ -230,7 +247,12 @@ function Alertlogsprops(props) {
                             <table>
                                 <tr>
                                     <td style={{"width":"15%"}}><b>{predicate_name}:</b></td>
-                                    <td colSpan="2" style={{"width":"100%"}}><a target="_blank" href={'/Datacrates/'+SpaceId+'/all_files/'+href_button_node_value}>{button_node_value}</a></td>
+
+                                    <td colSpan="2" style={{"width":"100%"}}>
+                                      <Link to={routes.specificDatacratePageNode({ datacrate_id: datacrate_uuid , node_id: href_button_node_value})}>
+                                      {button_node_value}
+                                      </Link>
+                                      </td>
                                 </tr>
                             </table>
                         </Form>
@@ -239,7 +261,7 @@ function Alertlogsprops(props) {
             }else{
                 return(
                     <>
-                      <button onClick={() => addBlankNode()} className="button_vliz space_button">add {predicate_name} node</button>
+                      <button onClick={(e) => addBlankNode(e)} className="button_vliz space_button">add {predicate_name} node</button>
                     </>
                 )
             }

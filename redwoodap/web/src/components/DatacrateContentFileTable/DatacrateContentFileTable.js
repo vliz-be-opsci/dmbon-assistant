@@ -1,6 +1,5 @@
 import { useState, useEffect} from "react";
-import { useParams } from 'react-router-dom';
-import { getAllAnnotations, getAnnotationsFile, postAnnotationFile, deleteAnnotationFile} from "src/utils/AxiosRequestsHandlers";
+import { getAllAnnotations, getAnnotationsFile, postAnnotationFile, deleteAnnotationFile, postBlanknoteFile} from "src/utils/AxiosRequestsHandlers";
 import AxiosError from "../AxiosError/AxiosError";
 import {Modal} from "react-bootstrap";
 
@@ -20,6 +19,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [DatacrateContent, setDatacrateContent] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [showmodal, setShowmodal] = useState(false);
   const [showAnnotationErrors, setShowAnnotationErrors] = useState(true);
   const [modalContent, setModalContent] = useState({});
@@ -51,6 +51,8 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
 
         }).catch(err => {
           console.log(err);
+          setError(true);
+          setErrorMessage(err);
         }
         );
       }
@@ -74,6 +76,8 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
           }
         }).catch(err => {
           console.log(err);
+          setError(true);
+          setErrorMessage(err);
         }
         );
       }
@@ -83,13 +87,25 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   useEffect(() => {
 
     getAllAnnotations(datacrate_uuid).then(res => {
-      setDatacrateContent(res.data.data);
+      //for entry in res.data.data, if the key contains http or https then console.log
+      let contentdata = {};
+      for(let entry in res.data.data){
+        if(entry.includes("http") || entry.includes("https")){
+          console.log(entry);
+        }else{
+          //add the key and value to the contentdata object
+          contentdata[entry] = res.data.data[entry];
+        }
+      }
+
+      setDatacrateContent(contentdata);
       console.log(res.data.data);
       setLoading(false);
     }
     ).catch(err => {
       console.log(err);
       setError(true);
+      setErrorMessage(err);
       setLoading(false);
     }
     );
@@ -104,6 +120,8 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
         setSpecificFileContent(res.data);
       }).catch(err => {
         console.log(err);
+        setError(true);
+        setErrorMessage(err);
       }
       );
     }
@@ -136,7 +154,8 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
                  datacrate_uuid,
                  modalContent.file_name,
                  postAnnotationFile,
-                 setAddingAnnotation
+                 setAddingAnnotation,
+                 postBlanknoteFile
                 )
               }
               <br></br>
@@ -189,7 +208,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     return (
       <>
       <div className="component">
-        <div className="title">File Content</div>
+        <div className="title">Files</div>
         {Object.keys(DatacrateContent).map((key) => {
           return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
         }

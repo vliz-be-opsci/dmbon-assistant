@@ -18,7 +18,7 @@ const AxiosError = (error) => {
     return (
       <div className="Axios_error">
         <h2>UI error</h2>
-        <p>{err}</p>
+        <p>{err.errorMessage}</p>
         <hr></hr>
         <a href="/"><b>return to homepage</b></a>
       </div>
