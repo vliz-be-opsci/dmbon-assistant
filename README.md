@@ -4,25 +4,33 @@
 
 [![On_Push_Testing](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml/badge.svg?branch=main)](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml)
 
+:earth_africa: **[Learn more about DMBON assistant on our website](https://open-science.vliz.be/#projects)**
+
 # Data management assistant
-Data management for Biodiversity Observation Networks (DMBON-assistant) is a case study of a more general data management framework and webtop application that supports scientists by providing a consistent and streamlined dataflow within and between organizations. 
-It lowers the barrier for collaborative efforts by making data more accessible and searchable, enabling more complex search queries on open datasets.
+Data management assistant for Biodiversity Observation Networks (DMBON-assistant) is a case study of a more general data management framework and webtop application that supports scientists by providing a consistent and streamlined dataflow within and between individuals and organizations. 
+It lowers the barrier for collaborative efforts by making data more accessible and searchable, enabling more complex search queries on open datasets that enrich meta-analyses.
+The DMBON-assistant is an important piece of our grander [vision](#our-vision).
 
 [//]: <> (CLEARLY EXPLAIN WHO THIS PROJECT IS FOR)
 #### Who is it for?
 This project is intended for academics, policy makers, and the general public. 
-Academics are encouraged to share their research in a streamlined fashion that makes their research discoverable and easily citable.
-Policy makers benefit from this tool through lowering the barrier for extensive meta-analysis that can shed light on previously unreported correlations. 
-Finally, the general public benefits from open science by making academic research more easily accesible, which incentivizes open source projects such as this one.
+Academics are encouraged to share their research in a way that makes their research more meaningful and easily citable.
+Policy makers benefit from this tool through lowering the barrier for extensive meta-analysis that can shed light on previously unreported correlations.
+Finally, the general public benefits from such an open source tool by making academic research more easily accesible to the public.
+We believe that open sourcing a project such as this benefits the community and with it we hope to advocate for future open science policies to come.
 
 [//]: <> (EXPLAIN HOW TO READ THIS DOCUMENT)
-## Reading this README
-Explain how to read this file, include a Table of Contents 
+##### Reading this README
+In this README, we will explain our vision for this project. 
+We will further motivate our choices and provide users and developers on how to use and contribute to DMBON-assistant. 
 
 ### Table of contents
-
-- [Motivation](#motivation)
+- [Our vision](#our-vision)
+  - [Motivation](#motivation)
+    - [Metadata: the overlooked critical component](#metadata-the-overlooked-critical-component)
+    - [Why open source?](#why-open-source)
 - [How does it work?](#how-does-it-work)
+- [Getting started](#getting-started)
 - [Installation](#installation)
   - [On Windows](#on-windows)
   - [On Linux](#on-linus)
@@ -30,30 +38,55 @@ Explain how to read this file, include a Table of Contents
   - [Getting started](#getting-started)
 - [Contributing](#contributing)
 
+---
+[//]: <> (VISION)
+## Our vision
+We believe that discovery relies on open and transparent management of data - following the [FAIR principles](https://www.go-fair.org/fair-principles/).
+Obviously, for this data to be FAIR and thus meaningful, it has to adhere to specific rules such that others can discover and (re-)use the data with little effort.
+Ideally, tools should exist such that those that gather data should be able to upload meaningful data without hassle.
 
-## Motivation
-Sound scientific results are derived from good data. While few people disagree with this statement, the current methods of both storing and accessing historical data are severely hampering novel scientific discoveries. 
+**Goals**: \
+:heavy_check_mark: Introduce simple and hassle-free procedure for uploading heterogeneous data that conforms to FAIR data management plans. \
+:heavy_check_mark: Build a thriving community that aims at open science which promotes simplified sharing and indexing of heterogenous data. \
+:heavy_check_mark: Enable complex search queries for meta-analysis.
+
+![Overview of our general vision](docs/images/dmbon-assistant-rocrate-to-pages.png)
+
+### Motivation
+Sound scientific results are derived from good data. 
+While few people disagree with this statement, the current methods of both storing and accessing historical data are severely hampering novel scientific discoveries. 
 On one end, data of published studies are permanently lost (Vines et al., [2014](https://doi.org/10.1016/j.cub.2013.11.014)) or researchers forget the details requires to make use of the data (Whitlock et al. [2010](https://doi.org/10.1086/650340)).
-On the other end, losing access to data (and their metadata) makes it impossible to reproduce scientific results or perform critical meta-analyses.
+On the other end, losing access to data (and, importantly, their [metadata](#metadata)) makes it impossible to reproduce scientific results or perform critical meta-analyses.
 Therefore, automated streamlining of data management plans (DMPs) is necessary for improving data preservation and accesibility.
-DMBON-assistant is an open source webtop application designed to provide this automisation and thereby enables consistent and streamlined data management.
+DMBON-assistant is an open source webtop application designed to provide this automisation, thereby enabling consistent and streamlined data management.
 
-##### Metadata 
+##### Metadata: the overlooked critical component
 One critical, but often overlooked, feature that greatly increases the longevity of datasets is [metadata](https://en.wikipedia.org/wiki/Metadata) (Leipzig et al. [2021](https://doi.org/10.1016/j.patter.2021.100322)), i.e. 'data that provides information about other data'. 
 Metadata often encodes how to interpret the actual data, e.g. descriptions of meaning of columns in a table, and is thus often necessary for meta-analyses.
 While sharing primary data is becoming increasingly more common (even though the process is not streamlined, see, e.g. Alsheikh-Ali et al., [2011](https://doi.org/10.1371/journal.pone.0024357) and Baker, [2015](https://doi.org/10.1038/533452a)), extensive efforts are often needed to gain access to metadata even when data is openly available (Tedersoo et al., [2021](https://doi.org/10.1038/s41597-021-00981-0)).
-DMBON-assistant aims to alleviate this issue by forcing its users to provide sufficient metadata needed to correctly interpret the data.
+DMBON-assistant aims to alleviate this issue by assisting its users in providing the sufficient metadata that is needed to correctly interpret the data.
 
+##### Why open source?
+As each use case requires specific actions, we lay our trust with the community to further extend DMBON-assistant's functionality with an open source mentality.
+We welcome any and all suggestions, feedback, bug reports and general discussion on DMBON-assistant. 
+Please find the section on [contributing](#contributing) below!
+
+---
 [//]: <> (PROVIDE A GENERAL OVERVIEW OF HOW THE TOOL FUNCTION)
 ## How does it work?
+Interested? Great! 
+But how does DMBON-assistant actually help those that gather data to upload and uplift their data in a meaningful way?
+
+
 Explain the general premise of DMBON-assistant
 
 - greatly simplifies generation of FAIR research objects 
 - ensures correspondence with established data management plans
 - ensures fast and easy indexation and discovery of research objects through automatic semantic uplifting
 
-[//]: <> (INSTALLATION)
-## Installation
+[//]: <> (GETTING STARTED)
+## Getting started
+### Installation
 #### On Windows
 (Thorough Windows installation instructions)
 #### On Linux
@@ -61,7 +94,7 @@ Explain the general premise of DMBON-assistant
 #### On Mac OS?
 (Thorough MacOS system installation instructions?)
 
-### Getting started
+### Example usage
 How to quickly get started using DMBon-assistant, using a very simple usecase.
 
 #### General usage
@@ -75,6 +108,8 @@ Highlight best practices (i.e. **DO**s & **DONT**s). Do not be too restrictive!
 Please find our [CONTRIBUTION guidelines](CONTRIBUTING.md) for more details on the process of contributing.
 
 
+
+<!--
 # dmbon-assistant
 webtop appliction consisting of a backend powered by fast-api and a react frontend
 
@@ -174,3 +209,4 @@ jobs:
         with:
           bump_version_scheme: mayor
 ```
+-->
