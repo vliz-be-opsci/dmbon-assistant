@@ -42,13 +42,16 @@ We will further motivate our choices and provide users and developers on how to 
 [//]: <> (VISION)
 ## Our vision
 We believe that discovery relies on open and transparent management of data - following the [FAIR principles](https://www.go-fair.org/fair-principles/).
-Obviously, for this data to be FAIR and thus meaningful, it has to adhere to specific rules such that others can discover and (re-)use the data with little effort.
-Ideally, tools should exist such that those that gather data should be able to upload meaningful data without hassle.
+We furthermore believe that researchers should be able to search through scientific data as if they are searching the semantic web.
+This means that search queries such as *"what was the water temperature during recent sightings of killer whales in the North Pacific Ocean?"*, should be made possible. 
+Obviously, for scientific data to be FAIR and meaningful to allow such queries, it has to adhere to specific rules such that others can discover, filter and (re-)use the data with little effort.
+Ideally, tools should exist such that those that gather data should be able to upload meaningful data with relative ease. \
+This project aims to do exactly that: assist people in uploading their data (including metadata) to the web.
 
 **Goals**: \
-:heavy_check_mark: Introduce simple and hassle-free procedure for uploading heterogeneous data that conforms to FAIR data management plans. \
-:heavy_check_mark: Build a thriving community that aims at open science which promotes simplified sharing and indexing of heterogenous data. \
-:heavy_check_mark: Enable complex search queries for meta-analysis.
+:heavy_check_mark: Introduce a simple assisted procedure for uploading heterogeneous data that conforms to FAIR data management plans. \
+:heavy_check_mark: Enable complex search queries for meta-analysis on heterogeneous data. \
+:heavy_check_mark: Build a thriving community that supports open science.
 
 ![Overview of our general vision](docs/images/dmbon-assistant-rocrate-to-pages.png)
 
@@ -67,9 +70,12 @@ While sharing primary data is becoming increasingly more common (even though the
 DMBON-assistant aims to alleviate this issue by assisting its users in providing the sufficient metadata that is needed to correctly interpret the data.
 
 ##### Why open source?
-As each use case requires specific actions, we lay our trust with the community to further extend DMBON-assistant's functionality with an open source mentality.
-We welcome any and all suggestions, feedback, bug reports and general discussion on DMBON-assistant. 
-Please find the section on [contributing](#contributing) below!
+We are a small team and can only do so much.
+Furthermore, we also cannot discover and fix all bugs and we can never cover all potential use cases and develop features for them. 
+We are additionally huge advocates for open science and thus open source projects, such as this one. 
+Therefore, we lay our hopes and trust with you, the community, to improve and further extend DMBON-assistant's functionality.
+We welcome any and all suggestions, feedback, bug reports and general discussion on DMBON-assistant. \
+If you are interested, please find the section on [contributing](#contributing) below!
 
 ---
 [//]: <> (PROVIDE A GENERAL OVERVIEW OF HOW THE TOOL FUNCTION)
@@ -87,12 +93,18 @@ Explain the general premise of DMBON-assistant
 [//]: <> (GETTING STARTED)
 ## Getting started
 ### Installation
-#### On Windows
+#### <img width="20" src="/docs/images/black/windows.svg"> On Windows
 (Thorough Windows installation instructions)
-#### On Linux
+#### <img width="20" src="/docs/images/black/linux.svg"> On Linux
 (Thorough Linux system installation instructions)
-#### On Mac OS?
+<!-- #### <img width="20" src="/docs/images/black/apple.svg#gh-light-mode-only"> On Mac OS
+#### <img width="20" src="/docs/images/white/apple.svg#gh-dark-mode-only"> On Mac OS -->
 (Thorough MacOS system installation instructions?)
+<h4>
+  <img width="20" src="/docs/images/black/apple.svg#gh-light-mode-only">
+  <img width="20" src="/docs/images/white/apple.svg#gh-dark-mode-only">
+  On Mac OS
+</h4>
 
 ### Example usage
 How to quickly get started using DMBon-assistant, using a very simple usecase.

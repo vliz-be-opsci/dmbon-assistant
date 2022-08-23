@@ -16,7 +16,7 @@ Below, we describe the guidelines to take into account when contributing to this
 
 #### Table of contents
 - [Our vision](#our-vision)
-- [How can I contribute?](#contributing)
+- [How can I contribute?](#how-can-i-contribute)
   - [Reporting bugs](#bug-report)
     - [Before submitting a bug report](#before-bug)
     - [How do I submit a useful bug report?](#submit-bug)
@@ -30,7 +30,11 @@ Below, we describe the guidelines to take into account when contributing to this
 ---
 
 ## Our vision 
-As each use case requires specific actions, we lay our trust with the community to further extend DMBON-assistant's functionality with an open source mentality.
+We are a small team and can only do so much.
+Furthermore, we also cannot discover and fix all bugs and we can never cover all potential use cases and develop features for them. 
+Additionally, we are huge advocates for open science and thus open source projects, such as this one. 
+Therefore, we envision to establish a thriving community of users and developers alike.
+We hope that this community can both improve and extend the functionality of DMBON-assistant and create a more open and widely used data pipeline.
 
 ## Links to important resources
 - :link: documentation
@@ -47,7 +51,6 @@ Explain, on the meta-level, the ''rules of the game''
 
 
 ---
-c
 ## How can I contribute?
 
 [//]: <> (BUG REPORTS)
@@ -77,7 +80,7 @@ Additionally, check if there are already existing libraries that provide the enh
 
 ---
 [//]: <> (YOUR CONTRIBUTION)
-#### Your contribution
+### Your contribution
 Are you unsure where to start contributing to DMBON-assistant? 
 You might be able to contribute by starting browsing through issues or already open feature suggestions.
 Below, we go through some ways you can contribute, but please keep in mind that we are open for any other suggestions that are not listed below!
