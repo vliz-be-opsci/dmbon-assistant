@@ -93,18 +93,24 @@ Explain the general premise of DMBON-assistant
 [//]: <> (GETTING STARTED)
 ## Getting started
 ### Installation
-#### <img width="20" src="/docs/images/black/windows.svg"> On Windows
+<h4>
+  <img width="20" src="/docs/images/black/windows.svg#gh-light-mode-only">
+  <img width="20" src="/docs/images/white/windows.svg#gh-dark-mode-only">
+  On Windows
+</h4>
 (Thorough Windows installation instructions)
-#### <img width="20" src="/docs/images/black/linux.svg"> On Linux
+<h4>
+  <img width="20" src="/docs/images/black/linux.svg#gh-light-mode-only">
+  <img width="20" src="/docs/images/white/linux.svg#gh-dark-mode-only">
+  On Linux
+</h4>
 (Thorough Linux system installation instructions)
-<!-- #### <img width="20" src="/docs/images/black/apple.svg#gh-light-mode-only"> On Mac OS
-#### <img width="20" src="/docs/images/white/apple.svg#gh-dark-mode-only"> On Mac OS -->
-(Thorough MacOS system installation instructions?)
 <h4>
   <img width="20" src="/docs/images/black/apple.svg#gh-light-mode-only">
   <img width="20" src="/docs/images/white/apple.svg#gh-dark-mode-only">
   On Mac OS
 </h4>
+(Thorough MacOS system installation instructions?)
 
 ### Example usage
 How to quickly get started using DMBon-assistant, using a very simple usecase.
