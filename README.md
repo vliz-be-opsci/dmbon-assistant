@@ -50,20 +50,23 @@ This project aims to do exactly that: assist people in uploading their data (inc
 We believe that future projects, potentially built on top of this one, can then further support complex search queries on distributed datasets.
 
 <!-- FIGURE -- Schematic overview of our vision -->
-<figure align="center">
+<p><figure align="center">
   <img width=750, src="docs/img/diagrams/envisioned-ecosystem-black.svg#gh-light-mode-only"></img>
   <img width=750, src="docs/img/diagrams/envisioned-ecosystem-white.svg#gh-dark-mode-only"></img>
-  <figcaption align="center"><b>Fig. 1:</b>
-  <i>A schematic overview of our vision: FAIR and distributed access to data and metadata using complex queries.</i>
+  <figcaption align="left"><b>Fig. 1:</b>
+  <i>A schematic overview of our vision: FAIR and distributed access to data and metadata using complex queries.
+  (1.) A user uploads heterogeneous data using DMBON assistant. Our service first ensures the FAIR principle by packaging data in an RO-crate that contains the necessary metadata. Then another service generates miniature webpages from every individual RO-crate, which can be easily accessed using any browser to preview data.
+  (2.) The distributed data lives on the web (e.g., using cloud services) and is summarized in a knowledge graph which can be queried using complex queries.
+  (3.) When other users provide queries, the search engine summarizes the data that matches the query conveniently in a table to be used for analysis.
+  </i>
   </figcaption>
-</figure>
+</figure></p>
 
-**Goals**: \
+
+#### Goals
 :heavy_check_mark: Introduce a simple assisted procedure for uploading heterogeneous data that conforms to FAIR data management plans. \
 :heavy_check_mark: Enable complex search queries for meta-analysis on distributed, heterogeneous databases. \
 :heavy_check_mark: Build a thriving community that supports open science.
-
-![Overview of our general vision](docs/img/dmbon-assistant-rocrate-to-pages.png)
 
 ### Motivation
 Sound scientific results are derived from good data. 
