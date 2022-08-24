@@ -5,8 +5,6 @@
 
 **To do:**
 - Do we want to include a code of conduct?
-- Generate a template for bug reports
-- Ensure valid links to GitHub pages/issues/...
 
 
 # Contributing
@@ -17,15 +15,15 @@ Below, we describe the guidelines to take into account when contributing to this
 #### Table of contents
 - [Our vision](#our-vision)
 - [How can I contribute?](#how-can-i-contribute)
-  - [Reporting bugs](#bug-report)
-    - [Before submitting a bug report](#before-bug)
-    - [How do I submit a useful bug report?](#submit-bug)
-  - [Suggesting new features](#suggesting)
-    - [Before suggesting new features](#before-suggesting)
-    - [How do I submit a (good) feature suggestion?](#submit-suggestion)
+  - [Reporting bugs](#bug-reporting-bugs)
+    - [Before submitting a bug report](#before-submitting-a-bug-report)
+    - [How do I submit a useful bug report?](#how-do-i-submit-a-useful-bug-report)
+  - [Suggesting new features](#bulb-suggesting-new-features)
+    - [Before suggesting new features](#before-suggesting-new-features)
+    - [How do I submit a (good) feature suggestion?](#how-do-i-submit-a-good-feature-suggestion)
   - [Your contribution](#your-contribution)
-- [Pull requests](#pull-requests)
-- [Who is involved?](#who-is-involved)
+- [Pull requests](#wrench-pull-requests)
+- [Who is involved?](#bustinsilhouette-who-is-involved)
 
 ---
 
@@ -41,9 +39,9 @@ We hope that this community can both improve and extend the functionality of DMB
 
 
 ## Links to important resources
-:link: documentation \
-:link: [Issues](vliz-be-opsci/dmbon-assistant/issues) \
-:link: [Discussions](https://github.com/vliz-be-opsci/dmbon-assistant/discussions)
+:link: [Issues](https://github.com/vliz-be-opsci/dmbon-assistant/issues) \
+:link: [Discussions](https://github.com/vliz-be-opsci/dmbon-assistant/discussions) \
+:link: Documentation
 
 ## Quickstart for developers
 Explain, on the meta-level, the ''rules of the game''
@@ -60,16 +58,19 @@ Explain, on the meta-level, the ''rules of the game''
 #### :bug: Reporting bugs
 Bugs are tracked as [GitHub issues](https://github.com/vliz-be-opsci/dmbon-assistant/issues). 
 ##### Before submitting a bug report
+Before submitting a bug report, please check any (open or closed) issues that raised similar issues. 
+If the bug is closely related and yet unsolved, consider adding to that discussion instead of filing a new issue. 
+This might help us track down the bug and give priority to bugs that trouble multiple users.
+
 ##### How do I submit a useful bug report?
-Once you have pinned down a bug, create an issue by providing sufficient information by filling in the provided template.
-Please ty to explain the problem clearly and concise and include additional details to help us reproduce and fix the problem.
+Once you have pinned down a bug, create an issue by providing sufficient information by filling in the provided template that should appear when filing a [new issue](https://github.com/vliz-be-opsci/dmbon-assistant/issues/new/choose).
+Please ty to explain the problem clearly and concise and include additional details that might help us reproduce, pin down and fix the problem.
 * Use a clear and descriptive title to identify the problem.
 * Describe the exact steps you have taken that made you encounter the issue. 
 * Describe the behavior that you expected.
 * Include details about your configuration, OS, environment, versions, etc. 
-* Include screenshots, logs, terminal output, or anything that could help illustrating the issue.
 * Describe what you have done to try to fix the issue.
-* ...
+* Include screenshots, logs, terminal output, or anything that could help illustrate the issue further.
 
 [//]: <> (NEW FEATURE SUGGESTIONS)
 #### :bulb: Suggesting new features 
@@ -111,4 +112,5 @@ We use [CLA assistant](https://cla-assistant.io/) to automate the process of con
 
 
 [//]: <> (WHO IS INVOLVED? LIST ALL CURRENT AUTHORS/CONTRIBUTORS)
-### :bust_in_silhouette: Who is (currently) involved?
+### :bust_in_silhouette: Who is involved?
+List of authors and contributors
