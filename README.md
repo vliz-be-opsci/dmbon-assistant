@@ -41,19 +41,28 @@ We will further motivate our choices and provide users and developers on how to 
 ---
 [//]: <> (VISION)
 ## Our vision
-We believe that discovery relies on open and transparent management of data - following the [FAIR principles](https://www.go-fair.org/fair-principles/).
+We believe that discovery relies on open and transparent management of data by following the [FAIR principles](https://www.go-fair.org/fair-principles/).
 We furthermore believe that researchers should be able to search through scientific data as if they are searching the semantic web.
 This means that search queries such as *"what was the water temperature during recent sightings of killer whales in the North Pacific Ocean?"*, should be made possible. 
 Obviously, for scientific data to be FAIR and meaningful to allow such queries, it has to adhere to specific rules such that others can discover, filter and (re-)use the data with little effort.
-Ideally, tools should exist such that those that gather data should be able to upload meaningful data with relative ease. \
-This project aims to do exactly that: assist people in uploading their data (including metadata) to the web.
+Ideally, tools should exist such that those that gather data should be able to upload and distribute meaningful data with relative ease. \
+This project aims to do exactly that: assist people in uploading their data (including metadata) to the web. 
+We believe that future projects, potentially built on top of this one, can then further support complex search queries on distributed datasets.
+
+<!-- FIGURE -- Schematic overview of our vision -->
+<figure align="center">
+  <img src="docs/img/envisioned-ecosystem.png#gh-light-mode-only"></img>
+  <figcaption align="center"><b>Fig. 1:</b>
+  <i>A schematic overview of our vision: FAIR and distributed access to data and metadata using complex queries.</i>
+  </figcaption>
+</figure>
 
 **Goals**: \
 :heavy_check_mark: Introduce a simple assisted procedure for uploading heterogeneous data that conforms to FAIR data management plans. \
-:heavy_check_mark: Enable complex search queries for meta-analysis on heterogeneous data. \
+:heavy_check_mark: Enable complex search queries for meta-analysis on distributed, heterogeneous databases. \
 :heavy_check_mark: Build a thriving community that supports open science.
 
-![Overview of our general vision](docs/images/dmbon-assistant-rocrate-to-pages.png)
+![Overview of our general vision](docs/img/dmbon-assistant-rocrate-to-pages.png)
 
 ### Motivation
 Sound scientific results are derived from good data. 
@@ -94,20 +103,20 @@ Explain the general premise of DMBON-assistant
 ## Getting started
 ### Installation
 <h4>
-  <img width="20" src="/docs/images/black/windows.svg#gh-light-mode-only">
-  <img width="20" src="/docs/images/white/windows.svg#gh-dark-mode-only">
+  <img width="20" src="/docs/img/icons/black/windows.svg#gh-light-mode-only">
+  <img width="20" src="/docs/img/icons/white/windows.svg#gh-dark-mode-only">
   On Windows
 </h4>
 (Thorough Windows installation instructions)
 <h4>
-  <img width="20" src="/docs/images/black/linux.svg#gh-light-mode-only">
-  <img width="20" src="/docs/images/white/linux.svg#gh-dark-mode-only">
+  <img width="20" src="/docs/img/icons/black/linux.svg#gh-light-mode-only">
+  <img width="20" src="/docs/img/icons/white/linux.svg#gh-dark-mode-only">
   On Linux
 </h4>
 (Thorough Linux system installation instructions)
 <h4>
-  <img width="20" src="/docs/images/black/apple.svg#gh-light-mode-only">
-  <img width="20" src="/docs/images/white/apple.svg#gh-dark-mode-only">
+  <img width="20" src="/docs/img/icons/black/apple.svg#gh-light-mode-only">
+  <img width="20" src="/docs/img/icons/white/apple.svg#gh-dark-mode-only">
   On Mac OS
 </h4>
 (Thorough MacOS system installation instructions?)

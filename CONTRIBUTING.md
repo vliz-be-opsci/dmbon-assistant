@@ -36,6 +36,10 @@ Additionally, we are huge advocates for open science and thus open source projec
 Therefore, we envision to establish a thriving community of users and developers alike.
 We hope that this community can both improve and extend the functionality of DMBON-assistant and create a more open and widely used data pipeline.
 
+| :exclamation: | Although we will explain the envisioned workflow with and by contributors below, please note that this workflow is also subjected to change. This means that any feedback on our envisioned workflow is also of great importance to us!
+| :--- | :--- |
+
+
 ## Links to important resources
 - :link: documentation
 - :link: issue tracker
