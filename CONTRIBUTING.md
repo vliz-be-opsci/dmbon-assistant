@@ -42,7 +42,7 @@ We hope that this community can both improve and extend the functionality of DMB
 
 ## Links to important resources
 :link: documentation \
-:link: [Issues](issues) \
+:link: [Issues](vliz-be-opsci/dmbon-assistant/issues) \
 :link: [Discussions](https://github.com/vliz-be-opsci/dmbon-assistant/discussions)
 
 ## Quickstart for developers
