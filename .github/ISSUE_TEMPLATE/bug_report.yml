@@ -1,4 +1,4 @@
-name: 🐛 Bug report
+name: Bug report
 description: File a bug report here
 title: "[BUG]:"
 labels: ["bug"]
@@ -20,8 +20,9 @@ body:
   - type: textarea
     id: bug-description
     attributes:
-      label: Bug description
-      description: Please provide a clear and conscise description of the bug 
+      label: 🐛 Bug description
+      description: Please provide a description of the bug 
+      placeholder: Try to be as clear and conscise as possible when describing the bug.
     validations:
       required: true 
   
@@ -30,17 +31,16 @@ body:
     attributes:
       label: ♻️ Steps to reproduce
       description: Describe the exact steps you have taken that made you encounter the bug.
-      placeholder: Please write detailed stels in a list form below.
+      placeholder: Please write detailed steps in a list form below.
     validations:
       required: true 
 
   - type: textarea
     id: your-efforts
     attributes:
-      label: List your efforts
+      label: 🔧 List your efforts
       description: Describe what you have done to try to fix the issue or what you possibly think is happening that raises the issue.
-    validations:
-      required: true 
+      placeholder: Please write details on possible solutions to the problem
   
   - type: textarea
     id: additional-information

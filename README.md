@@ -51,7 +51,8 @@ We believe that future projects, potentially built on top of this one, can then 
 
 <!-- FIGURE -- Schematic overview of our vision -->
 <figure align="center">
-  <img src="docs/img/envisioned-ecosystem.png#gh-light-mode-only"></img>
+  <img width=750, src="docs/img/diagrams/envisioned-ecosystem-black.svg#gh-light-mode-only"></img>
+  <img width=750, src="docs/img/diagrams/envisioned-ecosystem-white.svg#gh-dark-mode-only"></img>
   <figcaption align="center"><b>Fig. 1:</b>
   <i>A schematic overview of our vision: FAIR and distributed access to data and metadata using complex queries.</i>
   </figcaption>
