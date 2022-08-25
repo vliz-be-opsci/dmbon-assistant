@@ -96,6 +96,15 @@ If you are interested, please find the section on [contributing](#contributing) 
 Interested? Great! 
 But how does DMBON-assistant actually help those that gather data to upload and uplift their data in a meaningful way?
 
+<!-- FIGURE -- Schematic overview of the DMBON assistant -->
+<p><figure align="center">
+  <img width=750, src="docs/img/diagrams/dmbon-assistant-black.svg#gh-light-mode-only"></img>
+  <img width=750, src="docs/img/diagrams/dmbon-assistant-white.svg#gh-dark-mode-only"></img>
+  <figcaption align="left"><b>Fig. 1:</b>
+  <i>A schematic overview of what the DMBON assistant aims to accomplish.
+  </i>
+  </figcaption>
+</figure></p>
 
 Explain the general premise of DMBON-assistant
 
