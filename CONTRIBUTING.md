@@ -110,7 +110,6 @@ If yes, please submit a pull request.
 We use [CLA assistant](https://cla-assistant.io/) to automate the process of contributors agreeing with our Contributor License Agreement (CLA). 
 
 
-
 [//]: <> (WHO IS INVOLVED? LIST ALL CURRENT AUTHORS/CONTRIBUTORS)
 ### :bust_in_silhouette: Who is involved?
 List of authors and contributors
