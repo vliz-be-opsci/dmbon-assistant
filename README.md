@@ -7,6 +7,14 @@
 :earth_africa: **[Learn more about DMBON assistant on our website](https://open-science.vliz.be/#projects)**
 
 # Data management assistant
+
+**Uniform and FAIR data management for scientists**: \
+:outbox_tray: Remove the hassle of uploading meaningful research data \
+:notebook: Safeguard rules to ensure uniformity within and between organizations \
+:recycle: Streamline storage and access of research data
+
+---
+
 Data management assistant for Biodiversity Observation Networks (DMBON-assistant) is a case study of a more general data management framework and webtop application that supports scientists by providing a consistent and streamlined dataflow within and between individuals and organizations. 
 It lowers the barrier for collaborative efforts by making data more accessible and searchable, enabling more complex search queries on open datasets that enrich meta-analyses.
 The DMBON-assistant is an important piece of our grander [vision](#our-vision).
@@ -22,7 +30,7 @@ We believe that open sourcing a project such as this benefits the community and 
 [//]: <> (EXPLAIN HOW TO READ THIS DOCUMENT)
 ##### Reading this README
 In this README, we will explain our vision for this project. 
-We will further motivate our choices and provide users and developers on how to use and contribute to DMBON-assistant. 
+We will further motivate the choices that we have made and further provide both users and developers on how to use and contribute to DMBON-assistant.
 
 ### Table of contents
 - [Our vision](#our-vision)
@@ -42,7 +50,7 @@ We will further motivate our choices and provide users and developers on how to 
 [//]: <> (VISION)
 ## Our vision
 We believe that discovery relies on open and transparent management of data by following the [FAIR principles](https://www.go-fair.org/fair-principles/).
-We furthermore believe that researchers should be able to search through scientific data as if they are searching the semantic web.
+We furthermore believe that researchers should be able to search through scientific data just as easy as if they are performing a web-search.
 This means that search queries such as *"what was the water temperature during recent sightings of killer whales in the North Pacific Ocean?"*, should be made possible. 
 Obviously, for scientific data to be FAIR and meaningful to allow such queries, it has to adhere to specific rules such that others can discover, filter and (re-)use the data with little effort.
 Ideally, tools should exist such that those that gather data should be able to upload and distribute meaningful data with relative ease. \
@@ -95,22 +103,33 @@ If you are interested, please find the section on [contributing](#contributing) 
 ## How does it work?
 Interested? Great! 
 But how does DMBON-assistant actually help those that gather data to upload and uplift their data in a meaningful way?
+In general, the assistant (as the name suggests) aims to *assist* in the data upload process to ensure uniformity both within and between organizations. 
+Our general envisioned flow is illustrated below:
 
 <!-- FIGURE -- Schematic overview of the DMBON assistant -->
 <p><figure align="center">
   <img width=750, src="docs/img/diagrams/dmbon-assistant-black.svg#gh-light-mode-only"></img>
   <img width=750, src="docs/img/diagrams/dmbon-assistant-white.svg#gh-dark-mode-only"></img>
   <figcaption align="left"><b>Fig. 1:</b>
-  <i>A schematic overview of what the DMBON assistant aims to accomplish.
+  <i>A schematic overview of what the DMBON assistant aims to accomplish: easy and uniform uploading of heterogeneous datasets.
   </i>
   </figcaption>
 </figure></p>
 
+On the left, we see a user that has multiple sources of data and metadata. 
+These can range from raw data and metadata to (source code to) analyses and publications. 
+Importantly, much of the raw data is often uploaded to some external cloud service (such as [ENA](https://www.ebi.ac.uk/ena/browser/home) for DNA sequence information). 
+As such, links to the raw data can be provided as well! 
+
+DMBON assistant, here highlighted in blue, provides an easy way of uploading heterogeneous data using any browser!
+Hidden under the hood, DMBON assistant ensures that the data description conforms to the data management plan of the organization.
+Finally, the assistant generates a publishable [Research Object Crate (RO-crate)](https://www.researchobject.org/ro-crate/) that neatly packages heterogeneous research data with their metadata. 
 Explain the general premise of DMBON-assistant
 
-- greatly simplifies generation of FAIR research objects 
-- ensures correspondence with established data management plans
-- ensures fast and easy indexation and discovery of research objects through automatic semantic uplifting
+As such, using DMBON assistant greatly simplifies generation of FAIR research object crates by:
+- providing an easy to use interface to upload research data using your browser
+- ensuring correspondence with data management plans
+<!-- - ensures fast and easy indexation and discovery of research objects through automatic semantic uplifting -->
 
 [//]: <> (GETTING STARTED)
 ## Getting started
