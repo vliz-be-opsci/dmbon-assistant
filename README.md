@@ -135,20 +135,20 @@ As such, using DMBON assistant greatly simplifies generation of FAIR research ob
 ## Getting started
 ### Installation
 <h4>
-  <img width="20" src="/docs/img/icons/black/windows.svg#gh-light-mode-only">
-  <img width="20" src="/docs/img/icons/white/windows.svg#gh-dark-mode-only">
+  <img width="20" src="/docs/img/logos/black/windows.svg#gh-light-mode-only">
+  <img width="20" src="/docs/img/logos/white/windows.svg#gh-dark-mode-only">
   On Windows
 </h4>
 (Thorough Windows installation instructions)
 <h4>
-  <img width="20" src="/docs/img/icons/black/linux.svg#gh-light-mode-only">
-  <img width="20" src="/docs/img/icons/white/linux.svg#gh-dark-mode-only">
+  <img width="20" src="/docs/img/logos/black/linux.svg#gh-light-mode-only">
+  <img width="20" src="/docs/img/logos/white/linux.svg#gh-dark-mode-only">
   On Linux
 </h4>
 (Thorough Linux system installation instructions)
 <h4>
-  <img width="20" src="/docs/img/icons/black/apple.svg#gh-light-mode-only">
-  <img width="20" src="/docs/img/icons/white/apple.svg#gh-dark-mode-only">
+  <img width="20" src="/docs/img/logos/black/apple.svg#gh-light-mode-only">
+  <img width="20" src="/docs/img/logos/white/apple.svg#gh-dark-mode-only">
   On Mac OS
 </h4>
 (Thorough MacOS system installation instructions?)
