@@ -1,0 +1,52 @@
+name: Feature request
+description: Request a new feature or propose a new idea here
+title: "[REQUEST]:"
+labels: ["feature suggestion"]
+
+body:
+  - type: markdown
+    attributes:
+      value: | 
+        Thanks for taking your time to propose a new feature!
+  - type: checkboxes
+    id: new-feature 
+    attributes:
+      label: Is this feature already implemented or suggested?
+      description: |
+        Please make sure the suggested feature is not already somehow included or has already been suggested before.
+      options:
+        - label: I have determined this suggested feature is novel
+          required: true 
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Suggested feature
+      description: Please provide a clear description of the suggested feature
+      placeholder: As others might be implementing this feature, please make sure that the purpose of the suggested feature is as clear as possible.
+    validations:
+      required: true 
+  
+  - type: textarea
+    id: proposed-function
+    attributes:
+      label: Proposed function
+      description: Please try to describe how you would use the suggested feature in your workflow.
+      placeholder: Please include any details on how you envision the suggested feature to be integrated into the system. |
+        This can include code snippets, UI mockups, or a clear description of the intended purpose of the feature.
+  
+  - type: textarea
+    id: proposed-implementation
+    attributes:
+      label: Implementation proposal
+      description: If you already have some idea how the feature might be implemented, please let us know.
+      placeholder: Please provide any ideas you might already have on how to implement the suggested feature. |
+        This can include code snippets.
+  
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: 📑 Additional information
+      description: Please add any other information about the suggested feature here, such as other applications that might have this feature already implemented.
+      placeholder: If other applications already include the feature, please provide a link to the application and include a description of how it functions. |
+        This might help us to understand the intentions of the feature and where the idea is coming from.
