@@ -4,7 +4,10 @@
 
 [![On_Push_Testing](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml/badge.svg?branch=main)](https://github.com/vliz-be-opsci/dmbon-assistant/actions/workflows/buld_test_and_auto_tag_release.yml)
 
-:earth_africa: **[Learn more about DMBON assistant on our website](https://open-science.vliz.be/#projects)**
+<!-- @TODO: Include proper link to the larger ecosystem that highlights all the individual parts -->
+:link: **[This project is part of a larger open data ecosystem. Find out more information here!](https://open-science.vliz.be/#projects)** \
+:earth_africa: **[Learn more about this project on our website](https://open-science.vliz.be/#projects)**
+
 
 # Data management assistant
 
@@ -59,8 +62,8 @@ We believe that future projects, potentially built on top of this one, can then 
 
 <!-- FIGURE -- Schematic overview of our vision -->
 <p><figure align="center">
-  <img width=750, src="docs/img/diagrams/envisioned-ecosystem-black.svg#gh-light-mode-only"></img>
-  <img width=750, src="docs/img/diagrams/envisioned-ecosystem-white.svg#gh-dark-mode-only"></img>
+  <img width=750, src="img/diagrams/envisioned-ecosystem-black.svg#gh-light-mode-only"></img>
+  <img width=750, src="img/diagrams/envisioned-ecosystem-white.svg#gh-dark-mode-only"></img>
   <figcaption align="left"><b>Fig. 1:</b>
   <i>A schematic overview of our vision: FAIR and distributed access to data and metadata using complex queries.
   (1.) A user uploads heterogeneous data using DMBON assistant. Our service first ensures the FAIR principle by packaging data in an RO-crate that contains the necessary metadata. Then another service generates miniature webpages from every individual RO-crate, which can be easily accessed using any browser to preview data.
@@ -108,8 +111,8 @@ Our general envisioned flow is illustrated below:
 
 <!-- FIGURE -- Schematic overview of the DMBON assistant -->
 <p><figure align="center">
-  <img width=750, src="docs/img/diagrams/dmbon-assistant-black.svg#gh-light-mode-only"></img>
-  <img width=750, src="docs/img/diagrams/dmbon-assistant-white.svg#gh-dark-mode-only"></img>
+  <img width=750, src="img/diagrams/dmbon-assistant-black.svg#gh-light-mode-only"></img>
+  <img width=750, src="img/diagrams/dmbon-assistant-white.svg#gh-dark-mode-only"></img>
   <figcaption align="left"><b>Fig. 1:</b>
   <i>A schematic overview of what the DMBON assistant aims to accomplish: easy and uniform uploading of heterogeneous datasets.
   </i>
@@ -129,26 +132,25 @@ Explain the general premise of DMBON-assistant
 As such, using DMBON assistant greatly simplifies generation of FAIR research object crates by:
 - providing an easy to use interface to upload research data using your browser
 - ensuring correspondence with data management plans
-<!-- - ensures fast and easy indexation and discovery of research objects through automatic semantic uplifting -->
 
 [//]: <> (GETTING STARTED)
 ## Getting started
 ### Installation
 <h4>
-  <img width="20" src="/docs/img/logos/black/windows.svg#gh-light-mode-only">
-  <img width="20" src="/docs/img/logos/white/windows.svg#gh-dark-mode-only">
+  <img width="20" src="/img/logos/black/windows.svg#gh-light-mode-only">
+  <img width="20" src="/img/logos/white/windows.svg#gh-dark-mode-only">
   On Windows
 </h4>
 (Thorough Windows installation instructions)
 <h4>
-  <img width="20" src="/docs/img/logos/black/linux.svg#gh-light-mode-only">
-  <img width="20" src="/docs/img/logos/white/linux.svg#gh-dark-mode-only">
+  <img width="20" src="/img/logos/black/linux.svg#gh-light-mode-only">
+  <img width="20" src="/img/logos/white/linux.svg#gh-dark-mode-only">
   On Linux
 </h4>
 (Thorough Linux system installation instructions)
 <h4>
-  <img width="20" src="/docs/img/logos/black/apple.svg#gh-light-mode-only">
-  <img width="20" src="/docs/img/logos/white/apple.svg#gh-dark-mode-only">
+  <img width="20" src="/img/logos/black/apple.svg#gh-light-mode-only">
+  <img width="20" src="/img/logos/white/apple.svg#gh-dark-mode-only">
   On Mac OS
 </h4>
 (Thorough MacOS system installation instructions?)
