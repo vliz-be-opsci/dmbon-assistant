@@ -35,6 +35,9 @@ We believe that open sourcing a project such as this benefits the community and 
 In this README, we will explain our vision for this project. 
 We will further motivate the choices that we have made and further provide both users and developers on how to use and contribute to DMBON-assistant.
 
+:arrow_right: | _Different README files are located within this project, as github renders files with such a name nicely below the file information. Please do not confuse other README files in subdirectories with this one._
+| :--- | :--- |
+
 ### Table of contents
 - [Our vision](#our-vision)
   - [Motivation](#motivation)
