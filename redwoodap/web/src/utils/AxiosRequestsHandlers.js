@@ -166,7 +166,7 @@ export const postBlanknoteFile = (id, file_id, payload) => {
 
 // delete annotation for specific file in datacrate
 export const deleteAnnotationFile = (id, file_id, annotation_id) => {
-  return axios.delete(`${api_url}/spaces/${id}/annotation/file//${annotation_id}/${file_id}`);
+  return axios.delete(`${api_url}/spaces/${id}/annotation/file/${annotation_id}/${file_id}`);
 }
 
 // delete all annotations for specific datacrate
