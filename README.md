@@ -145,12 +145,45 @@ As such, using DMBON assistant greatly simplifies generation of FAIR research ob
   On Windows
 </h4>
 (Thorough Windows installation instructions)
+
 <h4>
   <img width="20" src="/img/logos/black/linux.svg#gh-light-mode-only">
   <img width="20" src="/img/logos/white/linux.svg#gh-dark-mode-only">
   On Linux
 </h4>
-(Thorough Linux system installation instructions)
+##### Building from source
+**Backend** \
+This is
+
+**Frontend** \
+For general use we do not recommend building from source, but for advanced use and/or adaptation (i.e. as a contributor) it can be useful to build from source instead. 
+The frontend is written in JavaScript using [RedwoodJS](https://redwoodjs.com/).
+We recommend installing all necessary packages/libraries with [`yarn`](https://yarnpkg.com/) as the package manager for [`Node.js`](https://nodejs.org/en/).
+
+1. Install [Node Version Manager](https://github.com/nvm-sh/nvm) to ensure the corrent version of Node will be used to support building the frontend:
+```bash
+$ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+```
+2. Install Node.js (>=14.19.x <=16.x)
+```bash
+$ nvm install 16
+```
+3. To manage the frontend, use Yarn which, in turn, is managed through [Corepack](https://nodejs.org/dist/latest/docs/api/corepack.html). 
+Versions of Node.js <16.10 do not automatically include Corepack, so run:
+```bash 
+$ npm i -g corepack
+```
+If the version of Node.js >=16.10, Corepack is included by default but needs to be enabled:
+```bash
+$ corepack enable
+```
+Then, activate Yarn:
+```bash
+$ corepack prepare yarn@stable --activate
+```
+4. Run installation scripts:
+
+
 <h4>
   <img width="20" src="/img/logos/black/apple.svg#gh-light-mode-only">
   <img width="20" src="/img/logos/white/apple.svg#gh-dark-mode-only">
