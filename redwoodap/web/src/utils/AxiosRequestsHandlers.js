@@ -183,5 +183,3 @@ export const getShaclReport = (id) => {
 export const getShaclTerms = (id) => {
   return axios.get(`${api_url}/spaces/${id}/annotation/terms`);
 }
-
-

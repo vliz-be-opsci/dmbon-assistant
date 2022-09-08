@@ -58,6 +58,7 @@ span {
   min-width: 2%;
   max-height: 60px;
   margin-right: 10px;
+  transform: translateX(-100px);
 }
 
 .file-content > .file-name {

@@ -14,6 +14,7 @@ import MainLayout from './layouts/MainLayout/MainLayout'
 const Routes = () => {
   return (
     <Router>
+      
       <Set wrap={MainLayout}>
         <Route path="/profiles" page={OverviewProfilesPage} name="overviewProfiles" />
         <Route path="/profiles/{profile_id}" page={SpecificProfilePage} name="specificProfile" />
@@ -23,6 +24,7 @@ const Routes = () => {
         <Route path="/datacrates/{datacrate_id}/content/{node_id}" page={SpecificDatacratePageNodePage} name="specificDatacratePageNode" />
         <Route path="/datacrates/{datacrate_id}/git" page={SpecificDatacrateGitPage} name="specificDatacrateGit" />
         <Route path="/datacrates/{datacrate_id}/settings" page={SpecificDatacrateSettingsPage} name="specificDatacrateSettings" />
+        <Route path="/make_profile" page={MakeProfilePage} name="makeProfile" />
         <Route path="/about" page={AboutPage} name="about" />
         <Route path="/" page={HomePage} name="home" />
         <Route path="/settings" page={SettingsPage} name="settings" />

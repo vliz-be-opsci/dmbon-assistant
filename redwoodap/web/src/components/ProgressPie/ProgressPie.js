@@ -7,7 +7,7 @@ const ProgressPie = (content) => {
   const display = content.content;
 
   const data = {
-    labels: ['Good','Warning','Req(%)'],
+    labels: ['Good(%)','Warn(%)','Req(%)'],
     datasets: [
       {
         label: 'Annotations',
