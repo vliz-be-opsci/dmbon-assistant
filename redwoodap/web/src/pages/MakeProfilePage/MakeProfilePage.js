@@ -1,5 +1,5 @@
 import { Link, routes } from '@redwoodjs/router'
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import { MetaTags } from '@redwoodjs/web'
 import $ from 'jquery'
 import Draggable, {DraggableCore} from 'react-draggable';
@@ -9,7 +9,6 @@ import "./MakeProfilePage.css"
 const MakeProfilePage = () => {
   const [DragElements, setDragElements] = useState({});
   const [count, setcount] = useState(0);
-  const [LastCoordinates, setLastCoordinates] = useState({});
 
   function addDraggableComponent() {
     console.log("event triggered");
@@ -19,20 +18,25 @@ const MakeProfilePage = () => {
     setDragElements(currentdrag)
   }
 
+  function deletedragComponent(id) {
+    console.log("deleting key", id);
+    let currentdrag = DragElements;
+    delete currentdrag[id]
+    console.log("currentdrag", currentdrag);
+    setDragElements(currentdrag);
+    setcount(count-1)
+  }
+
+  //everytime the count changes, this function is called
+  useEffect(() => {
+    console.log("count changed", count);
+    console.log("DragElements", DragElements);
+  }, [DragElements,count])
+
+
   function checklocation(key,e) {
     console.log(key)
     console.log(e)
-    console.log(LastCoordinates)
-    //get the current outher box coordinates of the canvas_profile
-    const canvas = document.getElementById("canvas_profile")
-    const rect = canvas.getBoundingClientRect();
-    const current_dragelement = document.getElementById("dragelement_"+key)
-    console.log(rect);
-
-    //check if the e[clientX] is bigger then rect[left] && < right - e[offsetX] and if e[clientY] is bigger then rect[top] && < rect[bottom] - e[offsetY]
-    //first x values 
-    if(e["clientX"] < (rect["left"]+ (e["offsetX"])) || e["clientX"] > (rect["right"] - e["offsetX"])){console.log("x value not good")}
-    if(e["clientY"] < (rect["top"]+ (e["offsetY"])) || e["clientY"] > (rect["bottom"] - e["offsetY"])){console.log("y value not good")}
   }
 
   return (
@@ -61,7 +65,12 @@ const MakeProfilePage = () => {
         <div className='canvas_profile' id='canvas_profile'>
           {Object.keys(DragElements).map((key) => {
             return (
-              <Draggable bounds="parent" onStop={e => checklocation(key,e)} key={key}><div id={"dragelement_"+key} className='dragelement'>{DragElements[key]["text"]}</div></Draggable>
+              <Draggable bounds="parent" onStop={e => checklocation(key,e)} key={key}>
+              <div id={"dragelement_"+key} className='dragelement'>
+                {DragElements[key]["text"]}
+                <button className='deletebutton' onClick={() => deletedragComponent(key)}>delete</button>
+                </div>
+              </Draggable>
             );
           }
           )}
