@@ -199,7 +199,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
 
   //return renders
   if (loading) {
-    return LoadingBlock("Fetching Datacrate Content");
+    return LoadingBlock("Fetching Datacrate Content, this can take a while");
   }
   if (error) {
     return <AxiosError errorMessage={errorMessage} />;
@@ -209,6 +209,9 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       <>
       <div className="component">
         <div className="title">Files</div>
+        <div className="searchbar">
+          placeholder searchbar
+        </div>
         {Object.keys(DatacrateContent).map((key) => {
           return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
         }

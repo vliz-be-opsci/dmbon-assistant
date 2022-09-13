@@ -193,7 +193,7 @@ const DatacrateContentResourceTable = (datacrate_uuid) => {
 
   //return renders
   if (loading) {
-    return LoadingBlock("Fetching Datacrate Content");
+    return LoadingBlock("Fetching Datacrate Resources, this can take a while");
   }
   if (error) {
     return <AxiosError errorMessage={errorMessage} />;
