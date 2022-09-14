@@ -86,7 +86,7 @@ export const deleteDatacrate = (id) => {
 
 //fix datacrate with id
 export const fixDatacrate = (id) => {
-  return axios.put(`${api_url}/spaces/${id}/fixcrate`);
+  return axios.get(`${api_url}/spaces/${id}/fixcrate`);
 }
 
 //get git status from a specific datacrate

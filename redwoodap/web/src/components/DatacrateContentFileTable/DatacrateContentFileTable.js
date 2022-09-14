@@ -9,6 +9,7 @@ import DatacrateContentFileRow from "../DatacrateContentFileRow/DatacrateContent
 import AnnotationTable from "../AnnotationTable/AnnotationTable";
 import AnnotationValidationErrorOverview from "../AnnotationValidationErrorOverview/AnnotationValidationErrorOverview";
 import ProgressBarContent from '../ProgressBar/ProgressBar';
+import FileActions from 'src/components/FileActions/FileActions';
 import 'react-loading-skeleton/dist/skeleton.css';
 import '../component.css';
 import './DatacrateContentFileTable.css'
@@ -28,9 +29,41 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [ValueAnnotation, setValueAnnotation] = useState("");
   const [AddingAnnotation, setAddingAnnotation] = useState(false);
   const [DeletingAnnotation, setDeletingAnnotation] = useState(false);
+  const [Showuploadmodal, setShowuploadmodal] = useState(false);
+  const [exploreradded, setExploreradded] = useState(false);
 
   console.log(`predicate annotation is ${PredicateAnnotation}`);
   console.log(`dtatacratecontent is ${DatacrateContent}`);
+
+  useEffect(() => {
+    if(!exploreradded){
+      setLoading(true);
+      getAllAnnotations(datacrate_uuid).then(res => {
+        //for entry in res.data.data, if the key contains http or https then console.log
+        let contentdata = {};
+        for(let entry in res.data.data){
+          if(entry.includes("http") || entry.includes("https")){
+            console.log(entry);
+          }else{
+            //add the key and value to the contentdata object
+            contentdata[entry] = res.data.data[entry];
+          }
+        }
+  
+        setDatacrateContent(contentdata);
+        console.log(res.data.data);
+        setLoading(false);
+      }
+      ).catch(err => {
+        console.log(err);
+        setError(true);
+        setErrorMessage(err);
+        setLoading(false);
+      }
+      );
+    }
+  }, [exploreradded]);
+
 
   //useEffect that gets triggered by a change in DeleteAnnotation, if deleteAnnotationFile is false then it will get annotations for the file and set the state of DatacrateContent to the annotations
   useEffect(() => {
@@ -209,6 +242,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       <>
       <div className="component">
         <div className="title">Files</div>
+        {FileActions(setExploreradded, datacrate_uuid, Showuploadmodal, setShowuploadmodal)}
         <div className="searchbar">
           placeholder searchbar
         </div>

@@ -40,3 +40,7 @@
   border: 2px solid #1a94aa;
   color: #fff
 }
+
+.wide {
+  width: 98%;
+}
