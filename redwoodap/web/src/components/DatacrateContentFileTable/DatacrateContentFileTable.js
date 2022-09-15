@@ -2,8 +2,8 @@ import { useState, useEffect} from "react";
 import { getAllAnnotations, getAnnotationsFile, postAnnotationFile, deleteAnnotationFile, postBlanknoteFile} from "src/utils/AxiosRequestsHandlers";
 import AxiosError from "../AxiosError/AxiosError";
 import {Modal} from "react-bootstrap";
-
-
+import { FaSearch } from "react-icons/fa";
+import {VscListTree} from "react-icons/vsc";
 import LoadingBlock from "../LoadingBlock/LoadingBlock";
 import DatacrateContentFileRow from "../DatacrateContentFileRow/DatacrateContentFileRow";
 import AnnotationTable from "../AnnotationTable/AnnotationTable";
@@ -32,6 +32,12 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [Showuploadmodal, setShowuploadmodal] = useState(false);
   const [exploreradded, setExploreradded] = useState(false);
 
+  //breadcrumn states
+  const [currentfolder, setcurrentfolder] = useState(".");
+  const [listallfolders, setListallfolders] = useState([]);
+  const [listcurrentfiles, setListcurrentfiles] = useState([]);
+  const [searchtext, setsearchtext] = useState("");
+
   console.log(`predicate annotation is ${PredicateAnnotation}`);
   console.log(`dtatacratecontent is ${DatacrateContent}`);
 
@@ -49,7 +55,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
             contentdata[entry] = res.data.data[entry];
           }
         }
-  
+
         setDatacrateContent(contentdata);
         console.log(res.data.data);
         setLoading(false);
@@ -122,15 +128,24 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     getAllAnnotations(datacrate_uuid).then(res => {
       //for entry in res.data.data, if the key contains http or https then console.log
       let contentdata = {};
+      let allfolders = [];
       for(let entry in res.data.data){
         if(entry.includes("http") || entry.includes("https")){
           console.log(entry);
         }else{
           //add the key and value to the contentdata object
           contentdata[entry] = res.data.data[entry];
+          //split entry on / and then loop through the array and add the folder to the listallfolders state if its not already there
+          let splitentry = entry.split("/");
+          //get every part exept the last part of the splitentry array and merge together with a / to get the folder
+          let folder = splitentry.slice(0, splitentry.length - 1).join("/");
+          if(!allfolders.includes(folder)){
+            allfolders = [...allfolders, folder]
+          }
         }
       }
-
+      console.log(allfolders);
+      setListallfolders(allfolders);
       setDatacrateContent(contentdata);
       console.log(res.data.data);
       setLoading(false);
@@ -144,6 +159,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     );
   }, [datacrate_uuid]);
 
+  //useEffect that gets triggered by a change in breadcrumbs, it gets all the input folders from the last element in the breadcrumbs array, if array is 0 then
   //useeffect that triggers when modalcontent is updated that will fetch the specific file content
   useEffect(() => {
     if(modalContent.file_name){
@@ -160,6 +176,24 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     }
   }
   , [modalContent]);
+
+  //useEffect that gets triggered when currentfolder or searchtext is updated
+  useEffect(() => {
+    let currentfiles = [];
+    let searchtextupper = searchtext.toUpperCase();
+    let currentfolderupper = currentfolder.toUpperCase();
+
+    //foreach key i ndatacratecontent, if the key contains the currentfolder and the key contains the searchtext then add the key to the currentfiles array
+    for(let key in DatacrateContent){
+      let keyupper = key.toUpperCase();
+      if(key.toUpperCase().includes(currentfolderupper) && key.toUpperCase().includes(searchtextupper)){
+        currentfiles = [...currentfiles, key];
+      }
+    }
+    console.log(currentfiles);
+    setListcurrentfiles(currentfiles);
+  }, [currentfolder, searchtext]);
+
 
   //function that returns the modal
   const MakeModal = () => {
@@ -244,10 +278,30 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
         <div className="title">Files</div>
         {FileActions(setExploreradded, datacrate_uuid, Showuploadmodal, setShowuploadmodal)}
         <div className="searchbar">
-          placeholder searchbar
+          <div className="input_folder">
+            <VscListTree></VscListTree>
+            <select onChange={(e)=> setcurrentfolder(e.target.value)}>
+              {
+                listallfolders.map((folder, index) => {
+                  return(<option key={index}>{folder}</option>)
+                })
+              }
+            </select>
+          </div>
+          <div className="input_search">
+            <FaSearch></FaSearch>
+            <input type="text" placeholder="Search" onChange={(e) => setsearchtext(e.target.value)}/>
+          </div>
         </div>
         {Object.keys(DatacrateContent).map((key) => {
-          return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
+          //check if the key contains the currentfolder and the searchtext
+          //convert key to uppercase
+          let keyupper = key.toUpperCase();
+          let searchtextupper = searchtext.toUpperCase();
+          let currentfolderupper = currentfolder.toUpperCase();
+          if(keyupper.includes(currentfolderupper) && keyupper.includes(searchtextupper)){
+            return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
+          }
         }
         )}
       </div>

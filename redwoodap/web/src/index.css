@@ -235,3 +235,70 @@ input.error, textarea.error {
 .fullwidth {
   width: 100%;
 }
+
+.searchbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.searchbar > .input_folder > select {
+  min-width: 30vw;
+  max-width: 30vw;
+  border: none;
+  font-size: 1rem;
+}
+
+.searchbar > .input_search > input {
+  min-width: 30vw;
+  max-width: 30vw;
+  border: none;
+  font-size: 1rem;
+}
+
+.searchbar > .input_search  {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-color-table);
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.searchbar > .input_folder  {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-color-table);
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.searchbar > .input_search > svg {
+  width: 2rem;
+  height: 2rem;
+  color: var(--border-color-table);
+  border-right: 1px solid var(--border-color-table);
+  margin-right: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.searchbar > .input_folder > svg {
+  width: 2rem;
+  height: 2rem;
+  color: var(--border-color-table);
+  border-right: 1px solid var(--border-color-table);
+  margin-right: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+
+.searchbar > .search_icon > svg {
+  width: 2rem;
+  height: 2rem;
+  color: var(--border-color-table);
+}
