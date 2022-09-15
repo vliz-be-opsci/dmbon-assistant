@@ -29,10 +29,16 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [ValueAnnotation, setValueAnnotation] = useState("");
   const [AddingAnnotation, setAddingAnnotation] = useState(false);
   const [DeletingAnnotation, setDeletingAnnotation] = useState(false);
+
+  //fileaction state descriptions here
   const [Showuploadmodal, setShowuploadmodal] = useState(false);
   const [exploreradded, setExploreradded] = useState(false);
+  const [ActionPerforming, setActionPerforming] = useState(false);
+  const [ShowDeleteModal, setShowDeleteModal] = useState(false);
+  const [ShowAnnotationModal, setShowAnnotationModal] = useState(false);
+  const [ToDeletefiles, setToDeletefiles] = useState([]);
 
-  //breadcrumn states
+  //filefolder and text search states here
   const [currentfolder, setcurrentfolder] = useState(".");
   const [listallfolders, setListallfolders] = useState([]);
   const [listcurrentfiles, setListcurrentfiles] = useState([]);
@@ -147,6 +153,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       console.log(allfolders);
       setListallfolders(allfolders);
       setDatacrateContent(contentdata);
+      setListcurrentfiles(Object.keys(contentdata));
       console.log(res.data.data);
       setLoading(false);
     }
@@ -276,7 +283,12 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       <>
       <div className="component">
         <div className="title">Files</div>
-        {FileActions(setExploreradded, datacrate_uuid, Showuploadmodal, setShowuploadmodal)}
+        {FileActions(setExploreradded, datacrate_uuid,
+           Showuploadmodal, setShowuploadmodal,
+            ShowDeleteModal, setShowDeleteModal,
+             ShowAnnotationModal, setShowAnnotationModal,
+              ActionPerforming, setActionPerforming,
+              listcurrentfiles,ToDeletefiles,setToDeletefiles)}
         <div className="searchbar">
           <div className="input_folder">
             <VscListTree></VscListTree>
@@ -293,17 +305,20 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
             <input type="text" placeholder="Search" onChange={(e) => setsearchtext(e.target.value)}/>
           </div>
         </div>
-        {Object.keys(DatacrateContent).map((key) => {
-          //check if the key contains the currentfolder and the searchtext
-          //convert key to uppercase
-          let keyupper = key.toUpperCase();
-          let searchtextupper = searchtext.toUpperCase();
-          let currentfolderupper = currentfolder.toUpperCase();
-          if(keyupper.includes(currentfolderupper) && keyupper.includes(searchtextupper)){
-            return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
+        <div className="metadata_file">
+          {Object.keys(DatacrateContent).map((key) => {
+            //check if the key contains the currentfolder and the searchtext
+            //convert key to uppercase
+            let keyupper = key.toUpperCase();
+            let searchtextupper = searchtext.toUpperCase();
+            let currentfolderupper = currentfolder.toUpperCase();
+            if(keyupper.includes(currentfolderupper) && keyupper.includes(searchtextupper)){
+              return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
+            }
           }
-        }
-        )}
+          )}
+        </div>
+
       </div>
       {MakeModal()}
       </>

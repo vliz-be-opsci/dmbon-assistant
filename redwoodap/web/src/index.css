@@ -296,9 +296,25 @@ input.error, textarea.error {
   padding-right: 0.5rem;
 }
 
-
 .searchbar > .search_icon > svg {
   width: 2rem;
   height: 2rem;
   color: var(--border-color-table);
+}
+
+/* have each nth child of .metadata_file fade in with +20ms delay for each nth child*/
+.metadata_file > * {animation: fadeIn 0.7s;}
+
+/* keyframes that have fade in left with blur */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px);
+    filter: blur(0px);
+  }
 }
