@@ -245,22 +245,22 @@ input.error, textarea.error {
 }
 
 .searchbar > .input_folder > select {
-  min-width: 30vw;
-  max-width: 30vw;
   border: none;
   font-size: 1rem;
+  text-align: left;
+  width: 90%;
 }
 
 .searchbar > .input_search > input {
-  min-width: 30vw;
-  max-width: 30vw;
   border: none;
   font-size: 1rem;
+  width: 90%;
 }
 
 .searchbar > .input_search  {
   display: flex;
   flex-direction: row;
+  min-width: 49%;
   justify-content: space-between;
   align-items: center;
   border: 1px solid var(--border-color-table);
@@ -270,6 +270,7 @@ input.error, textarea.error {
 
 .searchbar > .input_folder  {
   display: flex;
+  min-width: 49%;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -303,18 +304,114 @@ input.error, textarea.error {
 }
 
 /* have each nth child of .metadata_file fade in with +20ms delay for each nth child*/
-.metadata_file > * {animation: fadeIn 0.7s;}
+.metadata_file > * {
+  animation: fadeIn 0.8s;
+}
 
 /* keyframes that have fade in left with blur */
 @keyframes fadeIn {
   0% {
     opacity: 0;
     transform: translateX(-10px);
-    filter: blur(3px);
+    filter: blur(4px);
   }
   100% {
     opacity: 1;
     transform: translateX(0px);
     filter: blur(0px);
   }
+}
+
+.navigation_button {
+  width: auto;
+  margin: auto;
+  background-color: #1a94aa50;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  padding: 0.5rem;
+  border: 2px solid #1a94aa;
+  min-height: 70px;
+  max-height: 70px;
+  font-size: 1.5rem;
+  color:#1a94aa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/*center the icons */
+.navigation_button div svg {
+  color:#1a94aa;
+  font-size: 50px;
+  padding: 0.5rem;
+}
+
+.navigation_button:hover div svg {
+  color: #fff;
+}
+
+.navigation_button:hover {
+  background-color: #1a94aa;
+  border: 2px solid #1a94aa;
+  color: #fff
+}
+
+.wide {
+  width: 98%;
+}
+
+.title_file_content {
+  display: flex;
+  flex-direction: row;
+  max-height: 2rem;
+}
+
+.title_file_content > .row_navigation{
+  max-width: 50%;
+}
+
+.title_file_content > p {
+  margin: 0;
+  text-decoration: underline;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.row_navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.action_button {
+  width: auto;
+  min-width: 5rem;
+  margin-right: 0.2rem;
+  background-color: #1a94aa50;
+  text-decoration: none;
+  border-radius: 5px;
+  padding: 0.2rem;
+  border: 2px solid #1a94aa;
+  font-size: 1.0rem;
+  color:#1a94aa;
+  white-space: nowrap;
+}
+/*center the icons */
+.action_button div svg {
+  color:#1a94aa;
+  font-size: 20px;
+}
+
+.action_button:hover div svg {
+  color: #fff;
+}
+
+.action_button:hover {
+  background-color: #1a94aa;
+  border: 2px solid #1a94aa;
+  color: #fff
 }

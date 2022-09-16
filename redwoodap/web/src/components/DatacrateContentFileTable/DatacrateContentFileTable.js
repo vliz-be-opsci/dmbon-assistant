@@ -30,13 +30,16 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [AddingAnnotation, setAddingAnnotation] = useState(false);
   const [DeletingAnnotation, setDeletingAnnotation] = useState(false);
 
+  //filerow specific states
+  const [checkboxSelectedFiles, setCheckboxSelectedFiles] = useState([]);
+  const [normalselectedfiles, setNormalselectedfiles] = useState([]);
+
   //fileaction state descriptions here
   const [Showuploadmodal, setShowuploadmodal] = useState(false);
   const [exploreradded, setExploreradded] = useState(false);
   const [ActionPerforming, setActionPerforming] = useState(false);
   const [ShowDeleteModal, setShowDeleteModal] = useState(false);
   const [ShowAnnotationModal, setShowAnnotationModal] = useState(false);
-  const [ToDeletefiles, setToDeletefiles] = useState([]);
 
   //filefolder and text search states here
   const [currentfolder, setcurrentfolder] = useState(".");
@@ -282,13 +285,16 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     return (
       <>
       <div className="component">
-        <div className="title">Files</div>
+        <div className="title_file_content">
+          <p>Files</p>
         {FileActions(setExploreradded, datacrate_uuid,
            Showuploadmodal, setShowuploadmodal,
             ShowDeleteModal, setShowDeleteModal,
              ShowAnnotationModal, setShowAnnotationModal,
               ActionPerforming, setActionPerforming,
-              listcurrentfiles,ToDeletefiles,setToDeletefiles)}
+              listcurrentfiles,checkboxSelectedFiles,
+              normalselectedfiles, setNormalselectedfiles)}
+        </div>
         <div className="searchbar">
           <div className="input_folder">
             <VscListTree></VscListTree>
@@ -313,7 +319,17 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
             let searchtextupper = searchtext.toUpperCase();
             let currentfolderupper = currentfolder.toUpperCase();
             if(keyupper.includes(currentfolderupper) && keyupper.includes(searchtextupper)){
-              return DatacrateContentFileRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
+              return DatacrateContentFileRow(
+                key,
+                datacrate_uuid,
+                DatacrateContent[key],
+                setShowmodal,
+                setModalContent,
+                setSpecificFileContent,
+                checkboxSelectedFiles,
+                setCheckboxSelectedFiles,
+                normalselectedfiles, setNormalselectedfiles
+              );
             }
           }
           )}

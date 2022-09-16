@@ -6,9 +6,9 @@ import $ from "jquery";
 //inport util functions for opening explorer and fixcrate
 import { fixDatacrate , getOpenFileExplorer, deleteContent} from "src/utils/AxiosRequestsHandlers";
 
-const FileActions = (ActionPerformingEx, datacrate_uuid, uploadmodal, setuploadmodal, ShowDeleteModal, setShowDeleteModal, ShowAnnotationModal, setShowAnnotationModal, ActionPerforming, setActionPerforming ,listcurrentfiles, ToDeletefiles, setToDeletefiles) => {
+const FileActions = (ActionPerformingEx, datacrate_uuid, uploadmodal, setuploadmodal, ShowDeleteModal, setShowDeleteModal, ShowAnnotationModal, setShowAnnotationModal, ActionPerforming, setActionPerforming ,listcurrentfiles, checkboxselectedfiles, normalselectedfiles, setNormalselectedfiles) => {
 
-  // when uplaod clicked open file explorer and a popup with a message to place files in the folder
+  // when upload clicked open file explorer and a popup with a message to place files in the folder
   const upload = () => {
     getOpenFileExplorer(datacrate_uuid).then((res) => {
       setuploadmodal(true);
@@ -29,22 +29,21 @@ const FileActions = (ActionPerformingEx, datacrate_uuid, uploadmodal, setuploadm
   //function that will run the axios delete request to delete the Todeletefiles
   const deleteFiles = () => {
     console.log("delete clicked");
-    console.log(ToDeletefiles);
   }
 
   return (
     <>
     <div className='row_navigation' >
-      <button className='navigation_button' onClick={() => upload()}>
+      <button className='action_button' onClick={() => upload()}>
           <div><BsUpload></BsUpload></div>
       </button>
-      <button className='navigation_button' onClick={() => setShowDeleteModal(true)}>
+      <button className='action_button' onClick={() => setShowDeleteModal(true)}>
           <div><BsTrashFill></BsTrashFill></div>
       </button>
-      <button className='navigation_button' onClick={() => setShowAnnotationModal(true)}>
+      <button className='action_button' onClick={() => setShowAnnotationModal(true)}>
           <div><FaRegEdit></FaRegEdit></div>
       </button>
-      <button className='navigation_button' onClick={() => fix()}>
+      <button className='action_button' onClick={() => fix()}>
           <div><FaBookMedical></FaBookMedical></div>
       </button>
     </div>
@@ -58,49 +57,6 @@ const FileActions = (ActionPerformingEx, datacrate_uuid, uploadmodal, setuploadm
     <Modal show={ShowDeleteModal}>
       <Modal.Body>
         <h3>Placeholder modal for deleting files here, the backend functionality was removed and must be added back in </h3>
-        <table>
-          <tr>
-            <th>
-              <input type="checkbox" id="selectall" name="selectall" onChange={(e) => {
-                // if select all is checked then check all the checkboxes via jquery
-                console.log("select all clicked");
-                if (e.target.checked) {
-                  console.log("select all checked");
-                  $("input:checkbox").prop("checked", true);
-                  setToDeletefiles(listcurrentfiles);
-                } else {
-                  console.log("select all unchecked");
-                  $("input:checkbox").prop("checked", false);
-                  setToDeletefiles([]);
-                }
-              }}></input>
-            </th>
-            <th>File Name</th>
-          </tr>
-          {listcurrentfiles.map((file) => (
-            <tr>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={ToDeletefiles.includes(file)}
-                  name="checkboxinput"
-                  onChange={() => {
-                    console.log("checkbox clicked");
-                    if (ToDeletefiles.includes(file)) {
-                      setToDeletefiles(
-                        ToDeletefiles.filter((f) => f !== file)
-                      );
-                    } else {
-                      setToDeletefiles([...ToDeletefiles, file]);
-                    }
-                    console.log(ToDeletefiles);
-                  }}
-                />
-              </td>
-              <td>{file}</td>
-            </tr>
-          ))}
-        </table>
         <button onClick={() => deleteFiles()}> Delete </button>
         <button onClick={() => setShowDeleteModal(false)}> Cancel </button>
       </Modal.Body>
@@ -108,6 +64,20 @@ const FileActions = (ActionPerformingEx, datacrate_uuid, uploadmodal, setuploadm
     <Modal show={ShowAnnotationModal}>
       <Modal.Body>
         <h3>placeholder modal for annotating files here</h3>
+
+        <table>
+          <tr>
+            <th>File Name</th>
+          </tr>
+          {normalselectedfiles.map((file) => {
+            return (
+              <tr>
+                <td>{file}</td>
+              </tr>
+            );
+          })}
+        </table>
+
         <button onClick={() => setShowAnnotationModal(false)}> Done </button>
       </Modal.Body>
     </Modal>
