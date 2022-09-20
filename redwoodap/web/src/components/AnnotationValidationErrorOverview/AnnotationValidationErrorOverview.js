@@ -16,10 +16,9 @@ function ButtonShow(showerror,setshowerror) {
       </Button>
     )
   }
-
 }
 
-const AnnotationValidationErrorOverview = (shacl_requirements,showerror, setshowerror,spaceList,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation,postBlanknodeFile) => {
+const AnnotationValidationErrorOverview = (shacl_requirements,showerror, setshowerror,spaceList,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation,postBlanknodeFile,allResourceNodes) => {
 
   const sr = shacl_requirements;
 
@@ -110,7 +109,8 @@ const AnnotationValidationErrorOverview = (shacl_requirements,showerror, setshow
                         file_name,
                         postAnnotationFile,
                         setAddingAnnotation,
-                        postBlanknodeFile
+                        postBlanknodeFile,
+                        allResourceNodes
                       )}
                     </>
                 )}

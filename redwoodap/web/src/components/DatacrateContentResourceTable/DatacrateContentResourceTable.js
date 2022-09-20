@@ -24,6 +24,10 @@ const DatacrateContentResourceTable = (datacrate_uuid) => {
   const [AddingAnnotation, setAddingAnnotation] = useState(false);
   const [DeletingAnnotation, setDeletingAnnotation] = useState(false);
 
+   //filerow specific states
+   const [checkboxSelectedFiles, setCheckboxSelectedFiles] = useState([]);
+   const [normalselectedfiles, setNormalselectedfiles] = useState([]);
+
   //useEffect that gets triggered by a change in DeleteAnnotation, if deleteAnnotationFile is false then it will get annotations for the file and set the state of DatacrateContent to the annotations
   useEffect(() => {
     if(!DeletingAnnotation){
@@ -83,14 +87,12 @@ const DatacrateContentResourceTable = (datacrate_uuid) => {
       let contentdata = {};
       for(let entry in res.data.data){
         if(entry.includes("http") || entry.includes("https") || !entry.startsWith("./")){
-
           contentdata[entry] = res.data.data[entry];
         }else{
           //add the key and value to the contentdata object
           console.log(entry);
         }
       }
-
 
       setDatacrateContent(contentdata);
       console.log(res.data.data);
@@ -204,7 +206,7 @@ const DatacrateContentResourceTable = (datacrate_uuid) => {
       <div className="component">
         <div className="title">Resources</div>
         {Object.keys(DatacrateContent).map((key) => {
-          return DatacrateContentResourceRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent);
+          return DatacrateContentResourceRow(key,datacrate_uuid,DatacrateContent[key],setShowmodal, setModalContent, setSpecificFileContent, checkboxSelectedFiles, setCheckboxSelectedFiles,normalselectedfiles, setNormalselectedfiles);
         }
         )}
       </div>

@@ -29,6 +29,7 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   const [ValueAnnotation, setValueAnnotation] = useState("");
   const [AddingAnnotation, setAddingAnnotation] = useState(false);
   const [DeletingAnnotation, setDeletingAnnotation] = useState(false);
+  const [allResourceNodes,setAllResourceNodes] = useState([]);
 
   //filerow specific states
   const [checkboxSelectedFiles, setCheckboxSelectedFiles] = useState([]);
@@ -56,15 +57,17 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
       getAllAnnotations(datacrate_uuid).then(res => {
         //for entry in res.data.data, if the key contains http or https then console.log
         let contentdata = {};
+        let allResourceNodess = [];
         for(let entry in res.data.data){
-          if(entry.includes("http") || entry.includes("https")){
+          if(entry.includes("http") || entry.includes("https") || !entry.startsWith("./")){
             console.log(entry);
+            allResourceNodess.push(entry);
           }else{
             //add the key and value to the contentdata object
             contentdata[entry] = res.data.data[entry];
           }
         }
-
+        setAllResourceNodes(allResourceNodess);
         setDatacrateContent(contentdata);
         console.log(res.data.data);
         setLoading(false);
@@ -137,10 +140,15 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     getAllAnnotations(datacrate_uuid).then(res => {
       //for entry in res.data.data, if the key contains http or https then console.log
       let contentdata = {};
+      let allResourceNodess = [];
       let allfolders = [];
       for(let entry in res.data.data){
-        if(entry.includes("http") || entry.includes("https")){
+        console.log(entry);
+        if(entry.includes("http") || entry.includes("https") || !entry.startsWith("./")){
+          console.log('this is a resource node');
           console.log(entry);
+          //add the entry to the allResourceNodes state
+          allResourceNodess.push(entry);
         }else{
           //add the key and value to the contentdata object
           contentdata[entry] = res.data.data[entry];
@@ -154,6 +162,8 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
         }
       }
       console.log(allfolders);
+      console.log(allResourceNodess);
+      setAllResourceNodes(allResourceNodess);
       setListallfolders(allfolders);
       setDatacrateContent(contentdata);
       setListcurrentfiles(Object.keys(contentdata));
@@ -232,7 +242,8 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
                  modalContent.file_name,
                  postAnnotationFile,
                  setAddingAnnotation,
-                 postBlanknoteFile
+                 postBlanknoteFile,
+                 allResourceNodes
                 )
               }
               <br></br>

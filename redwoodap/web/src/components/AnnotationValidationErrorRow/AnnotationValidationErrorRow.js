@@ -3,20 +3,22 @@ import {GoDiffAdded} from 'react-icons/go';
 import {Alert, Form, Button} from 'react-bootstrap';
 import './AnnotationValidationErrorRow.css'
 
-const AnnotationValidationErrorRow = (predicate_name,severity_error, constraint_props, result_message, spacelist_data,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation,postBlanknodeFile) => {
+const AnnotationValidationErrorRow = (predicate_name,severity_error, constraint_props, result_message, spacelist_data,datacrate_uuid,file_name,postAnnotationFile,setAddingAnnotation,postBlanknodeFile,allResourceNodes) => {
 let predicate_value = ""
 //function that changes the value of the input
 const handleChange = (event) => {
   predicate_value = event.target.value;
 }
 
+const predicate_options = [];
+for (var i = 0; i < allResourceNodes.length; i++) {
+  //if allresourcenode[i]["@type"] == predicate_name => add to options
+  predicate_options.push(allResourceNodes[i]["@id"]);
+  console.log(predicate_options);
+}
+
 //function that perform a axios post request to add predicate to the file
 const addPredicate = async () => {
-  console.log("adding predicate");
-  console.log(datacrate_uuid);
-  console.log(file_name);
-  console.log(predicate_name);
-  console.log(predicate_value);
 
   //format the filename to be uri compliant
   let formatted_filename = encodeURIComponent(file_name);
@@ -262,6 +264,12 @@ function Alertlogsprops(props) {
                 return(
                     <>
                       <button onClick={(e) => addBlankNode(e)} className="button_vliz space_button">add {predicate_name} node</button>
+                      <select onChange={(e) => handleChange(e)} aria-label="Default select example">
+                          <option>Select option</option>
+                          {allResourceNodes.map(allResourceNode =>
+                              <option>{allResourceNode}</option>
+                          )}
+                      </select>
                     </>
                 )
             }
