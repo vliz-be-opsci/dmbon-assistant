@@ -170,6 +170,7 @@ class RoCrateGitBase():
         #log.debug(md)
         all_files = []
         for dictionaries in md["@graph"]:
+            log.debug(dictionaries)
             for item, value in dictionaries.items():
                 if item == "@id":
                     all_files.append(value)
@@ -219,7 +220,6 @@ class RoCrateGitBase():
                                 datag.append(dict_predicates)
                                 
                     #log.debug(f"data: {datag}")
-                    
                     green = 2
                     orange = 0
                     red = 0
@@ -266,7 +266,21 @@ class RoCrateGitBase():
                             if item == "@id" and value==file:
                                 for item_save, value_save in dictionaries.items():
                                     files_attributes[file][item_save] = value_save
-                
+                                break
+                else:
+                    #check if the @type of the file is not a dataset
+                    for item in data["@graph"]:
+                        if item["@id"] == file:
+                            if item["@type"] != "Dataset":
+                                summary = {"green": 0, "orange": 0, "red": 0}
+                                files_attributes[file] = {}
+                                files_attributes[file]["summary"] = summary
+                                for dictionaries in md["@graph"]:
+                                    for item, value in dictionaries.items():
+                                        if item == "@id" and value==file:
+                                            for item_save, value_save in dictionaries.items():
+                                                files_attributes[file][item_save] = value_save 
+                                            break         
                 
         #log.debug(f'All predicates from all files from project : {files_attributes}')
         return {"data":files_attributes}
@@ -603,6 +617,7 @@ class RoCrateGitBase():
                 new_blank_node = {}
                 new_blank_node["@id"] = new_uuid_blank_node
                 new_blank_node["@type"] = node_type
+                new_blank_node["label"] = node_type+"_"+new_uuid_blank_node
                 #add the new blank node to the graph
                 data["@graph"].append(new_blank_node)
                 #add uri predicate to the item with value of nw blacnk node @id
