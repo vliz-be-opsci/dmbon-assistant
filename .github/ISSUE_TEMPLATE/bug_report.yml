@@ -1,0 +1,50 @@
+name: Bug report
+description: File a bug report here
+title: "[BUG]:"
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: | 
+        Thanks for taking your time to file a bug report! 
+  - type: checkboxes
+    id: new-bug 
+    attributes:
+      label: Is there an already existing issue for this bug?
+      description: Please search through our issues to check if an issue already exists or has perhaps been closed already.
+      options:
+        - label: I have searched existing issues
+          required: true 
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 Bug description
+      description: Please provide a description of the bug 
+      placeholder: Try to be as clear and conscise as possible when describing the bug.
+    validations:
+      required: true 
+  
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: ♻️ Steps to reproduce
+      description: Describe the exact steps you have taken that made you encounter the bug.
+      placeholder: Please write detailed steps in a list form below.
+    validations:
+      required: true 
+
+  - type: textarea
+    id: your-efforts
+    attributes:
+      label: 🔧 List your efforts
+      description: Describe what you have done to try to fix the issue or what you possibly think is happening that raises the issue.
+      placeholder: Please write details on possible solutions to the problem
+  
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: 📑 Additional information
+      description: Please add any other information about the problem here, such as context, logs, terminal output, or anything that could help illustrate the issue.
+      placeholder: If applicable, add screenshots to help explain your problem. Please remember to mark the area in the application thats impacted.
