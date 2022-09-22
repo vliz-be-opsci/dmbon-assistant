@@ -61,49 +61,10 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         pulls = "not available for this space"
         
     #check if there are any unstaged files in the repo 
-    diff_list = repo.index.diff(None)
-    try:
-        diff = str(repo.git.diff('origin')).splitlines()
-        #log.info("before null")
-        #log.info(diff)
-    except Exception as e:
-        log.error(e)
-        log.exception(e)
+    diff_list = repo.git.diff(repo.head.commit)
+    log.debug(str(diff_list))
     
-    hcommit = repo.head.commit
-    #diff_list = hcommit.diff()
-    difff_list = repo.index.diff(None,ignore_blank_lines=True, ignore_space_at_eol=True,create_patch=True)
-    #log.debug(difff_list)
-    i = 0
-    for diff in diff_list:
-        try:
-            toappend = {}
-            #log.info(diff.change_type) # Gives the change type. eg. 'A': added, 'M': modified etc.
-            toappend["change_type"] = diff.change_type
-            # Returns true if it is a new file
-            #log.info(diff.new_file) 
-            toappend["newfile"] = diff.new_file
-            # Print the old file path
-            #log.info(diff.a_path)
-            toappend["a_path"] = diff.a_path
-            # Print the new file path. If the filename (or path) was changed it will differ
-            #log.info(diff.b_path) 
-            toappend["b_path"] = diff.b_path
-            toappend["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")
-            # text of diff make unified diff first 
-            unified_diff = "--- "+diff.a_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
-            unified_diff = unified_diff+"+++ "+diff.b_path+" "+datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f %z")+"\n"
-            tocleandiff = str(difff_list[i])
-            ofinterst = tocleandiff.split("---")[1].split("\ No newline at end of file")[0]
-            unified_diff = unified_diff + ofinterst
-            toappend['text'] = unified_diff
-            toreturn.append(toappend)
-            i+=1
-        except:
-            pass
-    
-    
-    return {'data':toreturn, 'message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
+    return {'data':diff_list, 'message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
 
 @router.post('/{command}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)"), item:GitCommitMessageModel):
