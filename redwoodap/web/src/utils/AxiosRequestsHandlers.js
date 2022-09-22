@@ -3,7 +3,7 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
 //check if this actually does anything?
-axiosRetry(axios, { retries: 3 });
+axiosRetry(axios, { retries: 4 });
 axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
 const base_url = "http://localhost:6656";
 export const api_url = `${base_url}/apiv1`;
@@ -100,8 +100,8 @@ export const getGitHistory = (id) => {
 }
 
 //post git command to a specific datacrate
-export const postGitCommand = (id, command) => {
-  return axios.post(`${api_url}/spaces/${id}/git/${command}`);
+export const postGitCommand = (id, command, message) => {
+  return axios.post(`${api_url}/spaces/${id}/git/${command}`,message);
 }
 
 //get content from specific datacrate

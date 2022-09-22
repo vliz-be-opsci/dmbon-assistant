@@ -1,8 +1,6 @@
 import { BsTrashFill , BsUpload} from "react-icons/bs";
-import { FaRegEdit, FaBookMedical, FaBullseye } from "react-icons/fa";
+import { FaRegEdit, FaBookMedical } from "react-icons/fa";
 import {Modal} from "react-bootstrap";
-import $ from "jquery";
-
 //inport util functions for opening explorer and fixcrate
 import { fixDatacrate , getOpenFileExplorer, deleteContent} from "src/utils/AxiosRequestsHandlers";
 

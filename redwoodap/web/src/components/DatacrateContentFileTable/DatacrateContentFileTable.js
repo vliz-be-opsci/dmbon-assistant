@@ -136,7 +136,6 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
   } , [AddingAnnotation]);
 
   useEffect(() => {
-
     getAllAnnotations(datacrate_uuid).then(res => {
       //for entry in res.data.data, if the key contains http or https then console.log
       let contentdata = {};
@@ -213,7 +212,6 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
     console.log(currentfiles);
     setListcurrentfiles(currentfiles);
   }, [currentfolder, searchtext]);
-
 
   //function that returns the modal
   const MakeModal = () => {
@@ -345,7 +343,6 @@ const DatacrateContentFileTable = (datacrate_uuid) => {
           }
           )}
         </div>
-
       </div>
       {MakeModal()}
       </>

@@ -415,3 +415,22 @@ input.error, textarea.error {
   border: 2px solid #1a94aa;
   color: #fff
 }
+
+.file-diff {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.diff-header {
+  font-size: 16px;
+  padding: 5px 10px;
+  line-height: 2;
+  background-color: #fafbfc;
+  border-bottom: 1px solid #ddd;
+}
+
+.hunk-header {
+  background-color: #f0f8ff;
+  color: #1b1f2380;
+  padding: 5px 20px;
+}

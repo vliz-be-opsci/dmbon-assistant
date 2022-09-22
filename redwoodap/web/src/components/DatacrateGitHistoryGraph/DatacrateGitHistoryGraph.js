@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import LoadingBlock from 'src/components/LoadingBlock/LoadingBlock';
 import { Gitgraph } from '@gitgraph/react';
-import { getGitHistory } from 'src/utils/AxiosRequestsHandlers';
 import AxiosError from 'src/components/AxiosError/AxiosError';
 import './DatacrateGitHistoryGraph.css';
-import $ from 'jquery';
-const DatacrateGitHistoryGraph = (datacrate_id) => {
-
-  const [loading, setLoading] = useState(true);
-  const [history, setHistory] = useState([]);
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+const DatacrateGitHistoryGraph = (datacrate_id,loading,history,error,errorMessage) => {
 
   //function that will add renderMessage to the history array commit
   const renderMessage = (commit) => {
@@ -25,7 +18,6 @@ const DatacrateGitHistoryGraph = (datacrate_id) => {
 
   //function that loops through each commit and then performs the renderMessage function
   const renderCommit = (history_data) => {
-
     //reverse the array
     history_data.reverse();
 
@@ -101,22 +93,7 @@ const DatacrateGitHistoryGraph = (datacrate_id) => {
     return commit;
   }
 
-  useEffect(() => {
-    getGitHistory(datacrate_id)
-      .then(response => {
-        console.log(renderCommit(response.data.data));
-        //setHistory(renderCommit(response.data.data));
-        //console.log(response.data.data);
-        setHistory(response.data.data);
-        setLoading(false);
-      }
-      ).catch(error => {
-        setError(true);
-        setErrorMessage(error);
-        setLoading(false);
-      }
-      );
-  }, []);
+  
 
   if(loading){
     return(LoadingBlock("getting git history..."));
