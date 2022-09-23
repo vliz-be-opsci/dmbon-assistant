@@ -1,0 +1,27 @@
+/**
+ * Once you are ready to add authentication to your application
+ * you'll build out requireAuth() with real functionality. For
+ * now we just return `true` so that the calls in services
+ * have something to check against, simulating a logged
+ * in user that is allowed to access that service.
+ *
+ * See https://redwoodjs.com/docs/authentication for more info.
+ */
+export const isAuthenticated = () => {
+  return true;
+};
+export const hasRole = ({
+  roles
+}) => {
+  return roles !== undefined;
+}; // This is used by the redwood directive
+// in ./api/src/directives/requireAuth
+// Roles are passed in by the requireAuth directive if you have auth setup
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+export const requireAuth = ({
+  roles
+}) => {
+  return isAuthenticated();
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJpc0F1dGhlbnRpY2F0ZWQiLCJoYXNSb2xlIiwicm9sZXMiLCJ1bmRlZmluZWQiLCJyZXF1aXJlQXV0aCJdLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2FwaS9zcmMvbGliL2F1dGguanMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXHJcbiAqIE9uY2UgeW91IGFyZSByZWFkeSB0byBhZGQgYXV0aGVudGljYXRpb24gdG8geW91ciBhcHBsaWNhdGlvblxyXG4gKiB5b3UnbGwgYnVpbGQgb3V0IHJlcXVpcmVBdXRoKCkgd2l0aCByZWFsIGZ1bmN0aW9uYWxpdHkuIEZvclxyXG4gKiBub3cgd2UganVzdCByZXR1cm4gYHRydWVgIHNvIHRoYXQgdGhlIGNhbGxzIGluIHNlcnZpY2VzXHJcbiAqIGhhdmUgc29tZXRoaW5nIHRvIGNoZWNrIGFnYWluc3QsIHNpbXVsYXRpbmcgYSBsb2dnZWRcclxuICogaW4gdXNlciB0aGF0IGlzIGFsbG93ZWQgdG8gYWNjZXNzIHRoYXQgc2VydmljZS5cclxuICpcclxuICogU2VlIGh0dHBzOi8vcmVkd29vZGpzLmNvbS9kb2NzL2F1dGhlbnRpY2F0aW9uIGZvciBtb3JlIGluZm8uXHJcbiAqL1xyXG5leHBvcnQgY29uc3QgaXNBdXRoZW50aWNhdGVkID0gKCkgPT4ge1xyXG4gIHJldHVybiB0cnVlXHJcbn1cclxuXHJcbmV4cG9ydCBjb25zdCBoYXNSb2xlID0gKHsgcm9sZXMgfSkgPT4ge1xyXG4gIHJldHVybiByb2xlcyAhPT0gdW5kZWZpbmVkXHJcbn1cclxuXHJcbi8vIFRoaXMgaXMgdXNlZCBieSB0aGUgcmVkd29vZCBkaXJlY3RpdmVcclxuLy8gaW4gLi9hcGkvc3JjL2RpcmVjdGl2ZXMvcmVxdWlyZUF1dGhcclxuXHJcbi8vIFJvbGVzIGFyZSBwYXNzZWQgaW4gYnkgdGhlIHJlcXVpcmVBdXRoIGRpcmVjdGl2ZSBpZiB5b3UgaGF2ZSBhdXRoIHNldHVwXHJcbi8vIGVzbGludC1kaXNhYmxlLW5leHQtbGluZSBAdHlwZXNjcmlwdC1lc2xpbnQvbm8tdW51c2VkLXZhcnNcclxuZXhwb3J0IGNvbnN0IHJlcXVpcmVBdXRoID0gKHsgcm9sZXMgfSkgPT4ge1xyXG4gIHJldHVybiBpc0F1dGhlbnRpY2F0ZWQoKVxyXG59XHJcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EsT0FBTyxNQUFNQSxlQUFlLEdBQUcsTUFBTTtFQUNuQyxPQUFPLElBQVA7QUFDRCxDQUZNO0FBSVAsT0FBTyxNQUFNQyxPQUFPLEdBQUcsQ0FBQztFQUFFQztBQUFGLENBQUQsS0FBZTtFQUNwQyxPQUFPQSxLQUFLLEtBQUtDLFNBQWpCO0FBQ0QsQ0FGTSxDLENBSVA7QUFDQTtBQUVBO0FBQ0E7O0FBQ0EsT0FBTyxNQUFNQyxXQUFXLEdBQUcsQ0FBQztFQUFFRjtBQUFGLENBQUQsS0FBZTtFQUN4QyxPQUFPRixlQUFlLEVBQXRCO0FBQ0QsQ0FGTSJ9

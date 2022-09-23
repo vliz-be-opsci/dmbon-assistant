@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/lib/logger.js"],
+  "sourcesContent": ["import { createLogger } from '@redwoodjs/api/logger'\r\n\r\n/**\r\n * Creates a logger with RedwoodLoggerOptions\r\n *\r\n * These extend and override default LoggerOptions,\r\n * can define a destination like a file or other supported pino log transport stream,\r\n * and sets whether or not to show the logger configuration settings (defaults to false)\r\n *\r\n * @param RedwoodLoggerOptions\r\n *\r\n * RedwoodLoggerOptions have\r\n * @param {options} LoggerOptions - defines how to log, such as redaction and format\r\n * @param {string | DestinationStream} destination - defines where to log, such as a transport stream or file\r\n * @param {boolean} showConfig - whether to display logger configuration on initialization\r\n */\r\nexport const logger = createLogger({})\r\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;AAAA;;;;;oBAA6B;AAgBtB,MAAM,SAAS,gCAAa,CAAA,CAAD;",
+  "names": []
+}
