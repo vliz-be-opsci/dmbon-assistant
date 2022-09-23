@@ -8,4 +8,5 @@ backend/app/webtop-work-space/spaces.json
 backend/app/webtop-work-space/spaces.json
 backend/app/webtop-work-space/spaces.json
 frontend/redwoodap/node_modules/
+frontend/node_modules/
 *.json
