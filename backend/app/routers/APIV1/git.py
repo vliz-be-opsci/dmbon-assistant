@@ -1,4 +1,5 @@
 from fastapi import Path, HTTPException, APIRouter
+from fastapi.responses import StreamingResponse
 from typing import Optional
 from pydantic import BaseModel, Field
 import os, json, git
@@ -8,6 +9,7 @@ from app.model.location import Locations
 from app.model.space import Space
 import logging
 from fastapi.responses import JSONResponse
+import io
 log=logging.getLogger(__name__)
 
 router = APIRouter(
@@ -24,16 +26,37 @@ class GitCommitMessageModel(BaseModel):
 
 ### api paths ###
 
-@router.get('/status/', status_code=200)
-def get_git_status(*,space_id: str = Path(None,description="space_id name")):
-    toreturn =[]
+@router.get("/diff", status_code=200)
+def get_git_diff(*,space_id: str = Path(None,description="space_id name")):
+    """Get the git diff of the current working directory"""
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
+    
+    #function to pull data from remote if remote was provided and if pulse finds diff 
+    try:
+        repo = git.Repo(space_folder)
+    except Exception as e:
+        log.error(e);
+        repo = git.Repo(os.path.join(space_folder,"repo"))
+    
+    diff_list = repo.git.diff(repo.head.commit)
+    log.debug(len(str(diff_list)))
+    diff_bytes = bytes(diff_list, 'utf-8','surrogateescape')
+    return StreamingResponse(io.BytesIO(diff_bytes), media_type="text/plain")
 
+@router.get('/status/', status_code=200)
+def get_git_status(*,space_id: str = Path(None,description="space_id name")):
+    log.debug("get_git_status")
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
     #function to pull data from remote if remote was provided and if pulse finds diff 
     try:
         repo = git.Repo(space_folder)
@@ -42,12 +65,13 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
         repo = git.Repo(os.path.join(space_folder,"repo"))
     
     #perform a fetch on the git repo
-    #log.info("Fetching remote")
+    log.info("Fetching remote")
     repo.git.fetch()
     
     ahead = 0
     behind = 0
     # check if the repo has a remote url
+    log.info("Checking if remote is set")
     try:
         #check if the remote origin has commits that haven't been pulled yet
         repo_status = repo.git.status(porcelain="v2", branch=True)
@@ -58,13 +82,10 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
             behind = int(ahead_behind_match.group(2))
         pulls = "Repo is {} commits ahead and {} behind.".format(ahead, behind)
     except:
+        log.info("No remote set")
         pulls = "not available for this space"
         
-    #check if there are any unstaged files in the repo 
-    diff_list = repo.git.diff(repo.head.commit)
-    log.debug(str(diff_list))
-    
-    return {'data':diff_list, 'message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
+    return {'message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
 
 @router.post('/{command}', status_code=200)
 def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)"), item:GitCommitMessageModel):
