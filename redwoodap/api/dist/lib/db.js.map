@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/lib/db.js"],
-  "sourcesContent": ["// See https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/constructor\r\n// for options.\r\n\r\nimport { PrismaClient } from '@prisma/client'\r\n\r\nimport { emitLogLevels, handlePrismaLogging } from '@redwoodjs/api/logger'\r\n\r\nimport { logger } from './logger'\r\n\r\n/*\r\n * Instance of the Prisma Client\r\n */\r\nexport const db = new PrismaClient({\r\n  log: emitLogLevels(['info', 'warn', 'error']),\r\n})\r\n\r\nhandlePrismaLogging({\r\n  db,\r\n  logger,\r\n  logLevels: ['info', 'warn', 'error'],\r\n})\r\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;AAAA;;;;;AAGA,oBAA6B;AAE7B,oBAAmD;AAEnD,qBAAuB;AAKhB,MAAM,KAAK,IAAI,2BAAa;EACjC,KAAK,iCAAc,CAAC,QAAQ,QAAQ,OAAjB,CAAD;AADe,CAAjB;AAIlB,uCAAoB;EAClB;EACA;EACA,WAAW,CAAC,QAAQ,QAAQ,OAAjB;AAHO,CAAD;",
-  "names": []
-}

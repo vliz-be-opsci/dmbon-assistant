@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/functions/graphql.js"],
-  "sourcesContent": ["import { createGraphQLHandler } from '@redwoodjs/graphql-server'\r\n\r\nimport directives from 'src/directives/**/*.{js,ts}'\r\nimport sdls from 'src/graphql/**/*.sdl.{js,ts}'\r\nimport { db } from 'src/lib/db'\r\nimport { logger } from 'src/lib/logger'\r\nimport services from 'src/services/**/*.{js,ts}'\r\n\r\nexport const handler = createGraphQLHandler({\r\n  loggerConfig: { logger, options: {} },\r\n  directives,\r\n  sdls,\r\n  services,\r\n  onException: () => {\r\n    // Disconnect from your database with an unhandled exception.\r\n    db.$disconnect()\r\n  },\r\n})\r\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;AAAA;;;;;4BAAqC;;;AAIrC,gBAAA;AACA,oBAAA;;;;;;AAGO,MAAM,UAAU,gDAAqB;EAC1C,cAAc;IAAE;IAAQ,SAAS,CAAA;EAAnB;EACd;EACA;EACA;EACA,aAAa,MAAM;AAEjB,iBAAG,YAAH;EACD;AARyC,CAAD;",
-  "names": []
-}

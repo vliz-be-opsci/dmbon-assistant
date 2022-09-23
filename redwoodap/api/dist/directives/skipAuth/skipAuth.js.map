@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/directives/skipAuth/skipAuth.js"],
-  "sourcesContent": ["import gql from 'graphql-tag'\r\n\r\nimport { createValidatorDirective } from '@redwoodjs/graphql-server'\r\n\r\nexport const schema = gql`\r\n  \"\"\"\r\n  Use to skip authentication checks and allow public access.\r\n  \"\"\"\r\n  directive @skipAuth on FIELD_DEFINITION\r\n`\r\n\r\nconst skipAuth = createValidatorDirective(schema, () => {\r\n  return\r\n})\r\n\r\nexport default skipAuth\r\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;AAEA;;;;;;4BAAyC;AAElC,MAAM,SAAM;EAAA,QAAA;EAAA,eAAA,CAAA;IAAA,QAAA;IAAA,eAAA;MAAA,QAAA;MAAA,SAAA;MAAA,SAAA;IAAA;IAAA,QAAA;MAAA,QAAA;MAAA,SAAA;IAAA;IAAA,aAAA,CAAA;IAAA,cAAA;IAAA,aAAA,CAAA;MAAA,QAAA;MAAA,SAAA;IAAA,CAAA;EAAA,CAAA;EAAA,OAAA;IAAA,SAAA;IAAA,OAAA;IAAA,UAAA;MAAA,QAAA;MAAA,QAAA;MAAA,kBAAA;QAAA,QAAA;QAAA,UAAA;MAAA;IAAA;EAAA;AAAA;AAOnB,MAAM,WAAW,oDAAyB,QAAQ,MAAM;AACtD;AACD,CAFwC;AAIzC,IAAA,mBAAe;",
-  "names": []
-}
