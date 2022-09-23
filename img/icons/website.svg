@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="14.200001mm"
+   height="13.979166mm"
+   viewBox="0 0 14.200001 13.979166"
+   version="1.1"
+   id="svg55250"
+   inkscape:version="1.2.1 (ef4d3fba62, 2022-07-19, custom)"
+   sodipodi:docname="website-black.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview55252"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="5.0495043"
+     inkscape:cx="24.259807"
+     inkscape:cy="35.746083"
+     inkscape:window-width="1243"
+     inkscape:window-height="1376"
+     inkscape:window-x="20"
+     inkscape:window-y="20"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid55254"
+       originx="0.099999969"
+       originy="0.099999992" />
+  </sodipodi:namedview>
+  <defs
+     id="defs55247" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0.09999996,0.09999999)">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       id="rect55313"
+       width="13.450001"
+       height="13.229166"
+       x="0.27500004"
+       y="0.27500001"
+       ry="2.5802996" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       d="M 0.27940742,2.9208335 H 13.720593"
+       id="path55315" />
+    <ellipse
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.8;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path20553-2"
+       cx="2.8531282"
+       cy="1.5979168"
+       rx="0.46145934"
+       ry="0.46145925" />
+    <ellipse
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.8;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path20553-6-9"
+       cx="4.7052097"
+       cy="1.5979168"
+       rx="0.46145934"
+       ry="0.46145925" />
+    <ellipse
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.8;stroke-linejoin:miter;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path20553-6-2-3"
+       cx="6.5572991"
+       cy="1.5979168"
+       rx="0.46145934"
+       ry="0.46145925" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round"
+       d="M 2.5250003,6.0395833 H 6.4937502"
+       id="path55391" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round"
+       d="M 2.5250003,7.3624999 H 6.4937502"
+       id="path55393" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round"
+       d="M 2.5250003,8.6854166 H 10.4625"
+       id="path55395" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round"
+       d="M 2.5250003,10.008333 H 5.1708336"
+       id="path55397" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round"
+       d="M 2.5250003,11.331249 H 7.8166669"
+       id="path55399" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.55;stroke-linecap:round;stroke-linejoin:round"
+       id="rect55401"
+       width="3.175"
+       height="2.6458333"
+       x="7.6729169"
+       y="4.7624998"
+       ry="0.29900867"
+       rx="0.15801236" />
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  fast_api_app:
+    build: .
+    ports:
+       - 8081:80
+    stage: test
+    script:
+      - pytest --junitxml=report.xml
+    artifacts:
+      when: always
+      reports:
+        junit: report.xml
+

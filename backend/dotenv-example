@@ -1,0 +1,2 @@
+#save this file locally as .env and add specifics
+PYTEST_LOGCONF=debug-logconf.yml
