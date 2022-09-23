@@ -32,8 +32,6 @@ const GitActions = (datacrate_id, setShowElement,ShowModalCommit, setShowModalCo
       );
   }
 
-
-
   return (
     <>
       <div className='row_navigation' >

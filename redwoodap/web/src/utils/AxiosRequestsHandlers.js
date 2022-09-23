@@ -94,6 +94,11 @@ export const getGitStatus = (id) => {
   return axios.get(`${api_url}/spaces/${id}/git/status/`);
 }
 
+//get git diff from a specific datacrate
+export const getGitDiff = (id) => {
+  return axios.get(`${api_url}/spaces/${id}/git/diff/`);
+}
+
 //get git history from a specific datacrate
 export const getGitHistory = (id) => {
   return axios.get(`${api_url}/spaces/${id}/git/history/`);

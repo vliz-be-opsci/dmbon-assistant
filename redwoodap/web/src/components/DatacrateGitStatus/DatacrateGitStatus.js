@@ -5,7 +5,6 @@ import LoadingBlock from "../LoadingBlock/LoadingBlock";
 import {BsCloudDownload, BsCloudUpload} from 'react-icons/bs';
 import {FiGitCommit} from 'react-icons/fi';
 import {AiOutlineCheck} from 'react-icons/ai';
-import './DatacrateGitStatus.css';
 
 const DatacrateGitStatus = (datacrate_uuid) => {
 
