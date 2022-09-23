@@ -384,6 +384,7 @@ input.error, textarea.error {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .action_button {
@@ -418,7 +419,6 @@ input.error, textarea.error {
 .file-diff {
   border: 1px solid #ddd;
   margin-bottom: 10px;
-  margin-top: 10px;
 }
 
 .diff-header {
@@ -426,91 +426,11 @@ input.error, textarea.error {
   padding: 5px 10px;
   line-height: 2;
   background-color: #fafbfc;
+  border-bottom: 1px solid #ddd;
 }
 
 .hunk-header {
   background-color: #f0f8ff;
   color: #1b1f2380;
   padding: 5px 20px;
-}
-
-.component {
-  width: 100%;
-  min-width: 450px;
-  background-color: #fff;
-  border-radius: 5px;
-  padding: 20px;
-  margin-top: 10px;
-  box-sizing: border-box;
-}
-
-.component .title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-decoration: underline;
-}
-
-.timeline-wrapper {
-  position: relative;
-  width: 100%;
-  margin-left: auto;
-  height: 100px;
-}
-
-.timeline-wrapper .middle-line {
-  position: absolute;
-  width: 80%;
-  height: 5px;
-  top: 50%;
-  left: 8%;
-  transform: translateY(-50%);
-  background: #1a94aa50;
-}
-
-.box {
-  width: 25%;
-  left: 8%;
-  position: relative;
-  min-height: 100px;
-  float: left;
-}
-
-.box .icon {
-  position: absolute;
-  top: 50%;
-  left: 0px;
-  transform: translateY(-50%);
-  width: 75px;
-  height: 75px;
-  border-radius: 100%;
-  background: #eafbff;
-  border: 2px solid #1a94aa;
-}
-.icon svg {
-  font-size: 30px;
-  color: #1a94aa;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.box .active {
-  background-color: #1a94aa;
-}
-
-.active svg {
-  color: #fff;
-}
-
-/*make box where */
-.statusmessage {
-  border: 2px solid #1a94aa;
-  border-radius: 5px;
-  padding: 10px;
-  background-color: #eafbff;
-  color: #1a94aa;
-  font-weight: bold;
-  text-align: center;
 }
