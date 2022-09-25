@@ -4,7 +4,6 @@
 .netlify
 .redwood
 dev.db*
-dist
 dist-babel
 node_modules
 yarn-error.log
