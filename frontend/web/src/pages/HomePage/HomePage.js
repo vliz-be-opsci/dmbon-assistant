@@ -1,5 +1,6 @@
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
+import useStore from 'src/store'
 import Taskbox from 'src/components/Taskbox/Taskbox'
 import { useRef } from 'react'
 import './HomePage.css'

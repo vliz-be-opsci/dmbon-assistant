@@ -1,2 +1,0 @@
-/*! For license information please see 629.233ded3e.chunk.js.LICENSE.txt */
-"use strict";(self.webpackChunkweb=self.webpackChunkweb||[]).push([[629],{74629:function(e,t,n){n.r(t);var l=n(27378),u=(n(98889),n(31786));t.default=function(){return l.createElement(l.Fragment,null,l.createElement(u.MetaTags,{title:"About",description:"About page"}),l.createElement("main",null,l.createElement("h1",null,"About")))}}}]);

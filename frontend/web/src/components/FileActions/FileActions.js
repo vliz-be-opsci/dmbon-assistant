@@ -61,12 +61,14 @@ const FileActions = (ActionPerformingEx, datacrate_uuid, uploadmodal, setuploadm
     </Modal>
     <Modal show={ShowAnnotationModal}>
       <Modal.Body>
-        <h3>placeholder modal for annotating files here</h3>
-
-        <table>
+        <h3>Annotate files</h3>
+        <table className="table_vliz">
+          <thead>
           <tr>
             <th>File Name</th>
           </tr>
+          </thead>
+          <tbody>
           {normalselectedfiles.map((file) => {
             return (
               <tr>
@@ -74,10 +76,11 @@ const FileActions = (ActionPerformingEx, datacrate_uuid, uploadmodal, setuploadm
               </tr>
             );
           })}
+          </tbody>
         </table>
 
-        <button onClick={() => setShowAnnotationModal(false)}> Done </button>
       </Modal.Body>
+      <Modal.Footer><button onClick={() => setShowAnnotationModal(false)}> Done </button></Modal.Footer>
     </Modal>
     </>
   )
