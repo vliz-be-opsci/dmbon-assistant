@@ -28,5 +28,5 @@ frontend/node_modules/
 !./frontend/yarn/patches
 !./frontend/yarn/plugins
 !./frontend/yarn/releases
-!./frontend/yarn/sdks
-!./frontend/yarn/versions
+!.yarn/sdks
+!.yarn/versions
