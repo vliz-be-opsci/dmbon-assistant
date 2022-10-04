@@ -1,0 +1,1734 @@
+{
+    openapi: "3.0.2",
+    info: {
+    title: "RO-Crate maker API",
+    description: "RO-Crate manager Rest-API",
+    version: "0.0.1",
+    x-logo: {
+    url: "https://biocompute-objects.github.io/bco-ro-crate/assets/img/biocomputeobject-rocrate.svg?20201014"
+        }
+    },
+    paths: {
+    /apiv1/profiles/: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Profiles"
+                ],
+    summary: "Get All Profiles Info",
+    operationId: "get_all_profiles_info_apiv1_profiles__get",
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    }
+                }
+            },
+    post: {
+    tags: [
+                    "API V1",
+                    "Profiles"
+                ],
+    summary: "Add Profile",
+    operationId: "add_profile_apiv1_profiles__post",
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/ProfileModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    201: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/profiles/{profile_id
+        }/: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Profiles"
+                ],
+    summary: "Get Profile Info",
+    operationId: "get_profile_info_apiv1_profiles__profile_id___get",
+    parameters: [
+                    {
+    description: "profile_id name",
+    required: true,
+    schema: {
+    title: "Profile Id",
+    type: "string",
+    description: "profile_id name"
+                        },
+    name: "profile_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    put: {
+    tags: [
+                    "API V1",
+                    "Profiles"
+                ],
+    summary: "Update Profile",
+    operationId: "update_profile_apiv1_profiles__profile_id___put",
+    parameters: [
+                    {
+    description: "profile_id name",
+    required: true,
+    schema: {
+    title: "Profile Id",
+    type: "string",
+    description: "profile_id name"
+                        },
+    name: "profile_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/ProfileModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    202: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    delete: {
+    tags: [
+                    "API V1",
+                    "Profiles"
+                ],
+    summary: "Delete Profile",
+    operationId: "delete_profile_apiv1_profiles__profile_id___delete",
+    parameters: [
+                    {
+    description: "profile_id name",
+    required: true,
+    schema: {
+    title: "Profile Id",
+    type: "string",
+    description: "profile_id name"
+                        },
+    name: "profile_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    202: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/content/: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Content"
+                ],
+    summary: "Get Space Content Info",
+    operationId: "get_space_content_info_apiv1_spaces__space_id__content__get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    post: {
+    tags: [
+                    "API V1",
+                    "Content"
+                ],
+    summary: "Add New Content",
+    operationId: "add_new_content_apiv1_spaces__space_id__content__post",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    required: false,
+    schema: {
+    title: "Path Folder",
+    type: "string"
+                        },
+    name: "path_folder",
+    in: "query"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/ContentModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    202: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    delete: {
+    tags: [
+                    "API V1",
+                    "Content"
+                ],
+    summary: "Delete Content",
+    operationId: "delete_content_apiv1_spaces__space_id__content__delete",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/DeleteContentModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    202: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/content/file/{file_id
+        }: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Content"
+                ],
+    summary: "Open File Content External",
+    operationId: "open_file_content_external_apiv1_spaces__space_id__content_file__file_id__get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    description: "id of the file that will be searched in the ro-crate-metadata.json file",
+    required: true,
+    schema: {
+    title: "File Id",
+    type: "string",
+    description: "id of the file that will be searched in the ro-crate-metadata.json file"
+                        },
+    name: "file_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/content/openexplorer: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Content"
+                ],
+    summary: "Open File Explorer",
+    operationId: "open_file_explorer_apiv1_spaces__space_id__content_openexplorer_get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/content/reference: {
+    post: {
+    tags: [
+                    "API V1",
+                    "Content"
+                ],
+    summary: "Add New References",
+    operationId: "add_new_references_apiv1_spaces__space_id__content_reference_post",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/ListReferenceModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    202: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/content/{path_folder
+        }: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Content"
+                ],
+    summary: "Get Space Content Folder Info",
+    operationId: "get_space_content_folder_info_apiv1_spaces__space_id__content__path_folder__get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    description: "folder  path to get the files from",
+    required: true,
+    schema: {
+    title: "Path Folder",
+    type: "string",
+    description: "folder  path to get the files from"
+                        },
+    name: "path_folder",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/git/status/: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Git"
+                ],
+    summary: "Get Git Status",
+    operationId: "get_git_status_apiv1_spaces__space_id__git_status__get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/git/{command
+        }: {
+    post: {
+    tags: [
+                    "API V1",
+                    "Git"
+                ],
+    summary: "Get Git Status",
+    operationId: "get_git_status_apiv1_spaces__space_id__git__command__post",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    description: "git command to use (commit,pull,push)",
+    required: true,
+    schema: {
+    title: "Command",
+    type: "string",
+    description: "git command to use (commit,pull,push)"
+                        },
+    name: "command",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/GitCommitMessageModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/annotation/: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Get All Resources Annotation",
+    operationId: "get_all_resources_annotation_apiv1_spaces__space_id__annotation__get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    post: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Make Annotations For All Resources",
+    operationId: "make_annotations_for_all_resources_apiv1_spaces__space_id__annotation__post",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/AnnotationsModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    delete: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Delete Annotations For All Resources",
+    operationId: "delete_annotations_for_all_resources_apiv1_spaces__space_id__annotation__delete",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/AnnotationsModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/annotation/file/{file_id
+        }: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Get Resource Annotation",
+    operationId: "get_resource_annotation_apiv1_spaces__space_id__annotation_file__file_id__get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    description: "id of the file that will be searched in the ro-crate-metadata.json file",
+    required: true,
+    schema: {
+    title: "File Id",
+    type: "string",
+    description: "id of the file that will be searched in the ro-crate-metadata.json file"
+                        },
+    name: "file_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    post: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Make Resource Annotation Single File",
+    operationId: "make_resource_annotation_single_file_apiv1_spaces__space_id__annotation_file__file_id__post",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    description: "id of the file that will be searched in the ro-crate-metadata.json file",
+    required: true,
+    schema: {
+    title: "File Id",
+    type: "string",
+    description: "id of the file that will be searched in the ro-crate-metadata.json file"
+                        },
+    name: "file_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/AnnotationsModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/annotation/file/{file_id
+        }/blanknode: {
+    post: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Make Resource Annotation Single File Blanknode",
+    operationId: "make_resource_annotation_single_file_blanknode_apiv1_spaces__space_id__annotation_file__file_id__blanknode_post",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    description: "id of the file that will be searched in the ro-crate-metadata.json file",
+    required: true,
+    schema: {
+    title: "File Id",
+    type: "string",
+    description: "id of the file that will be searched in the ro-crate-metadata.json file"
+                        },
+    name: "file_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/BlankModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/annotation/file/{file_id
+        }/{predicate
+        }: {
+    delete: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Delete Resource Annotation",
+    operationId: "delete_resource_annotation_apiv1_spaces__space_id__annotation_file__file_id___predicate__delete",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    },
+                    {
+    description: "id of the file that will be searched in the ro-crate-metadata.json file",
+    required: true,
+    schema: {
+    title: "File Id",
+    type: "string",
+    description: "id of the file that will be searched in the ro-crate-metadata.json file"
+                        },
+    name: "file_id",
+    in: "path"
+                    },
+                    {
+    description: "To delete predicate from the file annotations",
+    required: true,
+    schema: {
+    title: "Predicate",
+    type: "string",
+    description: "To delete predicate from the file annotations"
+                        },
+    name: "predicate",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/annotation/shacl_report: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Get Shacl Report",
+    operationId: "get_shacl_report_apiv1_spaces__space_id__annotation_shacl_report_get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/annotation/terms: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Annotation"
+                ],
+    summary: "Get Terms Shacl",
+    operationId: "get_terms_shacl_apiv1_spaces__space_id__annotation_terms_get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Spaces"
+                ],
+    summary: "Get All Spaces",
+    operationId: "get_all_spaces_apiv1_spaces__get",
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    }
+                }
+            },
+    post: {
+    tags: [
+                    "API V1",
+                    "Spaces"
+                ],
+    summary: "Add Space",
+    operationId: "add_space_apiv1_spaces__post",
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/SpaceModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    201: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Spaces"
+                ],
+    summary: "Get Space Info",
+    operationId: "get_space_info_apiv1_spaces__space_id___get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    200: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    put: {
+    tags: [
+                    "API V1",
+                    "Spaces"
+                ],
+    summary: "Update Space",
+    operationId: "update_space_apiv1_spaces__space_id___put",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    requestBody: {
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/SpaceModel"
+                            }
+                        }
+                    },
+    required: true
+                },
+    responses: {
+                    202: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+    delete: {
+    tags: [
+                    "API V1",
+                    "Spaces"
+                ],
+    summary: "Delete Space",
+    operationId: "delete_space_apiv1_spaces__space_id___delete",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    202: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /apiv1/spaces/{space_id
+        }/fixcrate: {
+    get: {
+    tags: [
+                    "API V1",
+                    "Spaces"
+                ],
+    summary: "Fix Crate",
+    operationId: "fix_crate_apiv1_spaces__space_id__fixcrate_get",
+    parameters: [
+                    {
+    description: "space_id name",
+    required: true,
+    schema: {
+    title: "Space Id",
+    type: "string",
+    description: "space_id name"
+                        },
+    name: "space_id",
+    in: "path"
+                    }
+                ],
+    responses: {
+                    201: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    },
+                    404: {
+    description: "Not found"
+                    },
+                    422: {
+    description: "Validation Error",
+    content: {
+    application/json: {
+    schema: {
+    $ref: "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    /: {
+    get: {
+    tags: [
+                    "test"
+                ],
+    summary: "Home",
+    operationId: "home__get",
+    responses: {
+                    418: {
+    description: "Successful Response",
+    content: {
+    application/json: {
+    schema: {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    components: {
+    schemas: {
+    AnnotationModel: {
+    title: "AnnotationModel",
+    type: "object",
+    properties: {
+    URI_predicate_name: {
+    title: "Uri Predicate Name",
+    type: "string",
+    description: "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates.                                                for more info about the allowed predicates, use TODO: insert api call for predicates here."
+                    },
+    value: {
+    title: "Value",
+    type: "string",
+    description: "Value linked to the URI predicate name chosen"
+                    }
+                }
+            },
+    AnnotationsModel: {
+    title: "AnnotationsModel",
+    type: "object",
+    properties: {
+    Annotations: {
+    title: "Annotations",
+    type: "array",
+    items: {
+    $ref: "#/components/schemas/AnnotationModel"
+                        },
+    description: "List of annotations to add to resource.                                               for more info about the allowed annotation predicates, use TODO: insert api call for predicates here."
+                    }
+                }
+            },
+    BlankModel: {
+    title: "BlankModel",
+    type: "object",
+    properties: {
+    URI_predicate_name: {
+    title: "Uri Predicate Name",
+    type: "string",
+    description: "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates"
+                    },
+    node_type: {
+    title: "Node Type",
+    type: "string",
+    description: "Type of the node that will be added."
+                    }
+                }
+            },
+    ContentModel: {
+    title: "ContentModel",
+    type: "object",
+    properties: {
+    content: {
+    title: "Content",
+    type: "array",
+    items: {
+    $ref: "#/components/schemas/FileModel"
+                        },
+    description: "List of files that need to be added, this list can also contain directories"
+                    }
+                }
+            },
+    DeleteContentModel: {
+    title: "DeleteContentModel",
+    type: "object",
+    properties: {
+    content: {
+    title: "Content",
+    type: "array",
+    items: {
+    type: "string"
+                        },
+    description: "List of files to delete , if full path given it will delete one file , of only file name given it will delete all entities in the system with file name."
+                    }
+                }
+            },
+    FileModel: {
+    title: "FileModel",
+    type: "object",
+    properties: {
+    name: {
+    title: "Name",
+    type: "string",
+    description: "Name of the file that will be added, can be filepath"
+                    },
+    content: {
+    title: "Content",
+    type: "string",
+    description: "Filepath that needs to be added to the space, can also be a directory or url"
+                    }
+                }
+            },
+    GitCommitMessageModel: {
+    title: "GitCommitMessageModel",
+    type: "object",
+    properties: {
+    message: {
+    title: "Message",
+    type: "string",
+    description: "Commit message"
+                    }
+                }
+            },
+    HTTPValidationError: {
+    title: "HTTPValidationError",
+    type: "object",
+    properties: {
+    detail: {
+    title: "Detail",
+    type: "array",
+    items: {
+    $ref: "#/components/schemas/ValidationError"
+                        }
+                    }
+                }
+            },
+    ListReferenceModel: {
+    title: "ListReferenceModel",
+    type: "object",
+    properties: {
+    references: {
+    title: "References",
+    type: "array",
+    items: {
+    $ref: "#/components/schemas/ReferenceModel"
+                        },
+    description: "List of references to add to the ROCrate."
+                    }
+                }
+            },
+    ProfileModel: {
+    title: "ProfileModel",
+    type: "object",
+    properties: {
+    name: {
+    title: "Name",
+    type: "string",
+    description: "Name of the profile"
+                    },
+    logo: {
+    title: "Logo",
+    type: "string",
+    description: "Logo to be displayed in RO crate UI",
+    example: "https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png"
+                    },
+    description: {
+    title: "Description",
+    type: "string",
+    description: "description of the RO-profile"
+                    },
+    url_ro_profile: {
+    title: "Url Ro Profile",
+    type: "string",
+    description: "github url where the rocrate profile is located"
+                    }
+                }
+            },
+    ReferenceModel: {
+    title: "ReferenceModel",
+    type: "object",
+    properties: {
+    URL: {
+    title: "Url",
+    type: "string",
+    description: "url of the reference that needs to be added to the ROCrate."
+                    }
+                }
+            },
+    SpaceModel: {
+    title: "SpaceModel",
+    type: "object",
+    properties: {
+    name: {
+    title: "Name",
+    type: "string",
+    description: "Name that the space should have"
+                    },
+    storage_path: {
+    title: "Storage Path",
+    type: "string",
+    description: "Valid path on local storage where ROcrate data will be stored"
+                    },
+    RO_profile: {
+    title: "Ro Profile",
+    type: "string",
+    description: "Ro-Profile name that will be used for the space"
+                    },
+    remote_url: {
+    title: "Remote Url",
+    type: "string",
+    description: "git repo url to get project from"
+                    }
+                }
+            },
+    ValidationError: {
+    title: "ValidationError",
+    required: [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+    type: "object",
+    properties: {
+    loc: {
+    title: "Location",
+    type: "array",
+    items: {
+    type: "string"
+                        }
+                    },
+    msg: {
+    title: "Message",
+    type: "string"
+                    },
+    type: {
+    title: "Error Type",
+    type: "string"
+                    }
+                }
+            }
+        }
+    }
+}
