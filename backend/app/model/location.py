@@ -33,6 +33,7 @@ class Locations():
         return os.path.join(self.root, *path_elements)
         
     def get_workspace_location_by_uuid(self, space_uuid):
+
         # get workspace location of a given space id
         # is repo url is git ssh or full html url and then convert
         return self.join_abs_path("spaces",space_uuid)

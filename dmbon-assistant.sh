@@ -7,7 +7,6 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 function service_request {
     srvrq=${1}
     for srv in "backend" "frontend"; do
-
         #if [[ $srv == "backend" ]]; then do code below else if [[ $srv == "frontend" ]];
         if [[ $srv == "backend" ]]; then
             script="${SCRIPT_DIR}/${srv}/${srv}-service.sh"
@@ -35,7 +34,6 @@ function service_request {
                 httpserverpid=$(netstat -ano | findstr :8080 | awk '{print $5}')
                 #print the process id of http-server
                 echo "http-server process id: $httpserverpid"
-                #kill the process
                 #try and kill the process
                 kill $httpserverpid
                 #if the process is still running, kill it with fire
@@ -50,14 +48,10 @@ function service_request {
         else
             echo "unknown service"
         fi
-
-        
     done
 }
 
-
 # check cli argument and feed it into the federated services
-
 case ${1} in
   start|stop|status)
     service_request $1
