@@ -170,11 +170,11 @@ class RoCrateGitBase():
         #log.debug(md)
         all_files = []
         for dictionaries in md["@graph"]:
-            log.debug(dictionaries)
+            #log.debug(dictionaries)
             for item, value in dictionaries.items():
                 if item == "@id":
                     all_files.append(value)
-        log.debug(all_files)
+        #log.debug(all_files)
         #foreach file get all the attributes
         files_attributes = {}
         for file in all_files:
@@ -232,7 +232,7 @@ class RoCrateGitBase():
 
                     # check the report for the number of violations for the item 
                     for item in validation_report_json:
-                        log.debug(f' validation report item: {item}')
+                        #log.debug(f' validation report item: {item}')
                         try:
                             if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                                 for key, value in item.items():
@@ -366,7 +366,7 @@ class RoCrateGitBase():
                         item_dict["schema:" + key] = value
                 barebones_json["@graph"].append(item_dict)
         
-        log.debug(f'barebones_json: {barebones_json}')
+        #log.debug(f'barebones_json: {barebones_json}')
         
         shacl_file = open(path_shacl, "rb").read()
         sh = Graph().parse(data=shacl_file, format="turtle")
@@ -397,14 +397,14 @@ class RoCrateGitBase():
 
         # check the report for the number of violations for the item 
         for item in validation_report_json:
-            log.debug(f' validation report item: {item}')
+            #log.debug(f' validation report item: {item}')
             try:
                 if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                     for key, value in item.items():
                         if key == "http://www.w3.org/ns/shacl#focusNode":
                             name_focusnode = "./"+value[0]["@id"].split("backend/")[-1]
-                            log.info(f'name_focusnode: {name_focusnode}')
-                            log.info(f'file_id: {file_id}')
+                            #log.info(f'name_focusnode: {name_focusnode}')
+                            #log.info(f'file_id: {file_id}')
                 if name_focusnode == file_id or name_focusnode == "./"+file_id:
                     for key, value in item.items():
                         if "resultSeverity" in key == "http://www.w3.org/ns/shacl#resultSeverity":
@@ -602,13 +602,13 @@ class RoCrateGitBase():
         self._write_metadata_datacrate(data)
         
     def create_blank_node_by_id(self, file_id=str, node_type=str, uri_predicate=str):
-        log.debug(f"file_id: {file_id}")  
+        #log.debug(f"file_id: {file_id}")  
         tocheck_folder = self.storage_path
         #load in metadata files
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         
-        log.debug(f"file_id: {file_id}")       
+        #log.debug(f"file_id: {file_id}")       
         new_uuid_blank_node = uuidmake.uuid4().hex
         #go over each file in the graph to see if the @id is the same as the file_id
         for item in data["@graph"]:
