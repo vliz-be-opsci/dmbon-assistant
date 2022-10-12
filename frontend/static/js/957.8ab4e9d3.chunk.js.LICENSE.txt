@@ -68,32 +68,6 @@
 
 /*! ./utils */
 
-/*! axios */
-
-/*! axios-retry */
-
-/*! core-js/modules/es.array.includes.js */
-
-/*! core-js/modules/esnext.async-iterator.for-each.js */
-
-/*! core-js/modules/esnext.async-iterator.map.js */
-
-/*! core-js/modules/esnext.iterator.constructor.js */
-
-/*! core-js/modules/esnext.iterator.for-each.js */
-
-/*! core-js/modules/esnext.iterator.map.js */
-
-/*! react */
-
-/*!**************************************!*\
-  !*** ./src/utils/HelperFunctions.js ***!
-  \**************************************/
-
-/*!********************************************!*\
-  !*** ./src/utils/AxiosRequestsHandlers.js ***!
-  \********************************************/
-
 /*!***********************************************!*\
   !*** ../node_modules/gitdiff-parser/index.js ***!
   \***********************************************/
@@ -150,10 +124,6 @@
   !*** ../node_modules/bootstrap/dist/css/bootstrap.min.css ***!
   \************************************************************/
 
-/*!*************************************************************!*\
-  !*** ./src/components/AxiosError/AxiosError.js + 1 modules ***!
-  \*************************************************************/
-
 /*!**************************************************************!*\
   !*** ../node_modules/@gitgraph/core/lib/graph-rows/index.js ***!
   \**************************************************************/
@@ -174,10 +144,6 @@
   !*** ../node_modules/core-js/modules/esnext.iterator.filter.js ***!
   \*****************************************************************/
 
-/*!*****************************************************************!*\
-  !*** ./src/components/LoadingBlock/LoadingBlock.js + 1 modules ***!
-  \*****************************************************************/
-
 /*!*********************************************************************!*\
   !*** ../node_modules/core-js/modules/esnext.async-iterator.find.js ***!
   \*********************************************************************/
@@ -193,10 +159,6 @@
 /*!************************************************************************!*\
   !*** ../node_modules/@gitgraph/core/lib/user-api/gitgraph-user-api.js ***!
   \************************************************************************/
-
-/*!*******************************************************************************!*\
-  !*** ./src/components/DatacrateNavigation/DatacrateNavigation.js + 1 modules ***!
-  \*******************************************************************************/
 
 /*!*************************************************************************************!*\
   !*** ./src/pages/SpecificDatacrateGitPage/SpecificDatacrateGitPage.js + 84 modules ***!
