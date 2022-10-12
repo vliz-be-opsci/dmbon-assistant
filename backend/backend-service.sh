@@ -28,9 +28,15 @@ function dependencies {
 } 
 
 function start_service {
-  #open the browser 
-  python -m webbrowser http://localhost:6656/apiv1/redoc
-  python -m webbrowser http://localhost:6656/apiv1/docs
+  #check if a -b flag is passed as second argument
+  if [ "$2" == "-b" ]; then
+    echo "Starting the service..."
+  else
+    #open the browser 
+    echo "Starting the service and opening browsers..."
+    python -m webbrowser http://localhost:6656/apiv1/redoc
+    python -m webbrowser http://localhost:6656/apiv1/docs
+  fi
   #run the server
   uvicorn app.app:app --reload --port 6656 --host 0.0.0.0 &
   echo -n $! > $PIDFILE
@@ -58,7 +64,6 @@ function check_service {
   fi
   echo ${running} 
 } 
-
 
 # check run argument
 

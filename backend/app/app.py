@@ -21,11 +21,10 @@ from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
+
 import app.ro_crate_reader_functions as ro_read
 #import shacl_helper as shclh
-
 from .routers.APIV1.router import router
-
 #app.include_router(profiles.router)
 
 #Import the locations and set locations to the root of the tbu cache
@@ -117,7 +116,6 @@ async def redoc_html():
     )
 
 ### define class profiles for the api ###
-
 class ProfileModel(BaseModel):
     logo: Optional[str] = Field(None, example = 'https://www.researchobject.org/ro-crate/assets/img/ro-crate-w-text.png', description = "Logo to be displayed in RO crate UI")
     description: Optional[str] = Field(None, description = "description of the RO-profile")
@@ -198,13 +196,11 @@ async def check_path_availability(tocheckpath,space_id):
             returnmessage = "Space created in existing folder: " + str(os.path.join(tocheckpath))
             return [returnmessage,tocheckpath]
 
-
 @app.get('/', tags=["test"], status_code=418)
 def home():
     return {'Message':'Waddup OpSci, docs can be found in the /docs route'}
 
 ### Custom API look ###
-
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -219,6 +215,5 @@ def custom_openapi():
     }
     app.openapi_schema = openapi_schema
     return app.openapi_schema
-
 
 app.openapi = custom_openapi

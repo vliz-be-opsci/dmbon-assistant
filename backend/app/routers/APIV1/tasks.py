@@ -164,9 +164,9 @@ def perform_sshcheck():
                                 "description": "Name user, will be used as author for all commits"
                                 },
                                 {
-                                    "label": "ORCID",
-                                    "type": "string",
-                                    "description": "ORCID user, leave empty if you don't have one"          
+                                "label": "ORCID",
+                                "type": "string",
+                                "description": "ORCID user, leave empty if you don't have one"          
                                 }
                             ]
                         }

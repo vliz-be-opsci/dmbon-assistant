@@ -13,7 +13,7 @@ function service_request {
             if [ ! -x ${script} ]; then
                 echo "script at ${script} does not exist or is not executable" >&2
             fi
-            echo "${script} ${srvrq} &" | bash 
+            echo "${script} ${srvrq} -b &" | bash 
             echo "'$srv' service requested for '${srvrq}'"
             echo
         elif [[ $srv == "frontend" ]]; then
