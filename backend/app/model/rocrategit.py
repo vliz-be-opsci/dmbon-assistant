@@ -333,6 +333,21 @@ class RoCrateGitBase():
         #write the metadata
         return {"data":full_data}
     
+    def get_predicates_by_type(self, type_search=str):
+        """Get all predicates by type
+        :param type_search: the type of the predicate
+        :type type_search: str
+        """
+        data = self._read_metadata_datacrate()
+        toreturn_data = []
+        for item in data["@graph"]:
+            #uppercase item["@type"] to make it case insensitive and also type search
+            if item["@type"].upper() == type_search.upper():
+                toreturn_data.append(item)
+        
+        return {"data":toreturn_data}
+        
+    
     def get_predicates_by_id(self,file_id=str):
         """ get predicates from a given id
         :param id: str of the id to get all the predicates of in the ro-crate-metadata.json
@@ -512,9 +527,6 @@ class RoCrateGitBase():
                 datag.append(dict_predicates)
                     
         #log.debug(f"data: {datag}")
-        
-        
-
         for item in datag:
             if item["predicate"] != "@type" and item["predicate"] != "@id":
                 green+=1
@@ -601,25 +613,36 @@ class RoCrateGitBase():
                 entity.pop(uri_name, None)
         self._write_metadata_datacrate(data)
         
-    def create_blank_node_by_id(self, file_id=str, node_type=str, uri_predicate=str):
+    def create_node_by_id(self, file_id=str, node_type=str, uri_predicate=str, node_id=str):
         #log.debug(f"file_id: {file_id}")  
         tocheck_folder = self.storage_path
         #load in metadata files
         self.delete_hashtag_from_begin_id()
         data = self._read_metadata_datacrate()
         
+        #check if the node id is filled in if not create one
+        if node_id == "" or node_id is None:
+            node_id = uuidmake.uuid4().hex
+            
         #log.debug(f"file_id: {file_id}")       
-        new_uuid_blank_node = uuidmake.uuid4().hex
+        new_uuid_blank_node = node_id
+        
+        #check if the node is already in the metadata file
+        presnet = False
+        for entity in data["@graph"]:
+            if entity["@id"] == node_id:
+                presnet = True
         #go over each file in the graph to see if the @id is the same as the file_id
         for item in data["@graph"]:
             if item["@id"] == file_id:
                 #if it is the same, create a new blank node with the same @id
-                new_blank_node = {}
-                new_blank_node["@id"] = new_uuid_blank_node
-                new_blank_node["@type"] = node_type
-                new_blank_node["label"] = node_type+"_"+new_uuid_blank_node
-                #add the new blank node to the graph
-                data["@graph"].append(new_blank_node)
+                if presnet == False:
+                    new_blank_node = {}
+                    new_blank_node["@id"] = new_uuid_blank_node
+                    new_blank_node["@type"] = node_type
+                    new_blank_node["label"] = node_type+"_"+new_uuid_blank_node
+                    #add the new blank node to the graph
+                    data["@graph"].append(new_blank_node)
                 #add uri predicate to the item with value of nw blacnk node @id
                 item[uri_predicate] = {"@id":new_uuid_blank_node}
                 #write the new graph to the metadata file

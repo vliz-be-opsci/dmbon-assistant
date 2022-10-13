@@ -28,9 +28,10 @@ class AnnotationModel(BaseModel):
                                                 for more info about the allowed predicates, use TODO: insert api call for predicates here.")
     value    : str = Field(None, description = "Value linked to the URI predicate name chosen")
     
-class BlankModel(BaseModel):
+class NodeModel(BaseModel):
     URI_predicate_name : str = Field(None, description = "Name of the URI that will be added, must be part of the RO-crate profile provided metadata predicates")
     node_type : str = Field(None, description = "Type of the node that will be added.")
+    node_id : str = Field(None, description = "ID of the node that will be added.")
 
 class AnnotationsModel(BaseModel):
     Annotations: List[AnnotationModel] = Field(None, description = "List of annotations to add to resource. \
@@ -62,9 +63,9 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
         raise HTTPException(status_code=500, detail=e)
     return toreturn
 
-#have call to make blank node in file id 
-@router.post('/file/blanknode/{file_id:path}', status_code=200)
-def make_resource_annotation_single_file_blanknode(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: BlankModel):
+#have call to make node in file id 
+@router.post('/file/node/{file_id:path}', status_code=200)
+def make_resource_annotation_single_file_node(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: NodeModel):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -74,7 +75,7 @@ def make_resource_annotation_single_file_blanknode(*,space_id: str = Path(None,d
     try:
         space_object = Space.load(uuid=space_id)
         #have a call to make blank node in file id
-        prerreturn = space_object.create_blank_node_by_id(file_id=file_id, node_type=item.node_type, uri_predicate=item.URI_predicate_name)
+        prerreturn = space_object.create_node_by_id(file_id=file_id, node_type=item.node_type, uri_predicate=item.URI_predicate_name, node_id=item.node_id)
         #log.info(prerreturn)
         if "error" in prerreturn.keys():
             return JSONResponse(status_code=int(prerreturn["error"]),content=str(prerreturn["detail"]))
@@ -150,6 +151,26 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
         log.error(e)
         log.exception(e)
         raise HTTPException(status_code=500, detail=e)
+    
+#router get call to get all files and annotations for a given tpye of node
+@router.get('/type/{node_type}', status_code=200)
+def get_resource_annotation_by_type(*,space_id: str = Path(None,description="space_id name"), node_type: str = Path(None,description="type of node to search for")):
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    #put the spce object here and call the function to get the annotations by type
+    try:
+        space_object = Space.load(uuid=space_id)
+        prereturn = space_object.get_predicates_by_type(type_search=node_type)
+        return prereturn
+    except Exception as e:
+        log.exception(e)
+        log.error(e)
+        raise HTTPException(status_code=500, detail=e)
+
     
 @router.get('/shacl_report', status_code=200)
 def get_shacl_report(*,space_id: str = Path(None,description="space_id name")):
