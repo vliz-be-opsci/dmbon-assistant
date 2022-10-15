@@ -1,3 +1,4 @@
+import array
 import git, os, json, re
 from abc import abstractmethod
 from .location import Locations
@@ -159,7 +160,32 @@ class RoCrateGitBase():
         '''get the object from a given subject with certain predicate uri
         '''
         pass
-    
+
+    def get_subobject(self, object_id:str, data:dict, array_dicts:list=[]):
+        '''Get the subobject info of a given object id and check if the value is a string or a dict, if it is a dict then recursively do this function again and add the dictionaries found to the array_dicts
+        @param object_id: the id of the object to get the subobject from
+        @type object_id: string
+        @param data: the data to get the subobject from
+        @type data: dict
+        '''
+        for item in data['@graph']:
+            if item["@id"] == object_id:
+                item_dict = {}
+                item_dict["@id"] = item["@id"]
+                item_dict["@type"] = "schema:" + item["@type"]
+                for key, value in item.items():
+                    if key == "@type":
+                        continue
+                    else:
+                        #check if the value is not a dict
+                        if value != None and type(value) != dict:
+                            item_dict["schema:" + key] = value
+                        else:
+                            item_dict["schema:" + key] = value
+                            self.get_subobject(value["@id"], data, array_dicts)
+                array_dicts.append(item_dict)
+                return(array_dicts)
+        
     def get_predicates_all(self):
         """ get predicates from all ids
         """
@@ -201,9 +227,14 @@ class RoCrateGitBase():
                                 if key == "@type":
                                     continue
                                 else:
-                                    item_dict["schema:" + key] = value
+                                    #check if the value is not a dict
+                                    if value != None and type(value) != dict:
+                                        item_dict["schema:" + key] = value
+                                    else:
+                                        self.get_subobject(value["@id"], data, barebones_json["@graph"])
+                            
                             barebones_json["@graph"].append(item_dict)
-                    #log.debug(barebones_json)
+                    log.debug(barebones_json)
                     shacl_file = open(path_shacl, "rb").read()
                     sh = Graph().parse(data=shacl_file, format="turtle")
                     r = validate(data_graph=json.dumps(barebones_json), shacl_graph=sh, advanced=True, data_graph_format="json-ld", serialize_report_graph="json-ld")
@@ -378,10 +409,18 @@ class RoCrateGitBase():
                     if key == "@type":
                         continue
                     else:
-                        item_dict["schema:" + key] = value
+                        #check if the value is not a dict
+                        if value != None and type(value) != dict:
+                            item_dict["schema:" + key] = value
+                        else:
+                            item_dict["schema:" + key] = value
+                            self.get_subobject(value["@id"], data, barebones_json["@graph"])
+                
+                #log.debug(returned_dict)
+                
                 barebones_json["@graph"].append(item_dict)
         
-        #log.debug(f'barebones_json: {barebones_json}')
+        log.debug(f'barebones_json: {barebones_json}')
         
         shacl_file = open(path_shacl, "rb").read()
         sh = Graph().parse(data=shacl_file, format="turtle")
@@ -412,7 +451,7 @@ class RoCrateGitBase():
 
         # check the report for the number of violations for the item 
         for item in validation_report_json:
-            #log.debug(f' validation report item: {item}')
+            log.debug(f' validation report item: {item}')
             try:
                 if item["@type"][0] == "http://www.w3.org/ns/shacl#ValidationResult":
                     for key, value in item.items():

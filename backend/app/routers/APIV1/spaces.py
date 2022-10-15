@@ -93,7 +93,7 @@ def complete_metadata_crate(source_path_crate):
         #make pre meta ids
         all_ids_pre_new_doc = []
         for id in datao['@graph']:
-            all_ids_pre_new_doc.append(id['@id'])
+            all_ids_pre_new_doc.append(id)
         
         ## start from fresh file with metadata template  ##
         with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'ro-crate-metadata.json')) as json_file:
@@ -228,14 +228,16 @@ def complete_metadata_crate(source_path_crate):
         #add the references to the @graph
         for i in all_ids_pre_new_doc:
             ##log.info(f"meta id i: {i}")
-            valid=validators.url(i)
+            valid=validators.url(i["@id"])
             if valid:
                 ##log.info(f"valid url: {i}")
                 #add i to the graph
                 for id in data['@graph']:
                     if id["@id"] == './':
                         id["hasPart"].append({'@id':i})
-                data['@graph'].append({'@id':i, '@type':"File"})  
+                data['@graph'].append({'@id':i["@id"], '@type':i["@type"]})  
+            else:
+                data['@graph'].append({'@id':i["@id"], '@type':i["@type"]})  
         
         ## add file_ids metadata correspondingly ##
         for ids in data['@graph']:
@@ -268,10 +270,12 @@ def complete_metadata_crate(source_path_crate):
         seen_ids = []
         for ids in data['@graph']:
             #replace the forward_slash_replace with a /
-            ids['@id'] = replace_forward_slash(ids['@id'])
+            
+            #check if the ids[@type] is not a File or if ids[@id] is a url
+            if ids['@type'] == "File" or ids['@type'] == "Dataset" and validators.url(ids['@id']) != True:
+                ids['@id'] = replace_forward_slash(ids['@id'])
             if ids['@id'] not in seen_ids:
                 seen_ids.append(ids['@id'])
-                
                 # if ids has hasPart check hasparts
                 if 'hasPart' in ids:
                     new_hasparts = []
