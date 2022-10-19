@@ -37,6 +37,10 @@ class AnnotationsModel(BaseModel):
     Annotations: List[AnnotationModel] = Field(None, description = "List of annotations to add to resource. \
                                               for more info about the allowed annotation predicates, use TODO: insert api call for predicates here.")
 
+class URIModel(BaseModel):
+    URI: str = Field(None, description = "URI of the resource to get annotations from")
+    Object_id: str = Field(None, description = "Object of the resource to append the annotations to in the rocrate_metadata.json file")
+
 ### define helper functions for the api ###
 
 ### api paths ###
@@ -165,6 +169,25 @@ def get_resource_annotation_by_type(*,space_id: str = Path(None,description="spa
     try:
         space_object = Space.load(uuid=space_id)
         prereturn = space_object.get_predicates_by_type(type_search=node_type)
+        return prereturn
+    except Exception as e:
+        log.exception(e)
+        log.error(e)
+        raise HTTPException(status_code=500, detail=e)
+    
+#router post call that will search for a given URI and will get back the application/ld+json for that URI and will add it to the ro-crate-metadata.json file and to the corresponding object in the crate if object id was also given in the request modal
+@router.post('/uri', status_code=200)
+def post_uri(*,space_id: str = Path(None,description="space_id name"), item: URIModel):
+    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
+        data = json.load(file)
+        try:
+            space_folder = data[space_id]['storage_path']
+        except Exception as e:
+            raise HTTPException(status_code=404, detail="Space not found")
+    try:
+        space_object = Space.load(uuid=space_id)
+        log.debug(item.Object_id)
+        prereturn = space_object.add_URI(URI=item.URI, object_id=item.Object_id)
         return prereturn
     except Exception as e:
         log.exception(e)

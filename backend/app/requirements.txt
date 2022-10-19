@@ -3,6 +3,7 @@ uvicorn
 pydantic
 gunicorn
 requests
+validators
 asyncio
 aiohttp
 GitPython

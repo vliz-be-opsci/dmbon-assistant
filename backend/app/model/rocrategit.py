@@ -1,4 +1,5 @@
 import array
+from locale import normalize
 import git, os, json, re
 from abc import abstractmethod
 from .location import Locations
@@ -11,6 +12,8 @@ from subprocess import call
 import app.shacl_helper as shclh
 from rdflib import Graph
 import json, math
+import validators
+import requests
 from pyshacl import validate
 from base64 import decode
 import uuid as uuidmake
@@ -168,6 +171,7 @@ class RoCrateGitBase():
         @param data: the data to get the subobject from
         @type data: dict
         '''
+        log.info(f"object_id: {object_id}")
         for item in data['@graph']:
             if item["@id"] == object_id:
                 item_dict = {}
@@ -181,8 +185,12 @@ class RoCrateGitBase():
                         if value != None and type(value) != dict:
                             item_dict["schema:" + key] = value
                         else:
-                            item_dict["schema:" + key] = value
-                            self.get_subobject(value["@id"], data, array_dicts)
+                            try:
+                                item_dict["schema:" + key] = value
+                                #log.info(f"value: {value}")
+                                self.get_subobject(value["@id"], data, array_dicts)
+                            except:
+                                pass
                 array_dicts.append(item_dict)
                 return(array_dicts)
         
@@ -231,7 +239,10 @@ class RoCrateGitBase():
                                     if value != None and type(value) != dict:
                                         item_dict["schema:" + key] = value
                                     else:
-                                        self.get_subobject(value["@id"], data, barebones_json["@graph"])
+                                        try:
+                                            self.get_subobject(value["@id"], data, barebones_json["@graph"])
+                                        except:
+                                            pass
                             
                             barebones_json["@graph"].append(item_dict)
                     log.debug(barebones_json)
@@ -364,8 +375,214 @@ class RoCrateGitBase():
         #write the metadata
         return {"data":full_data}
     
+    def add_URI(self,URI, object_id=None):
+        """get URI data and add it to the rocrate metadata
+        :param URI: URI to add
+        :param object_id: object_id to add the URI to
+        :type URI: str
+        :type object_id: str
+        :return: rocrate metadata from the crate that was updated
+        """
+        #get the metadata
+        data = self._read_metadata_datacrate()
+        #first check if the URI is a valid url
+        if not validators.url(URI):
+            return {"error": "The URI is not a valid url"}
+        #get the response from the URI with headers application/ld+json
+        try:
+            uri_response = requests.get(URI, headers={'Accept': 'application/ld+json'})
+            #console log the response.status_code and response.text
+            log.debug(f'uri_response.status_code: {uri_response.status_code}')
+            log.debug(f'uri_response.text: {uri_response.text}')
+            
+            #check if the uri_response.text is a valid json
+            try:
+                json.loads(uri_response.text)
+            except ValueError as e:
+                return {"error": "The URI is not a valid json"}
+        
+            #load in response_json the json from the uri_response.text
+            response_json = json.loads(uri_response.text)
+            log.debug(f'response_json: {response_json}')
+            #check if @id and @type keys are in the response_json and if @context == "http://schema.org/"
+            if "@id" in response_json and "@type" in response_json and response_json["@context"] == "http://schema.org":
+                #loop over all items in the graph and check if the @id is already present in the graph
+                for item in data["@graph"]:
+                    if item["@id"] == response_json["@id"]:
+                        return {"error": "The URI is already present in the graph"}
+                
+                #check if the object_id is not None
+                #check if the object_id is in the metadata
+                if object_id is not None:
+                    found = False
+                    for item in data["@graph"]:
+                        if item["@id"] == object_id:
+                            #log.debug(f'object id found')
+                            found = True
+                            break
+                    if not found:
+                        return {"error": "The object_id is not in the metadata"}
+                #first normalise the response_json using a while loop
+                normalised = True
+                toanalyse_json = [response_json]
+                while normalised:
+                    all_commands = []
+                    for item in toanalyse_json:
+                        normalised_response_json = self.normalize_json_ld_response(item)
+                        commands = normalised_response_json[0]
+                        normalised = normalised_response_json[1]
+                        #delete first item from toanalyse_json list
+                        for command in commands:
+                            all_commands.append(command)
+                    #go over all the commands and execute them by searching for the old key and value and replace it with the new key and value and adding the blank_node to the list of toanalyse_json
+                    for command in all_commands:
+                        #log.debug(f'command: {command}')
+                        old_dict = command["old"]
+                        new_dict = command["new"]
+                        blank_node = command["blank_node"]
+                        old_key = old_dict["key"]
+                        old_value = old_dict["value"]
+                        new_key = new_dict["key"]
+                        new_value = new_dict["value"]
+                        #search for old key and value and replace it with the new key and value
+                        itemnumber = 0
+                        for item in toanalyse_json:
+                            if old_key in item:
+                                try:
+                                    string_item = json.dumps(item)
+                                    #check if the old key and value are in the string_item
+                                    #convert old value dict to json string
+                                    old_value_string = json.dumps(old_value)
+                                    searchstring = old_value_string
+                                    if searchstring in string_item:
+                                        #replace the old value with the new value
+                                        new_value_string = json.dumps(new_value)
+                                        string_item = string_item.replace(searchstring, new_value_string)
+                                        #convert string_item back to json
+                                        item = json.loads(string_item)
+                                        toanalyse_json[itemnumber] = item
+                                        #add the blank_node to the toanalyse_json list
+                                        if blank_node != "":
+                                            toanalyse_json.append(blank_node)
+                                except:
+                                    pass
+                            itemnumber += 1
+                #check if the object_id has the same @context as the response_json
+                #loop over the toanalyse_json list and add the items to the metadata
+                for entry in toanalyse_json:
+                    #check if entry has @context in it 
+                    if "@context" in entry and "@type" in entry:
+                        toappenddict = {}
+                        #check if the entry id is not None
+                        if "@id" not in entry:
+                            #make object id
+                            node_id = "_:"+uuidmake.uuid4().hex
+                        else:
+                            node_id = entry["@id"]
+                        
+                        toappenddict["@id"] = node_id
+                        #loop over the rest of the dict and add it to the toappenddict
+                        for key in entry:
+                            if key != "@id":
+                                toappenddict[key] = entry[key]
+                        #add the toappenddict to the metadata
+                        data["@graph"].append(toappenddict)
+                        if object_id is not None:
+                            for item in data["@graph"]:
+                                if item["@id"] == object_id:
+                                    item[entry["@type"]] = {"@id": node_id}
+                                    break
+                    else:
+                        data["@graph"].append(entry)
+                
+            #log.debug(f'data: {json.dumps(data, indent=4)}')
+            self._write_metadata_datacrate(data)
+            return data
+        except Exception as e:
+            log.error(e)
+            log.exception(e)
+            return {"error": e}
+        
+    def normalize_json_ld_response(self, json_ld_response):
+        """normalize json ld response
+        :param json_ld_response: json ld response to normalize
+        :type json_ld_response: str
+        :return: normalized json ld response
+        """
+        #all_replacements = []
+        #go over each key in the json_ld_response and check if it is a dict
+        #if yes then extract the @type and @id if they exist
+        #if @id does not exist then creqte blank node as id
+        normalised_called = False
+        def normalize_dict(key,value):
+            commands = []
+            new_replacement_dict = {}
+            #if it is a dict check if it has the @id key
+            #log.debug(value)
+            if "@type" in value:
+                #check if id is present 
+                if "@id" in value:
+                    node_id = value["@id"]
+                else:
+                    #if it has the @id key replace the value of the key with the @id value
+                    #make new node_id by hex 
+                    node_id = "_:"+uuidmake.uuid4().hex
+                
+                #make replacement_dict {"old":{"key":key,"value":value},"new":{"key":value["@type"],"value":{"@id": node_id}}}
+                new_replacement_dict["old"] = {"key":key,"value":value}
+                new_replacement_dict["new"] = {"key":value["@type"],"value":{"@id": node_id}}
+                toappend = {}
+                toappend["@id"] = node_id
+                #for each entry in the dict add it to the toappend dict
+                for key2, value2 in value.items():
+                    if key2 != "@id":
+                        toappend[key2] = value2
+                new_replacement_dict["blank_node"] = toappend
+            else:
+                #if it does not have the @id key call the normalize_json_ld_response function again
+                new_replacement_dict["old"] = {"key":key,"value":value}
+                new_replacement_dict["new"] = {"key":key,"value":value}
+                new_replacement_dict["blank_node"] = ""
+            commands.append(new_replacement_dict)
+            return commands
+        
+        def append_all_commands(commands, all_commands):
+            for command in commands:
+                all_commands.append(command)
+            return all_commands
+        
+        #if it is a dict then 
+        all_commands = []
+        if isinstance(json_ld_response, dict):
+            for key, value in json_ld_response.items():
+                if isinstance(value, dict):
+                    commands = normalize_dict(key,value)
+                    all_commands = append_all_commands(commands, all_commands)
+                    normalised_called = True
+                elif isinstance(value, list):
+                    for item in value:
+                        if isinstance(item, dict):
+                            commands = normalize_dict(key,item)
+                            all_commands = append_all_commands(commands, all_commands)
+                            normalised_called = True
+        if isinstance(json_ld_response, list):
+            for iteme in json_ld_response:
+                if isinstance(iteme, dict):
+                    for key, value in iteme.items():
+                        if isinstance(value, dict):
+                            commands = normalize_dict(key,value)
+                            all_commands = append_all_commands(commands, all_commands)
+                            normalised_called = True
+                        elif isinstance(value, list):
+                            for item in value:
+                                if isinstance(item, dict):
+                                    commands = normalize_dict(key,item)
+                                    all_commands = append_all_commands(commands, all_commands)
+                                    normalised_called = True
+        return [all_commands,normalised_called]
+    
     def get_predicates_by_type(self, type_search=str):
-        """Get all predicates by type
+        """Get all predicates by type  
         :param type_search: the type of the predicate
         :type type_search: str
         """
@@ -414,13 +631,16 @@ class RoCrateGitBase():
                             item_dict["schema:" + key] = value
                         else:
                             item_dict["schema:" + key] = value
-                            self.get_subobject(value["@id"], data, barebones_json["@graph"])
+                            try:
+                                self.get_subobject(value["@id"], data, barebones_json["@graph"])
+                            except:
+                                pass
                 
                 #log.debug(returned_dict)
                 
                 barebones_json["@graph"].append(item_dict)
         
-        log.debug(f'barebones_json: {barebones_json}')
+        #log.debug(f'barebones_json: {barebones_json}')
         
         shacl_file = open(path_shacl, "rb").read()
         sh = Graph().parse(data=shacl_file, format="turtle")
@@ -508,8 +728,12 @@ class RoCrateGitBase():
                         if(type(value_save) is not dict):
                             all_files.append({'predicate':item_save,'value':value_save})
                         else:
-                            all_files.append({'predicate':item_save,'value':"nodeshape: "+value_save["@id"]})
-                            all_recursive_predicates.append({'predicate':item_save,'value':value_save})
+                            try:
+                                all_files.append({'predicate':item_save,'value':"nodeshape: "+value_save["@id"]})
+                                all_recursive_predicates.append({'predicate':item_save,'value':value_save})
+                            except:
+                                #all these exceptions are based on empty dicts
+                                pass
         
         if len(all_predicates) == 0:
             return {"error":404,"detail":"Resource not found"}
@@ -660,11 +884,15 @@ class RoCrateGitBase():
         data = self._read_metadata_datacrate()
         
         #check if the node id is filled in if not create one
-        if node_id == "" or node_id is None:
-            node_id = uuidmake.uuid4().hex
+        if node_id == "" or node_id is None or node_id == "create new Person node":
+            node_id = "_:"+uuidmake.uuid4().hex
             
         #log.debug(f"file_id: {file_id}")       
         new_uuid_blank_node = node_id
+        
+        #check if node_id is a url and if so trigger the self.add_uri function
+        if "http" in node_id:
+            return self.add_URI(node_id,file_id)
         
         #check if the node is already in the metadata file
         presnet = False
@@ -688,6 +916,7 @@ class RoCrateGitBase():
                 #log.debug(data)
                 self._write_metadata_datacrate(data)
                 return new_blank_node
+
         
     def delete_predicates_by_id(self,to_delete_predicate=str, file_id=str):
         """ delete predicates to given ids by giving a dictionary of predicates to delete 
