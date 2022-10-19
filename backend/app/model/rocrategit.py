@@ -409,7 +409,12 @@ class RoCrateGitBase():
                 #loop over all items in the graph and check if the @id is already present in the graph
                 for item in data["@graph"]:
                     if item["@id"] == response_json["@id"]:
-                        return {"error": "The URI is already present in the graph"}
+                        for dos in data["graph"]:
+                            if dos["@id"] == object_id:
+                                #get the @type and @id of the item and put them in the data[graph]
+                                dos[response_json["@type"]] = {"@id":response_json["@id"]}
+                                self._write_metadata_datacrate(data)
+                                return {data}
                 
                 #check if the object_id is not None
                 #check if the object_id is in the metadata
@@ -965,7 +970,6 @@ class RoCrateGitBase():
 
         data_entities = data['@graph']
         #log.debug(data_entities)
-        
 
         #convert the chacl file to have all the properties per node id
         node_properties_dicts = []
