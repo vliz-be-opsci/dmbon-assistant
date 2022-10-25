@@ -32,21 +32,18 @@ body:
     attributes:
       label: Proposed function
       description: Please try to describe how you would use the suggested feature in your workflow.
-      placeholder: Please include any details on how you envision the suggested feature to be integrated into the system. |
-        This can include code snippets, UI mockups, or a clear description of the intended purpose of the feature.
+      placeholder: Please include any details on how you envision the suggested feature to be integrated into the system. This can include code snippets, UI mockups, or a clear description of the intended purpose of the feature.
   
   - type: textarea
     id: proposed-implementation
     attributes:
       label: Implementation proposal
       description: If you already have some idea how the feature might be implemented, please let us know.
-      placeholder: Please provide any ideas you might already have on how to implement the suggested feature. |
-        This can include code snippets.
+      placeholder: Please provide any ideas you might already have on how to implement the suggested feature. This can include code snippets.
   
   - type: textarea
     id: additional-information
     attributes:
       label: 📑 Additional information
       description: Please add any other information about the suggested feature here, such as other applications that might have this feature already implemented.
-      placeholder: If other applications already include the feature, please provide a link to the application and include a description of how it functions. |
-        This might help us to understand the intentions of the feature and where the idea is coming from.
+      placeholder: If other applications already include the feature, please provide a link to the application and include a description of how it functions. This might help us to understand the intentions of the feature and where the idea is coming from.

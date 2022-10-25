@@ -49,7 +49,28 @@ Explain, on the meta-level, the ''rules of the game''
 * What do we **not** do (currently), e.g. 'we currently do not include testing', ...
   * @todo: Make a list of all things we know we should include, but are currently not included
   * @todo: Make the above list into open issues/feature suggestions?
+  
+The basic premise of open source, at least in our opinion, is that ideas should be motivated before being actively developed.
+Therefore we intend that all contributors (that includes ourselves!) only spend considerable time into changes that actually matter. 
+We _do_ wish to see an active community with those that are enthousiastic about Open Science, so even though you might not be a developer you can still contribute by giving feedback or filing issues. 
+So whatever the problem is, **please do not hesitate to let us (and the community) know**!
 
+Besides this, we do have some guidelines on the meta-level that we intend this project to follow.
+* We would like the system to be as modular as possible. \
+	This ensures that if a specific part breaks, the remainder can still continue. It also ensures that contributing to a specific part of the project is made much easier. Finally, it allows for relatively easy inclusion of new functionality as they only have to bridge or extend individual components instead of trying to fit in a monolithic framework with many (unexpected) dependencies.
+* We would like the functionalit be targeted towards those with little to no programming experience. \
+	Although we highly encourage experienced developers to add or change functionality that is suited for those with lots of programming experience, our main focus is the wider scientific community. Therein not everyone has the time to spend on learning a specific programming language for only a few tasks. We wish to streamline data management for everyone that handles (scientific) data, no exceptions. For this reason additional features should focus mainly on improving functionality without introducing technical overhead.
+
+### What do we **not** do (currently)?
+Below is an incomplete list of things we currently do not support.
+You might use these as a stepping stone for contributing to this project, or completely ignore them - that is up to you! 
+We are just happy that you have made it this far already! 
+You can, of course, also point us to things we do **not** do and why we actually should be doing these.
+
+* We do not include any testing (i.e. for verifying the installation).
+* We do not include a command line interface for experienced users.
+* We do not include ways to include the resulting RO-crates into a knowledge graph that can be queried efficiently.
+* ...
 
 ---
 ## How can I contribute?
@@ -81,6 +102,11 @@ Before suggesting a new feature, please check the list of already suggested feat
 Additionally, check if there are already existing libraries that provide the enhancement - no need to reinvent the wheel!
 
 ##### How do I submit a (good) feature suggestion?
+Once you have thought of a good feature suggestiong you can create an issue by providing the sufficient information through filling in the template that should appear when filing a [new issue](https://github.com/vliz-be-opsci/dmbon-assistant/issues/new/choose).
+Please be sure to select the 'Feature request' template. 
+Please try to explain the suggested feature clearly as others might be implementing this feature. 
+Additionally, any suggestions on how you would like the feature to be integrated is more than welcome.
+This can include (pseudo)code snippets, or 'MS Paint' style images that clearly lay out your idea.
 
 ---
 [//]: <> (YOUR CONTRIBUTION)
@@ -112,4 +138,14 @@ We use [CLA assistant](https://cla-assistant.io/) to automate the process of con
 
 [//]: <> (WHO IS INVOLVED? LIST ALL CURRENT AUTHORS/CONTRIBUTORS)
 ### :bust_in_silhouette: Who is involved?
-List of authors and contributors
+The main contributors are currently all members of the [VLIZ Open Science](https://www.vliz.be/en/open-science-vliz) team.
+
+[The team](https://open-science.vliz.be/#team) (in no particular order):
+* Marc Portier
+* Cedric Decruw
+* Laurian Van Maldeghem
+* Katrina Exter
+* Rory Meyer
+* Johannes Nauta
+
+For all contributions to the codebase, please refer to the [Github page on contributors](https://github.com/vliz-be-opsci/dmbon-assistant/graphs/contributors) for a detailed view on who did what exactly.
