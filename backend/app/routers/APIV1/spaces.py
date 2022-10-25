@@ -1,3 +1,7 @@
+from hashlib import new
+from operator import ne
+from re import L
+from symbol import pass_stmt
 from fastapi import Path, HTTPException, APIRouter
 from typing import Optional
 from pydantic import BaseModel, Field
@@ -54,254 +58,222 @@ def replace_forward_slash(path):
     return path
 
 def complete_metadata_crate(source_path_crate):
+    #get the metadata rocrate metadata file
     try:
-        ## get all the file_ids with their metadata ##
-        #open up the metadata.json file
-        with open(os.path.join(source_path_crate, 'ro-crate-metadata.json')) as json_file:
-            datao = json.load(json_file)
-            
-        #get all the node ids where the type is not a file
-        node_ids = []
-        for node in datao['@graph']:
-            if node['@type'] != 'File':
-                node_ids.append(node)
-                
-        #TODO perform a check here in all the node_ids to see if the part['@id] is a url, if so ten add the part to the dta['@graph]
-        '''
-        for i in node_ids:
-            data['@graph'].append(i)
-        '''
-                 
-                 
-        #check if the ids from relation are present in the json file
-        all_meta_ids_data = []
-        for id in datao['@graph']:
-            toappend_id = {}
-            toappand_data_values = []
-            # if first character is # in the @id then delete the #
-            if id['@id'][0] == '#':
-                id['@id'] = id['@id'][1:]
-            for key_id, value_id in id.items():
-                if key_id != "@id":
-                    toappand_data_values.append({key_id:value_id})
-            toappend_id[id['@id']] = toappand_data_values
-            all_meta_ids_data.append(toappend_id)
-        
-        #log.debug(f"all metadata ids of data: {all_meta_ids_data}")
-        
-        #for all metadata ids check if they have a parent folder, if so then add this one tp the real_name of the file and repeat until you are at the root
-        #make pre meta ids
-        all_ids_pre_new_doc = []
-        for id in datao['@graph']:
-            all_ids_pre_new_doc.append(id)
-        
-        ## start from fresh file with metadata template  ##
-        with open(os.path.join(os.getcwd(),'app',"webtop-work-space",'ro-crate-metadata.json')) as json_file:
-            data = json.load(json_file)
-            
-        #log.debug(f"data from rocrate: {data}")
-        
-        ## add data to the fresh file ##
-        relation = []
-        for root, dirs, files in os.walk(source_path_crate, topdown=False): 
-            
-            for diro in dirs:
-              if ' ' in diro:
-                  os.rename(os.path.join(root, diro), os.path.join(root, diro.replace(' ', '_')))
-            if ".git" not in root:
-                ##log.info(f'root == {root}')
-                for name in files:
-                    
-                    #if the name contains a " " then replace it with "_"
-                    if " " in name:
-                        #replace the " " with "_" on the file system
-                        os.rename(os.path.join(root, name), os.path.join(root, name.replace(" ", "_")))
-                        name = name.replace(" ", "_")
-                    ##log.info(f'file == {name}')
-                    if name != ".git":
-                        if root.split(source_path_crate)[-1] == "":
-                            parent_folder = ""
-                            relative_path = "./"
-                        else:
-                            relative_path = root.split(source_path_crate)[-1]
-                            #check if the relative path contains any " " , if so replace it with "_"
-                            try:
-                                if " " in relative_path:
-                                    relative_path = relative_path.replace(" ", "_")
-                            except Exception as e:
-                                log.error(f"error: {e}")
-                            parent_folder = relative_path.split(os.path.sep)[-1]
-                            added_relative_path = relative_path.replace(os.path.sep, "/")
-                            full_name = os.path.join(relative_path, name)
-                            #replace \\ by / and check if first char is . , if not add .
-                            full_name = full_name.replace("\\", "/")
-                            #escape the / in the name 
-                            full_name = full_name.replace("/", forward_slash_replace)
-                            #log.debug(f"full name: {full_name}")
-                        relation.append({'parent_folder':added_relative_path,"relative_path":relative_path,"name":full_name})
-                        #log.debug({'parent_folder':added_relative_path,"relative_path":relative_path,"name":full_name})
-        
-        
-        #add all the files that are in the root of the source_path_crate to the data
-        onlyfiles = [f for f in listdir(source_path_crate) if os.path.isfile(os.path.join(source_path_crate, f))]
-        for onlyfile in onlyfiles:
-            # if onlyfile doesn't start with './', add it to the relation
-            if onlyfile[0] != ".":
-                relation.append({'parent_folder':"","relative_path":"./","name":onlyfile})
-                #log.debug({'parent_folder':"","relative_path":"./","name":onlyfile})
-        
-        all_ids = []
-        for x in relation:
-            ##log.debug(x)
-            all_ids.append(x["name"])
-        #check if the ids from relation are present in the json file
-        all_meta_ids = []
-        for id in data['@graph']:
-            all_meta_ids.append(id['@id'])
-            ##log.debug(id['@id'])
-        for i in all_ids: 
-            #TODO when I delete stuff from the ro-crate-metdata.json, the folders don't come back to the root , find a way to hange this for when the user decides to mess with the ro-crate-metadata.json
-            if i not in all_meta_ids:
-                ##log.debug("not present: "+ i)
-                #check if parent is present in the file
-                def add_folder_path(path_folder):
-                    toaddppaths = path_folder.split("\\")
-                    
-                    #make list that loops over the toaddpaths and adds the next element to the previous one 
-                    complete_path = ""
-                    all_paths = []
-                    for toadd in toaddppaths:
-                        complete_path  = complete_path + toadd + "/"
-                        all_paths.append(complete_path)
-                    
-                    #log.debug(f"all paths: {all_paths}")
-                    
-                    previous = "./"
-                    for toadd in all_paths:         
-                        if str(toadd) not in all_meta_ids:
-                            if toadd != "/":
-                                data['@graph'].append({'@id':toadd, '@type':"Dataset", 'hasPart':[]})
-                                # add ro right haspart
-                                for ids in data['@graph']:
-                                    if ids['@id'] == previous:
-                                        try:
-                                            ids['hasPart'].append({'@id':toadd})
-                                        except:
-                                            ids['hasPart'] = []
-                                            ids['hasPart'].append({'@id':toadd})
-                                all_meta_ids.append(str(toadd))
-                        if toadd == "/":
-                            previous = './'
-                        else:
-                            previous = toadd
-                                
-                for checkparent in relation:
-                    if checkparent['name'] == i:
-                        if str(checkparent['parent_folder']+"/") not in all_meta_ids:
-                            if checkparent['parent_folder'] != "":
-                                #make the parent_folder in ids
-                                data['@graph'].append({'@id':checkparent['parent_folder']+"/", '@type':"Dataset", 'hasPart':[]})
-                                #check if folder has no parent
-                                #log.info(f"checkparent['parent_folder'] == {checkparent['parent_folder']}")
-                                #log.debug(checkparent['relative_path'].split("\\"))
-                                if len(checkparent['relative_path'].split("\\")) == 2:
-                                    checkparentpath = checkparent['relative_path'].split("\\")
-                                    #log.debug(f"splitted relative path: {checkparentpath}")
-                                    for ids in data['@graph']:
-                                        if ids['@id'] == './':
-                                            if {'@id':checkparent['relative_path'].split("\\")[-1]+"/"} not in ids['hasPart']:
-                                                ids['hasPart'].append({'@id':checkparent['relative_path'].split("\\")[-1]+"/"})
-                                
-                                add_folder_path(checkparent['relative_path'])
-                        #add the non present id to the folder haspart
-                        for ids in data['@graph']:
-                            if checkparent['parent_folder'] == "":
-                                if ids['@id'] == "."+checkparent['parent_folder']+"/":
-                                    ids['hasPart'].append({'@id':i})
-                            else:
-                                if ids['@id'] == checkparent['parent_folder']+"/":
-                                    ids['hasPart'].append({'@id':i})
-                #add the id to the @graph
-                data['@graph'].append({'@id':i, '@type':"File"})
-                #add id to ./ folder if necessary
-        
-        #add the references to the @graph
-        for i in all_ids_pre_new_doc:
-            ##log.info(f"meta id i: {i}")
-            valid=validators.url(i["@id"])
-            if valid:
-                ##log.info(f"valid url: {i}")
-                #add i to the graph
-                for id in data['@graph']:
-                    if id["@id"] == './':
-                        id["hasPart"].append({'@id':i})
-                data['@graph'].append({'@id':i["@id"], '@type':i["@type"]})  
-            else:
-                data['@graph'].append({'@id':i["@id"], '@type':i["@type"]})  
-        
-        ## add file_ids metadata correspondingly ##
-        for ids in data['@graph']:
-            # check if the first character fo the ids["@id "] is a # , if so remove this char
-            if ids["@id"][0] == "#":
-                #log.info(ids["@id"])
-                ids["@id"] = ids["@id"][1:]
-            for tocheck_id in all_meta_ids_data:
-                ##log.info("checking part of graph: "+ids["@id"])
-                if ids['@id'] == str(tocheck_id.keys()):
-                    #log.info(f"found {ids['@id']} in {tocheck_id.keys()}")
-                    #log.info(tocheck_id)
-                    for dict_single_metadata in tocheck_id[ids['@id']]:
-                        for key_dict_single_meta, value_dcit_sinle_meta in dict_single_metadata.items():
-                            if key_dict_single_meta not in ids.keys():
-                                #log.debug(f"key of single file metadata: {key_dict_single_meta}")
-                                ids[key_dict_single_meta] = value_dcit_sinle_meta
-        
-        #remove duplicates
-        seen_ids = []
-        for ids in data['@graph']:
-            if ids['@id'] in seen_ids:
-                #log.info("duplicate id found: "+ids['@id'])
-                data['@graph'].remove(ids)
-            else:
-                seen_ids.append(ids['@id'])
-                            
-        #remove duplicates from hasPart
-        new_graph = []
-        seen_ids = []
-        for ids in data['@graph']:
-            #replace the forward_slash_replace with a /
-            
-            #check if the ids[@type] is not a File or if ids[@id] is a url
-            if ids['@type'] == "File" or ids['@type'] == "Dataset" and validators.url(ids['@id']) != True:
-                ids['@id'] = replace_forward_slash(ids['@id'])
-            if ids['@id'] not in seen_ids:
-                seen_ids.append(ids['@id'])
-                # if ids has hasPart check hasparts
-                if 'hasPart' in ids:
-                    new_hasparts = []
-                    seen_hasparts = []
-                    for haspart in ids['hasPart']:
-                        haspart['@id'] = replace_forward_slash(haspart['@id'])
-                        if haspart['@id'] in seen_hasparts:
-                            #log.info("duplicate id found in hasparts of id: "+ haspart["@id"] + ids['@id'])
-                            pass
-                        else:
-                            seen_hasparts.append(haspart['@id'])
-                            new_hasparts.append(haspart)
-                    ids['hasPart'] = new_hasparts
-                new_graph.append(ids)
-
-        data["@graph"] = new_graph
-        
-        #write the rocrate file back 
-        with open(os.path.join(source_path_crate, 'ro-crate-metadata.json'), 'w') as json_file:
-            json.dump(data, json_file)
-        return data
-    
+        with open(os.path.join(source_path_crate, 'ro-crate-metadata.json'), "r") as f:
+            data = json.load(f)
     except Exception as e:
+        log.error("An error occured while trying to open the ro-crate-metadata.json file")
         log.error(f"error: {e}")
         log.exception(e)
+        return
+
+    #make varibale for the new metadata file
+    try:
+        #take the old metadata file that is not @grapth and put it in a new variable
+        new_data = {}
+        for key, value in data.items():
+            if key != "@graph":
+                new_data[key] = value
+            if key == "@graph":
+                #go over each item in the graph and only append the one where "@id" => "./ro-crate-metadata.json"    
+                for item in value:
+                    if item["@id"] == "./ro-crate-metadata.json":
+                        new_data["@graph"] = [item]
+                        break
+        log.debug(new_data)
+    except Exception as e:
+        log.error("An error occured while loading the new metadata file")
+        log.error(f"error: {e}")
+        log.exception(e)
+        return
+
+    #make variables that contain all the nodes from the graph that aren't a file and a variable that contains all the nodes in the graph that are files
+    try:
+        other_nodes = [node for node in data["@graph"] if node["@type"] != "File"]
+        log.debug(other_nodes)
+        files_nodes = [node for node in data["@graph"] if node["@type"] == "File"]
+        log.debug(files_nodes)
+    except Exception as e:
+        log.error("An error occured while trying to get the nodes from the graph")
+        log.error(f"error: {e}")
+        log.exception(e)
+        return
+
+    #make relations list variabe that is comprised of all parent_folder, relative_path and name of all the files present on the local storage of the user
+    try:
+        relation = []
+        for root, dirs, files in os.walk(source_path_crate, topdown=False): 
+            #make a log.info that shows the root path but split by the source_path_crate
+            last_part_root = root.split(source_path_crate)[-1]
+            current_folder_name = os.path.split(last_part_root)[-1]
+            full_relative_folder = last_part_root[1:]
+            #replace os.path.sep by "/"
+            old_full_relative_folder = full_relative_folder
+            full_relative_folder = full_relative_folder.replace(os.path.sep, "/")
+            #check if full_relative_folder is empty, if so, set it to ./
+            if full_relative_folder == "":
+                log.info(f"nothing root : {root}")
+                parent = "./"
+                for file in files:
+                    if " " in file:
+                        new_file = file.replace(" ", "_")
+                        old_file = os.path.join(root, file)
+                        new_file = os.path.join(root, new_file)
+                        log.debug(f"old_file: {old_file}")
+                        log.debug(f"new_file: {new_file}")
+                        os.rename(old_file, new_file)
+                        file = new_file
+                    #get the relative path of the file , the parent relative direcotry
+                    label_file = os.path.join(parent, file)
+                    label_file = label_file.replace(" ", "_")
+                    label_file = label_file.replace(os.path.sep, "/")
+                    log.debug(f"label_file: {label_file}")
+                    relation.append({"label":label_file, "parent":parent, "file":file})
+                # go to the next iteration of the loop
+                continue
+            
+            #check if full_relative_folder does not start with "."
+            if full_relative_folder[0] != ".":
+                log.info(f"no . root : {root}")
+                parent = "./" + full_relative_folder + "/"
+                log.debug(f"full_current_folder: {root}")
+                #check if there are spaces in the lastpart of the root path split by os.path.sep and if so replace them with _
+                if " " in current_folder_name:
+                    current_folder_name = current_folder_name.replace(" ", "_")
+                    root_without_last_folder = root.split(os.path.sep)[:-1]
+                    new_root = os.path.sep.join(root_without_last_folder + [current_folder_name])
+                    log.debug(f"new_root: {new_root}")
+                    os.rename(root, new_root)
+                    root = new_root
+                #go over each file and first check if there are no spaces in the file location 
+                for file in files:
+                    if " " in file:
+                        new_file = file.replace(" ", "_")
+                        old_file = os.path.join(root, file)
+                        new_file = os.path.join(root, new_file)
+                        log.debug(f"old_file: {old_file}")
+                        log.debug(f"new_file: {new_file}")
+                        os.rename(old_file, new_file)
+                        file = new_file
+                    #get the relative path of the file , the parent relative direcotry
+                    label_file = os.path.join(parent, file)
+                    label_file = label_file.replace(" ", "_")
+                    label_file = label_file.replace(os.path.sep, "/")
+                    log.debug(f"label_file: {label_file}")
+                    relation.append({"label":label_file, "parent":parent, "file":file})
+        log.debug(f"relation: {relation}")
+    except Exception as e:
+        log.error("An error occured while trying to get the relations list")
+        log.error(f"error: {e}")
+        log.exception(e)
+        return {"error": "An error occured while trying to fix the rocrate , make sure you don't have the file explorer open of the current rocrate {source_path_crate}"}
         
+    #go over all relations and check if relation["parent"] is in the other_nodes that are of type dataset
+    try:
+        all_datasets_added = []
+        for rel in relation:
+            parent = rel["parent"]
+            if parent in all_datasets_added:
+                continue
+            log.debug(f"parent: {parent}")
+            for node in other_nodes:
+                if node["@type"] == "Dataset":
+                    #chekc first if the id_to_check is not a url
+                    if validators.url(node["@id"]):
+                        new_data["@graph"].append(node)
+                        break
+                    if node["@id"] == parent:
+                        #TODO discuss with marc if we should use an uuid or not as the id and then the real name as the label?
+                        new_data["@graph"].append({"@id":node["@id"], "@type":node["@type"], "label":node["@id"], "hasPart":[]})
+                        break   
+            all_datasets_added.append(parent)    
+    except Exception as e:
+        log.error("An error occured while trying to add the dataset nodes to the new metadata file")
+        log.error(f"error: {e}")
+        log.exception(e)
+        return
+
+    #go over the relation list again and add the parent to the parent folder of the parent
+    try:
+        all_parents_added = []
+        for rel in relation:
+            parent = rel["parent"]
+            parent_splitted = parent.split("/")
+            parent_of_parent = "/".join(parent_splitted[:-2]) + "/"
+            if parent not in all_parents_added:
+                for node in new_data["@graph"]:
+                    if node["@id"] == parent_of_parent:
+                        node["hasPart"].append({"@id":parent})
+                        all_parents_added.append(parent)
+                        break
+    except Exception as e:
+        log.error("An error occured while trying to add the parent to the parent folder of the parent")
+        log.error(f"error: {e}")
+        log.exception(e)
+        return
+
+    #go over all the other_nodes and do the same but for the ones that are not a dataset
+    try:
+        for node in other_nodes:
+            if node["@id"] == "./ro-crate-metadata.json":
+                continue
+            id_to_check = node["@id"]
+            if "label" in node:
+                id_to_check = node["label"]
+            if node["@type"] != "Dataset":
+                log.debug(node)
+                if "label" not in node:
+                    node["label"] = node["@id"]
+                new_data["@graph"].append(node)
+    except Exception as e:
+        log.error("An error occured while trying to add the non dataset nodes to the new metadata file")
+        log.error(f"error: {e}")
+        log.exception(e)
+        return
+    
+    #go over all the files_nodes and check in the relation list if the label of the file is in files_nodes["@id"] => if found then add the file from files_nodes to the new_data["@graph"]
+    try:
+        for rel in relation:
+            found = False
+            for file_node in files_nodes:
+                if rel["label"] == file_node["@id"]:
+                    found = True
+                    #check first if ref["@label"] is already in teh graph
+                    for node in new_data["@graph"]:
+                        if node["@id"] == file_node["@id"]:
+                            break
+                    if "label" not in file_node:
+                        file_node["label"] = file_node["@id"]
+                    new_data["@graph"].append(file_node)
+                    #add the file to the dataset hasPart
+                    for parentnode in new_data["@graph"]:
+                        if parentnode["@id"] == rel["parent"]:
+                            parentnode["hasPart"].append({"@id":file_node["@id"]})
+                            break
+                    break
+            if not found:
+                if rel["label"] == "./ro-crate-metadata.json":
+                    continue
+                new_data["@graph"].append({"@id":rel["label"], "@type":"File", "label":rel["label"]})
+                #add the file to the dataset hasPart
+                for parentnode in new_data["@graph"]:
+                    if parentnode["@id"] == rel["parent"]:
+                        parentnode["hasPart"].append({"@id":rel["label"]})
+                        break
+    except Exception as e:
+        log.error("An error occured while trying to add the files nodes to the new metadata file")
+        log.error(f"error: {e}")
+        log.exception(e)
+        return
+    
+    #pretty print the new_data with identation of 4
+    log.debug(f"new_data: {json.dumps(new_data, indent=4)}")
+    with open(os.path.join(source_path_crate, 'ro-crate-metadata.json'), 'w') as json_file:
+            json.dump(new_data, json_file, indent=4)
+            #json.dump(new_data, json_file) #this is for a more compact version of the jsonld
+    return new_data
+
 def check_space_name(spacename):
     with open(Locations().join_abs_path('spaces.json'), "r+")as file:
         data = json.load(file)
