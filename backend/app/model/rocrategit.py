@@ -390,12 +390,14 @@ class RoCrateGitBase():
             return {"error": "The URI is not a valid url"}
         #get the response from the URI with headers application/ld+json
         try:
-            uri_response = requests.get(URI, headers={'Accept': 'application/ld+json'})
+            #TODO check if rdf-lib can do content negociation for me and if it can then use it
+            uri_response = requests.get(URI, headers={'Accept': 'application/ld+json'}) #TODO write util function to loop over diff ways to get data
             #console log the response.status_code and response.text
             log.debug(f'uri_response.status_code: {uri_response.status_code}')
-            log.debug(f'uri_response.text: {uri_response.text}')
+            log.debug(f'uri_response.text: {uri_response.text}') 
             
             #check if the uri_response.text is a valid json
+            #TODO write helper function that can handle json and turtle text and lets its be converted to json+ld
             try:
                 json.loads(uri_response.text)
             except ValueError as e:
