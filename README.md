@@ -144,7 +144,48 @@ As such, using DMBON assistant greatly simplifies generation of FAIR research ob
   <img width="20" src="/img/logos/white/windows.svg#gh-dark-mode-only">
   On Windows
 </h4>
-(Thorough Windows installation instructions)
+
+_instructions for use on a Windows-based docker container_
+
+Run a container by executing the following command on the host machine:
+```
+docker run -it -p 8080:8080 --name dmbon-assistant-win mcr.microsoft.com/windows:10.0.19041.1052-amd64
+```
+In the container, run `powershell` to enter the PowerShell interpreter:
+```
+C:\> powershell
+```
+
+Install the Chocolatey package manager:
+```
+> Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+Use Chocolatey to install Git and Node.js:
+```
+> choco install git
+```
+
+```
+> choco install nvm
+```
+
+Restart the container to continue the installation:
+```
+> nvm install 16
+> nvm use 16.18.1
+> npm i -g corepack
+> corepack enable
+> corepack prepare yarn@stable --activate
+```
+
+After cloning the source code, start the application and visit `http://localhost:8080` in the host machine's browser:
+```
+> cd C:\Users\Administrator\Desktop
+> git clone https://github.com/vliz-be-opsci/dmbon-assistant.git
+> cd dmbon-assistant
+> "C:\Program Files\Git\bin\bash.exe" start_webtop_application.sh
+```
 
 <h4>
   <img width="20" src="/img/logos/black/linux.svg#gh-light-mode-only">
