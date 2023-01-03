@@ -68,9 +68,9 @@ def complete_metadata_crate(source_path_crate):
         log.exception(e)
         return
 
-    #make varibale for the new metadata file
+    #make variable for the new metadata file
     try:
-        #take the old metadata file that is not @grapth and put it in a new variable
+        #take the old metadata file that is not @graph and put it in a new variable
         new_data = {}
         for key, value in data.items():
             if key != "@graph":
@@ -173,6 +173,7 @@ def complete_metadata_crate(source_path_crate):
     try:
         all_datasets_added = []
         for rel in relation:
+            added_via_other_node = False
             parent = rel["parent"]
             if parent in all_datasets_added:
                 continue
@@ -182,11 +183,16 @@ def complete_metadata_crate(source_path_crate):
                     #chekc first if the id_to_check is not a url
                     if validators.url(node["@id"]):
                         new_data["@graph"].append(node)
+                        added_via_other_node = True
                         break
                     if node["@id"] == parent:
                         #TODO discuss with marc if we should use an uuid or not as the id and then the real name as the label?
                         new_data["@graph"].append({"@id":node["@id"], "@type":node["@type"], "label":node["@id"], "hasPart":[]})
+                        added_via_other_node = True
                         break   
+            
+            if not added_via_other_node:
+                new_data["@graph"].append({"@id":parent, "@type":"Dataset", "label":parent, "hasPart":[]})
             all_datasets_added.append(parent)    
     except Exception as e:
         log.error("An error occured while trying to add the dataset nodes to the new metadata file")
