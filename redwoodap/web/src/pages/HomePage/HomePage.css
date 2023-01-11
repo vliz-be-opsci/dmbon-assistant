@@ -94,3 +94,11 @@ section {
 .counterclockwise_turned {
     transform: rotate(-20deg);
 }
+
+vocab-search-bar > * > table thead {
+  display: none;
+}
+
+vocab-search-bar table tbody tr > td {
+  display:none;
+}

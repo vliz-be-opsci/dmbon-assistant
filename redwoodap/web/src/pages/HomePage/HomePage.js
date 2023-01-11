@@ -25,6 +25,19 @@ const HomePage = () => {
   const all_spaces = useStore((state) => state.spaces)
   */
 
+  //onload
+  window.onload = function () {
+    const container = document.querySelector("#vocabsearch");
+
+    container.addEventListener("search-results-changed", (event) => {
+      console.log(`The search results have changed to ${event.detail}`);
+      console.log(event.detail);
+    });
+    container.addEventListener("search-result-clicked", (event) => {
+      console.log(`A search result was clicked: ${event.detail}`);
+      console.log(event.detail);
+    });
+  };
   return (
     <>
       <MetaTags title="Home" description="Home page" />
@@ -33,6 +46,14 @@ const HomePage = () => {
             <section className="blue">
                 <h2>DM-BON Assistant</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <div id="vocabsearch">
+                  <vocab-search-bar
+                    search-endpoint="https://vocabsearch.redpencil.io"
+                    hide
+                    >
+                  </vocab-search-bar>
+                </div>
+
             </section>
             <section className="dark">
                 <h2>TODO have a section for the user to create a new space</h2>

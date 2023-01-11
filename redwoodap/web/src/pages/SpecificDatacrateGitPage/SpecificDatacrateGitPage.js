@@ -1,7 +1,5 @@
-import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
 import DatacrateNavigation from 'src/components/DatacrateNavigation/DatacrateNavigation';
-
 import DatacrateGitOverview from 'src/components/DatacrateGitOverview/DatacrateGitOverview';
 
 
