@@ -1,3 +1,4 @@
+
 function log {           # log(msg) {}
   if [[ ! -z "${VERBOSE}" ]]; then
     echo ${1}
