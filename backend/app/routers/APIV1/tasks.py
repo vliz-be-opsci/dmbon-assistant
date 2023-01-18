@@ -296,8 +296,9 @@ def checkcompletestatus():
     #open the setup.json file and check if the complete is set to true
     with open(Locations().join_abs_path('setup.json'), 'r') as data_file:
         data = json.load(data_file)
+        log.debug(data)
     
-    if data['complete'] == True:
+    if data['complete'] == "True":
         return {'data':'setup is complete'}
     else:
         raise HTTPException(status_code=500, detail={"data": "setup is not complete"})
