@@ -64,15 +64,13 @@ class MyWindow:
                     #run the sh start_webtop_application.sh file in a new terminal 
                     filepathto = os.path.join(os.path.dirname(os.path.realpath(__file__)),"dmbon-assistant.sh")
                     print(filepathto)
-                    #use os.system to open a git bash terminal
-                    os.system('start \"C:\Program Files\Git\git-bash.exe\"')
                     #execute command in git bash terminal
-                    os.system('start \"\" \"C:\Program Files\Git\git-bash.exe\" /k "cd '+os.path.dirname(os.path.realpath(__file__))+' && '+filepathto+' start"')
+                    os.system('start_webtop_application.sh')
+                    #os.system('start \"\" \"C:\Program Files\Git\git-bash.exe\" /k "cd '+os.path.dirname(os.path.realpath(__file__))+' && '+filepathto+' start"')
                     #still need to find a way to run the sh file in a new terminal
                     self.end_installation()
         except Exception as e:
-            self.errorhandling("test_all_installed",e)
-            
+            self.errorhandling("test_all_installed",e)       
         
     def end_installation(self):
         try:

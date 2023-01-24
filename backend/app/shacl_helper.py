@@ -11,6 +11,7 @@ from pyshacl.rdfutil import (
     order_graph_literal,
 )
 import rdflib
+import logging
 import os, sys
 from rdflib.namespace import RDF
 from rdflib import Graph, BNode, Namespace, URIRef
@@ -40,6 +41,8 @@ from pyshacl.consts import (
 SH_mincount = SH.minCount
 SH_maxcount = SH.maxCount
 SH_in = SH.term("in")
+
+log=logging.getLogger(__name__)
 
 class ShapesInfoGraph():
     def __init__(self,rdf_graph_file_path):
@@ -113,7 +116,8 @@ class ShapesInfoGraph():
         tureturn = []
         for nodeshape in self.node_shapes:
             target = self.target_for_shape(nodeshape) 
-            print("target for :",nodeshape," == ", target , file=sys.stderr)
+            log.debug(f"target for : {nodeshape} == {target}")
+            #print("target for :",nodeshape," == ", target , file=sys.stderr) # this line causes an OS error 22 on windows
             props  = self.properties_for_shape(nodeshape)
             tureturn.append({"node":nodeshape,"target":target,"properties":props})
         return tureturn

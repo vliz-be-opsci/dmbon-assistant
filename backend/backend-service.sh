@@ -4,7 +4,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}
 
 PIDFILE="backend.pid"
-
+echo "Args mainline: $0 $1 $2"
 function dependencies {
   #check if there is a venv folder already in the directory
   if [ ! -d venv ]; then
@@ -28,8 +28,9 @@ function dependencies {
 } 
 
 function start_service {
+  echo "Args startservice:$1"
   #check if a -b flag is passed as second argument
-  if [ "$2" == "-b" ]; then
+  if [ "$1" == "-b" ]; then
     echo "Starting the service..."
   else
     #open the browser 
@@ -76,7 +77,7 @@ case ${1} in
     else
       echo "Backend Service is not running. Will start it now."
       dependencies
-      start_service
+      start_service $2
       echo "Backend Service started as pid $(cat ${PIDFILE})"
     fi
     ;;

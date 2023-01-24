@@ -39,7 +39,12 @@ function service_request {
                 #if the process is still running, kill it with fire
                 if [[ $(netstat -ano | findstr :8080 | awk '{print $5}') == $httpserverpid ]]; then
                     echo "http-server is still running, killing it with fire"
-                    taskkill /F /PID $httpserverpid
+                    #perform taskkill in powershell
+                    #powershell.exe -Command "Stop-Process -Id $httpserverpid"
+                    #perform taskkill in cmd
+                    powershell.exe -Command "Stop-Process -Id $httpserverpid"
+                    #taskkill when shit really hits the fan
+                    #taskkill /F /PID $httpserverpid
                 fi
             elif [[ $srvrq == "status" ]]; then
                 echo "checking http-server status"

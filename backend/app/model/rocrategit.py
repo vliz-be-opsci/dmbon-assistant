@@ -831,6 +831,7 @@ class RoCrateGitBase():
         f_constraints = open(path_shacl, "r")
         f_constraints_text = f_constraints.read()
         test = shclh.ShapesInfoGraph(path_shacl)
+        log.debug(f"test shacl info graph: {test}")
         shacldata = test.full_shacl_graph_dict()
         #convert the shacl file to have all the properties per node id
         node_properties_dicts = []
