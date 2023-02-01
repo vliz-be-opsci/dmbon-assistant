@@ -76,30 +76,30 @@
 
 /*! ../modules/es.regexp.exec */
 
-/*! ./FormContext */
+/*! core-js/modules/es.array.includes.js */
 
-/*! ./FormGroup */
+/*! core-js/modules/esnext.async-iterator.for-each.js */
 
-/*! ./ThemeProvider */
+/*! core-js/modules/esnext.async-iterator.map.js */
 
-/*! classnames */
+/*! core-js/modules/esnext.iterator.constructor.js */
+
+/*! core-js/modules/esnext.iterator.for-each.js */
+
+/*! core-js/modules/esnext.iterator.map.js */
 
 /*! react */
-
-/*! react/jsx-runtime */
-
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
 
 /*!**************************************!*\
   !*** ./src/components/component.css ***!
   \**************************************/
 
-/*!********************************************************!*\
-  !*** ../node_modules/core-js/internals/regexp-exec.js ***!
-  \********************************************************/
+/*!**************************************!*\
+  !*** ./src/utils/HelperFunctions.js ***!
+  \**************************************/
 
 /*!********************************************************!*\
-  !*** ../node_modules/react-bootstrap/esm/FormGroup.js ***!
+  !*** ../node_modules/core-js/internals/regexp-exec.js ***!
   \********************************************************/
 
 /*!*********************************************************!*\
@@ -110,16 +110,8 @@
   !*** ../node_modules/core-js/modules/es.regexp.exec.js ***!
   \*********************************************************/
 
-/*!**********************************************************!*\
-  !*** ../node_modules/react-bootstrap/esm/FormContext.js ***!
-  \**********************************************************/
-
 /*!************************************************************!*\
   !*** ../node_modules/core-js/modules/es.string.replace.js ***!
-  \************************************************************/
-
-/*!************************************************************!*\
-  !*** ../node_modules/react-bootstrap/esm/FloatingLabel.js ***!
   \************************************************************/
 
 /*!*************************************************************!*\
@@ -133,10 +125,6 @@
 /*!***************************************************************!*\
   !*** ./src/components/ProgressBar/ProgressBar.js + 1 modules ***!
   \***************************************************************/
-
-/*!****************************************************************!*\
-  !*** ../node_modules/react-bootstrap/esm/Form.js + 12 modules ***!
-  \****************************************************************/
 
 /*!*****************************************************************!*\
   !*** ../node_modules/core-js/internals/advance-string-index.js ***!
@@ -162,6 +150,10 @@
   !*** ../node_modules/core-js/internals/fix-regexp-well-known-symbol-logic.js ***!
   \*******************************************************************************/
 
+/*!*******************************************************************************!*\
+  !*** ./src/components/DatacrateNavigation/DatacrateNavigation.js + 1 modules ***!
+  \*******************************************************************************/
+
 /*!*********************************************************************************************!*\
-  !*** ./src/pages/SpecificDatacrateContentPage/SpecificDatacrateContentPage.js + 32 modules ***!
+  !*** ./src/pages/SpecificDatacrateContentPage/SpecificDatacrateContentPage.js + 13 modules ***!
   \*********************************************************************************************/
