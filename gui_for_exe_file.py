@@ -53,7 +53,7 @@ class MyWindow:
         self.npm_check_install()
         self.python_check_install()
         self.git_check_install()
-        self.check_all_installed()
+        #self.check_all_installed()
         
     def check_all_installed(self):
         try:
@@ -226,6 +226,8 @@ class MyWindow:
         
 window=Tk()
 mywin=MyWindow(window)
+#add minimize button
+window.protocol("WM_DELETE_WINDOW", window.iconify)
 window.geometry("500x500")
 window.configure(background="black")
 window.resizable(False, False)
