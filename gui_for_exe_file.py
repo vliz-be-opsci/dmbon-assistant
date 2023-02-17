@@ -129,11 +129,6 @@ class MyWindow:
         
     def git_install(self):
         ose = self.check_os()
-        if ose == "Windows":
-            url = "https://git-scm.com/download/win"
-            command = f"curl -O {url}"
-            os.system(command)
-            os.system("Git-2.33.1-64-bit.exe")
         if ose == "Linux":
             url = "https://www.kernel.org/pub/software/scm/git/git-2.39.1.tar.gz"
             command = f"curl -O {url}"
