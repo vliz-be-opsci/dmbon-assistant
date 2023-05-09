@@ -342,7 +342,7 @@ def get_all_spaces():
             raise HTTPException(status_code=500, detail=e)
 
 @router.get('/{space_id}/', tags=["Spaces"])
-def get_space_info(*,space_id: str = Path(None,description="space_id name")):
+def get_space_info(*,space_id: str = Path(description="space_id name")):
     if check_space_name(space_id):
         with open(Locations().join_abs_path('spaces.json'), "r+") as file:
             data = json.load(file)
@@ -366,7 +366,7 @@ def get_space_info(*,space_id: str = Path(None,description="space_id name")):
         raise HTTPException(status_code=404, detail="Space not found")
 
 @router.delete('/{space_id}/', status_code=202, tags=["Spaces"])
-def delete_space(*,space_id: str = Path(None,description="space_id name")):
+def delete_space(*,space_id: str = Path(description="space_id name")):
     with open(Locations().join_abs_path('spaces.json')) as data_file:
             data = json.load(data_file)
             try:
@@ -422,7 +422,7 @@ async def add_space(*,item: SpaceModel):
     return {'Message':f"Space made, location:{item.storage_path}", 'name': item.name}
 
 @router.put('/{space_id}/', status_code=202, tags=["Spaces"])
-async def update_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
+async def update_space(*,space_id: str = Path(description="space_id name"), item: SpaceModel):
     tocheckpath = str(item.storage_path)
     with open(Locations().join_abs_path('spaces.json'), "r+")as file:
         data = json.load(file)
@@ -441,7 +441,7 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
     raise HTTPException(status_code=404, detail="Space not found")
 
 @router.get('/{space_id}/fixcrate', status_code=201, tags=["Spaces"])
-async def fix_crate(*,space_id: str = Path(None,description="space_id name")): 
+async def fix_crate(*,space_id: str = Path(description="space_id name")): 
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:

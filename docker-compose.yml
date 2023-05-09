@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "6656:6656"
+  frontend:
+    build: ./frontend
+    ports:
+      - "8910:8910"
+  

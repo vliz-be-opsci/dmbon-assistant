@@ -47,7 +47,7 @@ class URIModel(BaseModel):
 
 ### space resource annotation ###
 @router.get('/', status_code=200)
-def get_all_resources_annotation(*,space_id: str = Path(None,description="space_id name")):
+def get_all_resources_annotation(*,space_id: str = Path(description="space_id name")):
     
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -69,7 +69,7 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
 
 #have call to make node in file id 
 @router.post('/file/node/{file_id:path}', status_code=200)
-def make_resource_annotation_single_file_node(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: NodeModel):
+def make_resource_annotation_single_file_node(*,space_id: str = Path(description="space_id name"), file_id: str = Path(description="id of the file that will be searched in the ro-crate-metadata.json file"), item: NodeModel):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -90,7 +90,7 @@ def make_resource_annotation_single_file_node(*,space_id: str = Path(None,descri
         raise HTTPException(status_code=500, detail=e)
 
 @router.post('/file/{file_id:path}', status_code=200)
-def make_resource_annotation_single_file(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), item: AnnotationsModel):
+def make_resource_annotation_single_file(*,space_id: str = Path(description="space_id name"), file_id: str = Path(description="id of the file that will be searched in the ro-crate-metadata.json file"), item: AnnotationsModel):
     ## get the current metadata.json ##
     #log.info(file_id)
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
@@ -115,7 +115,7 @@ def make_resource_annotation_single_file(*,space_id: str = Path(None,description
 
 
 @router.delete('/file/{predicate}/{file_id:path}', status_code=200)
-def delete_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file"), predicate: str = Path(None,description="To delete predicate from the file annotations")):
+def delete_resource_annotation(*,space_id: str = Path(description="space_id name"), file_id: str = Path(description="id of the file that will be searched in the ro-crate-metadata.json file"), predicate: str = Path(description="To delete predicate from the file annotations")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -135,7 +135,7 @@ def delete_resource_annotation(*,space_id: str = Path(None,description="space_id
         raise HTTPException(status_code=500, detail=e)
 
 @router.get('/file/{file_id:path}', status_code=200)
-def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), file_id: str = Path(None,description="id of the file that will be searched in the ro-crate-metadata.json file")):
+def get_resource_annotation(*,space_id: str = Path(description="space_id name"), file_id: str = Path(description="id of the file that will be searched in the ro-crate-metadata.json file")):
     #log.info(file_id)
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -158,7 +158,7 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
     
 #router get call to get all files and annotations for a given tpye of node
 @router.get('/type/{node_type}', status_code=200)
-def get_resource_annotation_by_type(*,space_id: str = Path(None,description="space_id name"), node_type: str = Path(None,description="type of node to search for")):
+def get_resource_annotation_by_type(*,space_id: str = Path(description="space_id name"), node_type: str = Path(description="type of node to search for")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -177,7 +177,7 @@ def get_resource_annotation_by_type(*,space_id: str = Path(None,description="spa
     
 #router post call that will search for a given URI and will get back the application/ld+json for that URI and will add it to the ro-crate-metadata.json file and to the corresponding object in the crate if object id was also given in the request modal
 @router.post('/uri', status_code=200)
-def post_uri(*,space_id: str = Path(None,description="space_id name"), item: URIModel):
+def post_uri(*,space_id: str = Path(description="space_id name"), item: URIModel):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -196,7 +196,7 @@ def post_uri(*,space_id: str = Path(None,description="space_id name"), item: URI
 
     
 @router.get('/shacl_report', status_code=200)
-def get_shacl_report(*,space_id: str = Path(None,description="space_id name")):
+def get_shacl_report(*,space_id: str = Path(description="space_id name")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -217,7 +217,7 @@ def get_shacl_report(*,space_id: str = Path(None,description="space_id name")):
         raise HTTPException(status_code=500, detail=e)
 
 @router.get('/terms', status_code=200)
-def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
+def get_terms_shacl(*, space_id: str = Path(description="space_id name")):
     try:
         
         #TODO from json select which shacl file should be taken
@@ -238,7 +238,7 @@ def get_terms_shacl(*, space_id: str = Path(None,description="space_id name")):
         log.exception(e)
 
 @router.post('/', status_code=200)
-def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+def make_annotations_for_all_resources(*,space_id: str = Path(description="space_id name"), item: AnnotationsModel):
     #get path of metadatafile
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -254,7 +254,7 @@ def make_annotations_for_all_resources(*,space_id: str = Path(None,description="
     return {"data":data}
 
 @router.delete('/', status_code=200)
-def delete_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+def delete_annotations_for_all_resources(*,space_id: str = Path(description="space_id name"), item: AnnotationsModel):
     #get path of metadatafile
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)

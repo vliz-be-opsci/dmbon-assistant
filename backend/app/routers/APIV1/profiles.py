@@ -60,7 +60,7 @@ def get_all_profiles_info():
             raise HTTPException(status_code=500, detail=e)
 
 @router.get('/{profile_id}/')
-def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
+def get_profile_info(profile_id: str = Path(description="profile_id name")):
     #log.info(f"profile get begin")
     with open(Locations().join_abs_path('profiles.json'), "r+") as file:
         data = json.load(file)
@@ -74,7 +74,7 @@ def get_profile_info(profile_id: str = Path(None,description="profile_id name"))
             raise HTTPException(status_code=404, detail="profile not found")
 
 @router.delete('/{profile_id}/', status_code=202)
-def delete_profile(profile_id: str = Path(None,description="profile_id name")):
+def delete_profile(profile_id: str = Path(description="profile_id name")):
     #log.info(f"profile delete begin")
     with open(Locations().join_abs_path('profiles.json')) as data_file:
             data = json.load(data_file)
@@ -111,7 +111,7 @@ def add_profile(*,item: ProfileModel):
         raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
 
 @router.put('/{profile_id}/', status_code=202)
-def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
+def update_profile(*,profile_id: str = Path(description="profile_id name"), item: ProfileModel):
     #log.info(f"profile update begin")
     with open(Locations().join_abs_path('profiles.json'), "r+")as file:
         data = json.load(file)

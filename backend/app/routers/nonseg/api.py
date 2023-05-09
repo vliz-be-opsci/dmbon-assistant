@@ -114,7 +114,7 @@ def get_all_profiles_info():
         return data
 
 @router.get('/profiles/{profile_id}/')
-def get_profile_info(profile_id: str = Path(None,description="profile_id name")):
+def get_profile_info(profile_id: str = Path(description="profile_id name")):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+") as file:
         data = json.load(file)
         try:
@@ -124,7 +124,7 @@ def get_profile_info(profile_id: str = Path(None,description="profile_id name"))
             raise HTTPException(status_code=404, detail="profile not found")
 
 @router.delete('/profiles/{profile_id}/', status_code=202)
-def delete_profile(profile_id: str = Path(None,description="profile_id name")):
+def delete_profile(profile_id: str = Path(description="profile_id name")):
     with open(os.path.join(os.getcwd(),"app","workflows.json")) as data_file:
             data = json.load(data_file)
             try:
@@ -152,7 +152,7 @@ def add_profile(*,item: ProfileModel):
             raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
 
 @router.put('/profiles/{profile_id}/', status_code=202)
-def update_profile(*,profile_id: str = Path(None,description="profile_id name"), item: ProfileModel):
+def update_profile(*,profile_id: str = Path(description="profile_id name"), item: ProfileModel):
     with open(os.path.join(os.getcwd(),"app","workflows.json"), "r+")as file:
         data = json.load(file)
     for profile in data.keys():
@@ -174,7 +174,7 @@ def get_all_spaces():
         return data
 
 @router.get('/spaces/{space_id}/')
-def get_space_info(*,space_id: str = Path(None,description="space_id name")):
+def get_space_info(*,space_id: str = Path(description="space_id name")):
     if check_space_name(space_id):
         with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
             data = json.load(file)
@@ -187,7 +187,7 @@ def get_space_info(*,space_id: str = Path(None,description="space_id name")):
         raise HTTPException(status_code=404, detail="Space not found")
 
 @router.delete('/spaces/{space_id}/', status_code=202)
-def delete_space(*,space_id: str = Path(None,description="space_id name")):
+def delete_space(*,space_id: str = Path(description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json")) as data_file:
             data = json.load(data_file)
             try:
@@ -272,7 +272,7 @@ async def add_space(*,item: SpaceModel):
     return {'Message':returnmessage, 'space_id': space_id}
 
 @router.put('/spaces/{space_id}/', status_code=202)
-async def update_space(*,space_id: str = Path(None,description="space_id name"), item: SpaceModel):
+async def update_space(*,space_id: str = Path(description="space_id name"), item: SpaceModel):
     tocheckpath = str(item.storage_path)
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+")as file:
         data = json.load(file)
@@ -291,7 +291,7 @@ async def update_space(*,space_id: str = Path(None,description="space_id name"),
     raise HTTPException(status_code=404, detail="Space not found")
 
 @router.get('/spaces/{space_id}/content/')
-def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
+def get_space_content_info(*,space_id: str = Path(description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
@@ -307,7 +307,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
     return {'Data':toreturn}
 
 @router.post('/spaces/{space_id}/content/', status_code=202)
-def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
+def add_new_content(*,space_id: str = Path(description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
 
@@ -363,7 +363,7 @@ def add_new_content(*,space_id: str = Path(None,description="space_id name"), it
     return {'Data':'all content successfully added to space'}
 
 @router.delete('/spaces/{space_id}/content/', status_code=202)
-def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
+def delete_content(*,space_id: str = Path(description="space_id name"), item: DeleteContentModel):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
@@ -385,7 +385,7 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
     return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
 
 @router.get('/spaces/{space_id}/content/{path_folder:path}')
-def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
+def get_space_content_folder_info(*,space_id: str = Path(description="space_id name"), path_folder: str = Path(description="folder  path to get the files from")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
@@ -402,7 +402,7 @@ def get_space_content_folder_info(*,space_id: str = Path(None,description="space
     return {'Data':toreturn}
 
 @router.get('/spaces/{space_id}/git/status/', status_code=200)
-def get_git_status(*,space_id: str = Path(None,description="space_id name")):
+def get_git_status(*,space_id: str = Path(description="space_id name")):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -444,7 +444,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     return {'data':toreturn}
 
 @router.post('/spaces/{space_id}/git/{command}}', status_code=200)
-def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
+def get_git_status(*,space_id: str = Path(description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)")):
     toreturn =[]
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
@@ -493,7 +493,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
 ### space resource annotation ###
 
 @router.get('/spaces/{space_id}/annotation/', status_code=200)
-def get_all_resources_annotation(*,space_id: str = Path(None,description="space_id name")):
+def get_all_resources_annotation(*,space_id: str = Path(description="space_id name")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
@@ -525,7 +525,7 @@ def get_all_resources_annotation(*,space_id: str = Path(None,description="space_
     return {"data":files_attributes}
 
 @router.get('/spaces/{space_id}/annotation/{path_folder:path}', status_code=200)
-def get_resource_annotation(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path or file name to the file")):
+def get_resource_annotation(*,space_id: str = Path(description="space_id name"), path_folder: str = Path(description="folder-path or file name to the file")):
     with open(os.path.join(os.getcwd(),"app","projects.json"), "r+") as file:
         data = json.load(file)
         try:
@@ -561,27 +561,27 @@ def get_resource_annotation(*,space_id: str = Path(None,description="space_id na
 #TODO : Add content modal for the annotation of the resources
 
 @router.post('/spaces/{space_id}/annotation/{path_folder:path}}', status_code=200)
-def make_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
+def make_resource_annotations(*,space_id: str = Path(description="space_id name"), path_folder: str = Path(description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
 @router.post('/spaces/{space_id}/annotation/}', status_code=200)
-def make_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+def make_annotations_for_all_resources(*,space_id: str = Path(description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
 
 @router.put('/spaces/{space_id}/annotation/{path_folder:path}}', status_code=200)
-def update_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
+def update_resource_annotations(*,space_id: str = Path(description="space_id name"), path_folder: str = Path(description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
 @router.put('/spaces/{space_id}/annotation/}', status_code=200)
-def update_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+def update_annotations_for_all_resources(*,space_id: str = Path(description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
 
 @router.delete('/spaces/{space_id}/annotation/{path_folder:path}}', status_code=200)
-def delete_resource_annotations(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder-path to the file"), item: AnnotationsModel):
+def delete_resource_annotations(*,space_id: str = Path(description="space_id name"), path_folder: str = Path(description="folder-path to the file"), item: AnnotationsModel):
     return {"message":"TODO"}
 
 @router.delete('/spaces/{space_id}/annotation/}', status_code=200)
-def delete_annotations_for_all_resources(*,space_id: str = Path(None,description="space_id name"), item: AnnotationsModel):
+def delete_annotations_for_all_resources(*,space_id: str = Path(description="space_id name"), item: AnnotationsModel):
     return {"message":"TODO"}
 
 ### statistics ###

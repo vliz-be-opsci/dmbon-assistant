@@ -62,7 +62,7 @@ class DeleteContentModel(BaseModel):
 ### api paths ###
 
 @router.get('/')
-def get_space_content_info(*,space_id: str = Path(None,description="space_id name")):
+def get_space_content_info(*,space_id: str = Path(description="space_id name")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -94,7 +94,7 @@ def get_space_content_info(*,space_id: str = Path(None,description="space_id nam
             
     return toreturn
 @router.get('/openexplorer')
-def open_file_explorer(*,space_id: str = Path(None,description="space_id name")):
+def open_file_explorer(*,space_id: str = Path(description="space_id name")):
     #log.debug(space_id)
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -114,7 +114,7 @@ def open_file_explorer(*,space_id: str = Path(None,description="space_id name"))
     return "file-explorer opened successfully"
 
 @router.post('/reference', status_code=202) #TODO fix broken reference adding
-async def add_new_references(*,space_id: str = Path(None,description="space_id name"), item: ListReferenceModel):  
+async def add_new_references(*,space_id: str = Path(description="space_id name"), item: ListReferenceModel):  
     try:
         
         with open(Locations().join_abs_path('spaces.json'), "r+") as file:
@@ -184,7 +184,7 @@ async def add_new_references(*,space_id: str = Path(None,description="space_id n
         raise HTTPException(status_code=400, detail=e)
 
 @router.get('/{path_spec:path}')
-def open_file_content_external(*,space_id: str = Path(None,description="space_id name"), path_spec: str = Path(None,description="content path (relative to crate pointing to file or folder) to get the info from")):
+def open_file_content_external(*,space_id: str = Path(description="space_id name"), path_spec: str = Path(description="content path (relative to crate pointing to file or folder) to get the info from")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -215,7 +215,7 @@ def open_file_content_external(*,space_id: str = Path(None,description="space_id
 
 '''
 @router.post('/', status_code=202)
-async def add_new_content(*,space_id: str = Path(None,description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
+async def add_new_content(*,space_id: str = Path(description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -273,7 +273,7 @@ async def add_new_content(*,space_id: str = Path(None,description="space_id name
 
 '''
 @router.delete('/', status_code=202)
-def delete_content(*,space_id: str = Path(None,description="space_id name"), item: DeleteContentModel):
+def delete_content(*,space_id: str = Path(description="space_id name"), item: DeleteContentModel):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
@@ -321,7 +321,7 @@ def delete_content(*,space_id: str = Path(None,description="space_id name"), ite
 '''
 '''
 @router.get('/{path_folder:path}')
-def get_space_content_folder_info(*,space_id: str = Path(None,description="space_id name"), path_folder: str = Path(None,description="folder  path to get the files from")):
+def get_space_content_folder_info(*,space_id: str = Path(description="space_id name"), path_folder: str = Path(description="folder  path to get the files from")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:

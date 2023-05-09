@@ -1,0 +1,67 @@
+.content_item {
+  display: flex;
+  flex: row;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
+  border : 1px solid #ccc;
+  margin-bottom: 0.3rem;
+}
+
+span {
+  margin-right: 0.27rem;
+}
+
+.actions {
+  display: flex;
+  flex: row;
+  min-width: 20%;
+}
+
+.actions > button {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  min-width: 40px;
+  min-height:40px;
+  justify-content: space-between;
+  background-color: var(--border-color-table);
+}
+
+.actions > button:hover {
+  background-color: var(--button-hover-color);
+  color: white;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
+}
+
+.actions > button:focus {
+  background-color: var(--button-hover-color);
+  color: white;
+  box-shadow: 0px 0px 5px var(--button-hover-color);
+}
+
+.file-content {
+  flex: row;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  min-width: 75%;
+  margin-right: 0.25rem;
+}
+
+.file-storage {
+  display: flex;
+  flex: row;
+  min-width: 2%;
+  max-height: 40px;
+  margin-right: 10px;
+  transform: translateX(-70px);
+}
+
+.file-content > .file-name {
+  font-size: 0.9em;
+  float: left;
+}

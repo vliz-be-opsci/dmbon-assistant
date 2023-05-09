@@ -298,7 +298,7 @@ def checkcompletestatus():
         data = json.load(data_file)
         log.debug(data)
     
-    if data['complete'] == "True":
+    if data['complete']:
         return {'data':'setup is complete'}
     else:
         raise HTTPException(status_code=500, detail={"data": "setup is not complete"})

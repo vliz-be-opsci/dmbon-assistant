@@ -55,7 +55,7 @@ def get_all_projects_info():
             raise HTTPException(status_code=500, detail=e)
 
 @router.get('/{project_id}/')
-def get_project_info(project_id: str = Path(None,description="project_id name")):
+def get_project_info(project_id: str = Path(description="project_id name")):
     #log.info(f"project get begin")
     with open(Locations().join_abs_path('projects.json'), "r+") as file:
         data = json.load(file)
@@ -68,7 +68,7 @@ def get_project_info(project_id: str = Path(None,description="project_id name"))
             raise HTTPException(status_code=404, detail="project not found")
 
 @router.delete('/{project_id}/', status_code=202)
-def delete_project(project_id: str = Path(None,description="project_id name")):
+def delete_project(project_id: str = Path(description="project_id name")):
     #log.info(f"project delete begin")
     with open(Locations().join_abs_path('projects.json')) as data_file:
             data = json.load(data_file)
@@ -105,7 +105,7 @@ def add_project(*,item: ProjectModel):
         raise HTTPException(status_code=400, detail="supplied body must have following keys: {}".format(keys))
 
 @router.put('/{project_id}/', status_code=202)
-def update_project(*,project_id: str = Path(None,description="project_id name"), item: ProjectModel):
+def update_project(*,project_id: str = Path(description="project_id name"), item: ProjectModel):
     #log.info(f"project update begin")
     with open(Locations().join_abs_path('projects.json'), "r+")as file:
         data = json.load(file)

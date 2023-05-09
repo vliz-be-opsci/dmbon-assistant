@@ -1,0 +1,31 @@
+/* background gradient 45% angled, #fff, #1a94aaAA */
+.loader {
+  border: 3px solid;
+  display: flex;
+  flex: row;
+}
+
+.small {
+  width: 100%;
+  min-width: 450px;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 1px;
+  margin-top: 2px;
+  box-sizing: border-box;
+}
+
+.normal {
+  width: 100%;
+  min-width: 450px;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.loader h2 {
+  margin: auto;
+  text-align: center;
+}

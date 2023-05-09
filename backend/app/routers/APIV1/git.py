@@ -27,7 +27,7 @@ class GitCommitMessageModel(BaseModel):
 ### api paths ###
 
 @router.get("/diff", status_code=200)
-def get_git_diff(*,space_id: str = Path(None,description="space_id name")):
+def get_git_diff(*,space_id: str = Path(description="space_id name")):
     """Get the git diff of the current working directory"""
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -49,7 +49,7 @@ def get_git_diff(*,space_id: str = Path(None,description="space_id name")):
     return StreamingResponse(io.BytesIO(diff_bytes), media_type="text/plain")
 
 @router.get('/status/', status_code=200)
-def get_git_status(*,space_id: str = Path(None,description="space_id name")):
+def get_git_status(*,space_id: str = Path(description="space_id name")):
     log.debug("get_git_status")
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -88,7 +88,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name")):
     return {'message':pulls, 'dirty':repo.is_dirty(), 'ahead':ahead, 'behind':behind}
 
 @router.post('/{command}', status_code=200)
-def get_git_status(*,space_id: str = Path(None,description="space_id name"),command: str = Path("commit",description="git command to use (commit,pull,push)"), item:GitCommitMessageModel):
+def get_git_status(*,space_id: str = Path(description="space_id name"),command: str = Path(description="git command to use (commit,pull,push)"), item:GitCommitMessageModel):
     toreturn =[]
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
@@ -143,7 +143,7 @@ def get_git_status(*,space_id: str = Path(None,description="space_id name"),comm
     
 
 @router.get('/history/', status_code=200)
-def get_git_history(*,space_id: str = Path(None,description="space_id name")):
+def get_git_history(*,space_id: str = Path(description="space_id name")):
     with open(Locations().join_abs_path('spaces.json'), "r+") as file:
         data = json.load(file)
         try:
