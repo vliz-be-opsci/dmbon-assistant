@@ -4,6 +4,9 @@ services:
     build: .
     ports:
       - "6656:6656"
+    volumes:
+    #volumne comes from the c:\ drive
+      - C:\\dmbon:/code/app/workspace
   frontend:
     build: ./frontend
     ports:

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+CWD=$(pwd)
+name="ssh-git-tools"
+gituri="https://gitlab.vliz.be/datac/openscience/${name}.git"
+target="/data/${name}"
+
+
+echo "Checking if git is installed..."
+if ! which git > /dev/null; then
+  echo "Installing git..."
+  sudo apt-get install -y git
+fi
+
+echo "Checking if dotfiles are installed..."
+if [ -z "${target}" ]; then
+  echo "Installing ${name}..."
+  mkdir -p ${target}
+  git clone ${gituri} ${target}
+  cd ${target}
+  echo "Install done."
+else
+  cd "${target}"
+  git pull
+  echo "Update done."
+fi
+
+yes | ./install.sh
+
+cd "$CWD"

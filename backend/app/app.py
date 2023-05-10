@@ -198,7 +198,11 @@ async def check_path_availability(tocheckpath,space_id):
 
 @app.get('/', tags=["test"], status_code=418)
 def home():
-    return {'Message':'Waddup OpSci, docs can be found in the /docs route'}
+    return {
+        'Message':'Root entrypoint of the RO-Crate maker API',
+        "description": "This is the root entrypoint of the RO-Crate maker API, for more information about the API, please visit the documentation page.",
+        'documentation': "http://localhost:6656"+"/apiv1/docs"
+        }
 
 ### Custom API look ###
 def custom_openapi():
