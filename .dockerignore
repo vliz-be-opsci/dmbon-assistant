@@ -1,2 +1,3 @@
 #ignore ./backend/venv files
 backend/venv/*
+backend/app/workspace
