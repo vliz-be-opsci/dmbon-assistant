@@ -293,8 +293,10 @@ def on_rm_error(func, path, exc_info):
     os.unlink(path)
 
 async def check_path_availability(tocheckpath,space_id):
+    '''
     if os.path.isdir(os.path.join(tocheckpath)) == False:
         raise HTTPException(status_code=400, detail="Given storage path does not exist on local storage")
+    '''
     #check if given path is already used by another project
     toposturl = 'http://localhost:6656/apiv1/spaces' #TODO : figure out how to not hardcode this <---
     async with ClientSession() as session:
@@ -395,14 +397,11 @@ def delete_space(*,space_id: str = Path(description="space_id name")):
 
 @router.post('/', status_code=201, tags=["Spaces"])
 async def add_space(*,item: SpaceModel):
-    tocheckpath = str(item.storage_path)
     space_id = uuid.uuid4().hex
     with open(Locations().join_abs_path('spaces.json'), "r+")as file:
         data = json.load(file)
         if space_id in data.keys():
             raise HTTPException(status_code=400, detail="Space already exists")
-        check_aval = await check_path_availability(tocheckpath,space_id)
-        tocheckpath = check_aval
         toposturl = 'http://localhost:6656/apiv1/profiles/'+str(item.RO_profile)  #TODO : figure out how to not hardcode this <---
         async with ClientSession() as session:
             response = await session.request(method='GET', url=toposturl)
@@ -410,6 +409,7 @@ async def add_space(*,item: SpaceModel):
             if response.status != 200:
                 raise HTTPException(status_code=400, detail="Given RO-profile does not exist")
             if response.status == 200:
+                log.debug("RO-profile exists")
                 try:
                     Space(
                         storage_path=os.path.join(item.storage_path,item.name),

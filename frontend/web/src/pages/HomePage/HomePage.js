@@ -32,7 +32,7 @@ const HomePage = () => {
   //define all constants first
   //All the functions here
   const [show, setShow] = useState(false);
-  const [setupready, setSetupReady] = useState(true);
+  const [setupready, setSetupReady] = useState(false);
   const [username, setUsername] = useState('');
   const [ORCID, setORCID] = useState('');
   const [PerformTaskForm, setPerformTaskForm] = useState(false);

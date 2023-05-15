@@ -18,7 +18,7 @@ if [ ! -d ~/.dmbon ]; then
     mkdir ~/.dmbon
 fi
 
-if [ ! -f ~/.ssh/id_ed25519 ]; then
+if [ ! -f ~/.ssh/dmbon ]; then
     #ask user for gh email adress
     echo "Enter the email adress you use for github: "
     echo "============================================="
@@ -28,7 +28,7 @@ if [ ! -f ~/.ssh/id_ed25519 ]; then
     echo " press continue on all the following prompts"
     echo "============================================="
     #generate ssh key
-    ssh-keygen -t ed25519 -C "$gh_email"
+    ssh-keygen -t ed25519 -f ~/.ssh/dmbon -C "$gh_email"
 fi
 
 #check if the ssh key exists in the .ssh folder
@@ -38,8 +38,8 @@ if [ ! -f ~/.ssh/id_ed25519 ]; then
 fi
 
 #make variable that will hold the contents of the ssh key
-ssh_prv_key="$(cat ~/.ssh/id_ed25519)"
-ssh_pub_key="$(cat ~/.ssh/id_ed25519.pub)"
+ssh_prv_key="$(cat ~/.ssh/dmbon)"
+ssh_pub_key="$(cat ~/.ssh/dmbon.pub)"
 echo $ssh_prv_key
 echo $ssh_pub_key
 

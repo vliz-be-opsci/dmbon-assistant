@@ -25,7 +25,16 @@ class Space(RoCrateGitBase):
         :param workspace_path: Optional - path on local disk that stores all the space workspace data
         :type workspace_path: Path
         """  
-        self.storage_path = storage_path
+        loc = Locations()
+        #get parent dir of loc
+        parent = os.path.dirname(loc.root)
+        github_repo_name = remote_url.split("/")[-1].split(".")[0]
+        #sister dir /workspace
+        workspace_dir = os.path.join(parent,"workspace")
+        #make the workspace dir if it does not exist
+        if not os.path.exists(os.path.join(workspace_dir,github_repo_name)):
+            os.mkdir(os.path.join(workspace_dir,github_repo_name))
+        self.storage_path = os.path.join(workspace_dir,github_repo_name)
         self.ro_profile = Profile.load(uuid = ro_profile)
         self.remote_url = remote_url #TODO: what todo with the the optionality of the property
         if uuid is None:
