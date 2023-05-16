@@ -225,9 +225,7 @@ def connect_ssh_key():
         return_output += f"<p>Then, click on the 'New SSH key' button.</p>"
         return_output += f"<p>Give the key a name, for example 'dmbon'.</p>"
         return_output += f"<p>Then, copy the following text and paste it into the SSH key field:</p>"
-        return_output += f"<p><code> ---- </code></p>"
         return_output += f"<p><code>{pubic_key}</code></p>"
-        return_output += f"<p><code> ---- </code></p>"
         
         return {'data':return_output, 
                 'next_task': None

@@ -42,12 +42,24 @@ const DatacrateContentFileRow = (file_to_render, datacrate_uuid, info, setshow, 
 
   ischecked();
 
+  //function here that will run getOpenFile and then make an alert with the resposne.data 
+  const openFile = async(datacrate_uuid, file_to_render) => {
+    try {
+      const response = await getOpenFile(datacrate_uuid, file_to_render);
+      //alert the user that they must fill in the respose.data in a new tab as url
+      const response_message = "Please fill in the following url in a new tab: \n " + response.data;
+      alert(response_message);
+    } catch (error) {
+      alert(error);
+    }
+  }
+
   return (
     <div className="content_item">
 
       <div className="actions">
         <button onClick={() => makeModal()}><MdScreenSearchDesktop></MdScreenSearchDesktop></button>
-        <button onClick={() => getOpenFile(datacrate_uuid, file_to_render)}><VscVmRunning></VscVmRunning></button>
+        <button onClick={() => openFile(datacrate_uuid, file_to_render)}><VscVmRunning></VscVmRunning></button>
       </div>
       <div className="file-storage">
         <ProgressPie content={info.summary} />

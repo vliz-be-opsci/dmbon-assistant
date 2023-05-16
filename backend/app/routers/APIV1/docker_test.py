@@ -29,7 +29,13 @@ def get_root():
     parent_ls = os.listdir(parent)
     #sister dir /workspace
     workspace_dir = os.path.join(parent,"workspace")
-    #sister dir /workspace ls -al
+    
+    #check if env var BASE_URL_FILE is set
+    if os.environ.get("BASE_FILE_URL") is not None:
+        base_url_file = os.environ.get("BASE_FILE_URL")
+    else:
+        base_url_file = "Not Set"
+    
     try:
         workspace_dir_ls = os.listdir(workspace_dir)
     except FileNotFoundError:
@@ -44,7 +50,9 @@ def get_root():
             "workspace_dir":{
                 "path": workspace_dir,
                 "content": workspace_dir_ls
-            }}
+            },
+            "base_url_file": base_url_file
+            }
     
 #route to check if the docker container has .ssh folder and if it has the correct permissions and content
 @router.get("/ssh")

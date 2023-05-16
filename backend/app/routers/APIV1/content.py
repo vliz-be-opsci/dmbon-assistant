@@ -26,8 +26,14 @@ def showFileExplorer(file):  # Path to file (string)
         import subprocess
         subprocess.call(["open", "-R", file])
     else:
-        import subprocess
-        subprocess.Popen(["xdg-open", file])
+        try:
+            import subprocess
+            subprocess.Popen(["xdg-open", file])
+        except:
+            #try and see what file is and then try and change the directory to that file to the windows explorer path 
+            log.info(file)
+            import os
+            os.startfile(file)
 
 router = APIRouter(
     prefix="/content",
@@ -189,14 +195,18 @@ def open_file_content_external(*,space_id: str = Path(description="space_id name
         data = json.load(file)
         try:
             space_folder = data[space_id]['storage_path']
-            #TODO: this wil only work if the file is in the root of the datacrate, find way to make it work for non root files
-            #TODO: find a way to make this work for non windows systems
             
             #replace the + in the filen bu the os.path.sep()
             #log.debug(path_spec)
             #log.info("performing os.path.join on file_id")
             path_spec = path_spec.replace('/',os.path.sep)
             #log.debug(path_spec)
+            log.debug(space_folder+os.path.sep+path_spec)
+            
+            #path to repo is os.environ.get("BASE_FILE_URL")+storage_path.split("workspace/")[-1]
+            log.debug(os.environ.get("BASE_FILE_URL")+space_folder.split("workspace/")[-1]+os.path.sep+path_spec)
+            return os.environ.get("BASE_FILE_URL")+space_folder.split("workspace/")[-1]+os.path.sep+path_spec
+            
             showFileExplorer(space_folder+os.path.sep+path_spec)
             '''
             #find the file_id in the space_folder by looping over the folders and files in the space_folder
@@ -211,136 +221,3 @@ def open_file_content_external(*,space_id: str = Path(description="space_id name
             log.error(e)
             raise HTTPException(status_code=404, detail="Space not found")
     return "file opened successfully"
-
-
-'''
-@router.post('/', status_code=202)
-async def add_new_content(*,space_id: str = Path(description="space_id name"), item: ContentModel, path_folder: Optional[str] = None):  
-    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-        data = json.load(file)
-        try:
-            space_folder = data[space_id]['storage_path']
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-
-    if path_folder != None:
-        space_folder = os.path.join(os.sep.join((data[space_id]['storage_path'])), path_folder) 
-        try:
-            pads(space_folder).mkdir(parents=True, exist_ok=True)
-        except:
-            raise HTTPException(status_code=400, detail="Directory could not be made")
-
-    datalog = []
-    crate = ROCrate(space_folder)
-    repo = git.Repo(data[space_id]['storage_path'])
-    for content_item in item.content:
-        #check if file or url are present
-        if (content_item.content == None and content_item.name == None):
-            content_present = False
-        #check if only url prsent:
-        if ('.html' in content_item.content or 'http' in content_item.content):
-            try:
-                crate.add_file(content_item.content, fetch_remote = False)
-            except Exception as e:
-                datalog.append({content_item.content:e})
-        #check if content_item.content is a directory
-        if os.path.isdir(content_item.content):
-            try:
-                crate.add_directory(content_item.content,str(os.sep.join((space_folder,os.path.basename(os.path.normpath(content_item.content))))))
-            except Exception as e:
-                datalog.append({content_item.content:e})
-        else:
-            try:
-                print("trying to add {}".format(content_item.content), file=sys.stderr)
-                crate.add_file(content_item.content)
-            except Exception as e:
-                datalog.append({content_item.content:e})
-    crate.write_crate(space_folder)
-    try:
-        crate.write_crate(space_folder)
-    except:
-        #auto resolve the crate by calling the space fixcrate 
-        toposturl = 'http://localhost:6656/apiv1/spaces/'+space_id+'/fixcrate' #TODO : figure out how to not hardcode this <---
-        async with ClientSession() as session:
-            response = await session.request(method='GET', url=toposturl)
-    repo.git.add(all=True)
-    if len(datalog) > 0:
-        raise HTTPException(status_code=400, detail=datalog)
-
-    return {'Data':'all content successfully added to space'}
-'''
-
-
-'''
-@router.delete('/', status_code=202)
-def delete_content(*,space_id: str = Path(description="space_id name"), item: DeleteContentModel):
-    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-        data = json.load(file)
-        try:
-            space_folder = data[space_id]['storage_path']
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-        
-    repo = git.Repo(data[space_id]['storage_path'])
-    crate = ROCrate(space_folder)
-    try:
-        for content_item in item.content:
-            crate.delete(crate.dereference(content_item))
-            del_path = os.path.join(space_folder,content_item)
-            os.remove(del_path)
-        crate.write_crate(space_folder)
-    except:
-        for content_item in item.content:
-            print("to delete content: " + content_item, file=sys.stderr)
-            #find the file that must be deleted
-            to_find_delete = glob.glob(space_folder + "/**/"+content_item, recursive = True)
-            for qzef in to_find_delete:
-                print("to delete content path : " + qzef, file=sys.stderr)
-                os.remove(qzef)
-            #open the rocrate metadata.json and delete the id from the rocrate 
-            with open(os.path.join(space_folder, 'ro-crate-metadata.json')) as json_file:
-                data = json.load(json_file)
-            for i in range(len(data['@graph'])):
-                try:
-                    if data['@graph'][i]['@id'] == content_item:
-                        del data['@graph'][i]
-                except:
-                    pass
-                try:
-                    for parto in range(len(data['@graph'][i]['hasPart'])):
-                        if data['@graph'][i]['hasPart'][parto]["@id"] == content_item:
-                            del data['@graph'][i]['hasPart'][parto]
-                except:
-                    pass
-            #write the rocrate file back 
-            with open(os.path.join(space_folder, 'ro-crate-metadata.json'), 'w') as json_file:
-                json.dump(data, json_file)
-
-    repo.git.add(all=True)
-    return {'Data':'all content successfully deleted from space :TODO: currently delete function is not working'}
-'''
-'''
-@router.get('/{path_folder:path}')
-def get_space_content_folder_info(*,space_id: str = Path(description="space_id name"), path_folder: str = Path(description="folder  path to get the files from")):
-    with open(Locations().join_abs_path('spaces.json'), "r+") as file:
-        data = json.load(file)
-        try:
-            toreturn = data[space_id]
-            allpaths = path_folder
-            if(path_folder == "/"):
-                space_folder = data[space_id]['storage_path']
-                #log.debug(space_folder)
-            else:
-                space_folder = os.path.join(data[space_id]['storage_path'], path_folder)
-                #log.debug(space_folder)
-
-        except Exception as e:
-            raise HTTPException(status_code=404, detail="Space not found")
-    toreturn = []
-    for (dirpath, dirnames, filenames) in os.walk(space_folder):
-        for filen in filenames:
-            if '.git' not in dirpath:
-                #log.info(f"{dirpath}/{filen}")
-                toreturn.append({"file":filen,"folder":dirpath})
-    return {'Data':toreturn}
-'''

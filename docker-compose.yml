@@ -7,8 +7,9 @@ services:
     volumes:
     #volumne comes from the c:\ drive
       - ~/.dmbon:/code/app/workspace
+    env_file:
+      - .env
   frontend:
     build: ./frontend
     ports:
       - "8910:8910"
-  

@@ -20,6 +20,9 @@ COPY ./backend /code
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+# sudo apt-get install xdg-utils
+#RUN apt-get update && apt-get install -y xdg-utils
+
 EXPOSE 6656
 
 CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "6656"]
