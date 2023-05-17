@@ -7,6 +7,8 @@ services:
     volumes:
     #volumne comes from the c:\ drive
       - ~/.dmbon:/code/app/workspace
+    #mount the ~/.dmbon/hostbrowerpipeline to the container
+      - ~/hostbrowserpipeline.lnk:/root/hostbrowserpipeline.lnk
     env_file:
       - .env
   frontend:

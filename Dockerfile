@@ -18,8 +18,10 @@ WORKDIR /code
 
 COPY ./backend /code
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+#mkfifo hostbrowserpipeline in /code/app/workspace
+#RUN mkfifo /code/app/workspace/hostbrowserpipeline
 
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 # sudo apt-get install xdg-utils
 #RUN apt-get update && apt-get install -y xdg-utils
 

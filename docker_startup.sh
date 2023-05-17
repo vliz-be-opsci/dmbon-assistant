@@ -18,6 +18,38 @@ if [ ! -d ~/.dmbon ]; then
     mkdir ~/.dmbon
 fi
 
+#check if hostbrowserpipeline.lnk exists on disk if not create it
+if [ ! -f ~/hostbrowserpipeline.lnk ]; then
+    echo "hostbrowserpipeline.lnk does not exist"
+    echo "creating hostbrowserpipeline"
+    mkfifo ~/hostbrowserpipeline
+    #checnge permissions on the file so that it can be read and written to by everyone
+    chmod 777 ~/hostbrowserpipeline
+    #echo "file:///C:/dmbon/hostbrowserpipeline.html" > ~/.dmbon/hostbrowserpipeline.lnk
+fi
+
+#detect what OS the user is running
+OS_USER="$(uname -a)"
+#check if the OS is windows
+W_USER=false
+if [[ $OS_USER == *"MINGW"* ]]; then
+    W_USER=true
+fi
+#check if the OS is mac
+M_USER=false
+if [[ $OS_USER == *"Darwin"* ]]; then
+    M_USER=true
+fi
+#check if the OS is linux
+L_USER=false
+if [[ $OS_USER == *"Linux"* ]]; then
+    L_USER=true
+fi
+
+#add a while read on the hostbrowserpipeline.lnk file and depending in the OS open the file 
+
+
+
 if [ ! -f ~/.ssh/dmbon ]; then
     #ask user for gh email adress
     echo "Enter the email adress you use for github: "
@@ -55,7 +87,7 @@ ssh_pub_key="$(cat ~/.ssh/dmbon.pub)"
 echo $ssh_prv_key
 echo $ssh_pub_key
 
-#make the app image 
+#make the app image also bind ~/.dmbon/hostbrowserpipeline.lnk to /root/hostbrowserpipeline.lnk
 docker build -t dmbon-assistant-app --build-arg ssh_prv_key="$ssh_prv_key" --build-arg ssh_pub_key="$ssh_pub_key" .
 docker-compose up -d
 
@@ -65,3 +97,23 @@ rm ~/.ssh/dmbon.pub
 
 #open browser to localhost:8910
 #open http://localhost:8910
+
+#constantly poll the hostpipeline.lnk file and see if a new link has been added, if so open that link with the default program
+#depending on the OS this will be different
+#on windows this will be start <link>
+#on mac this will be open <link>
+#on linux this will be xdg-open <link>
+while read -r URL < ~/.dmbon/hostbrowserpipeline; do
+    if $W_USER; then
+        start $URL;
+    fi
+    if $M_USER; then
+        open $URL;
+    fi
+    if $L_USER; then
+        xdg-open $URL;
+    fi
+done
+
+#echo file:///C:/Users/cedricd/Documents/GitHub/mariokart_tournament/package.json into ~/.dmbon/hostbrowserpipeline.lnk
+#echo "file:///C:/Users/cedricd/Documents/GitHub/mariokart_tournament/package.json" > ~/.dmbon/hostbrowserpipeline.lnk
