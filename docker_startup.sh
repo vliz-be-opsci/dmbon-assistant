@@ -18,41 +18,9 @@ if [ ! -d ~/.dmbon ]; then
     mkdir ~/.dmbon
 fi
 
-#check if make is installed
-make --version
-#if make is not installed install it
-if [ $? -eq 0 ]; then
-    echo "make is installed"
-else
-    echo "make is not installed"
-    echo "installing make"
-    #get the follwoing git repo
-    #run choco install make
-    choco install make
-fi
-
-#check inotifywait is installed
-inotifywait --version
-if [ $? -eq 0 ]; then
-    echo "inotifywait is installed"
-else
-    echo "inotifywait is not installed"
-    echo "installing inotifywait"
-    #get the follwoing git repo https://github.com/thekid/inotify-win into ./inotify-win
-    #cd into the repo and run make
-    #copy the inotifywait.exe file into the shell_scripts folder
-    #add the shell_scripts folder to the path
-    #check inotifywait is installed
-    git clone https://github.com/thekid/inotify-win inotify-win
-    cd inotify-win
-    #run Makefile
-    make
-    cp inotifywait.exe ../shell_scripts
-    cd ..
-    #rm -rf inotify-win
-    export PATH=$PATH:~/shell_scripts
-    inotifywait --version
-fi
+#if os is windows then make a filesystemwatcher for the .dmbon folder
+#detect what OS the user is running
+OS_USER="$(uname -a)"
 
 #check if hostbrowserpipeline.lnk exists on disk if not create it
 #if [ ! -f ~/.dmbon/hostbrowserpipeline ]; then
@@ -64,8 +32,6 @@ fi
 #    #echo "file:///C:/dmbon/hostbrowserpipeline.html" > ~/.dmbon/hostbrowserpipeline.lnk
 #fi
 
-#detect what OS the user is running
-OS_USER="$(uname -a)"
 #check if the OS is windows
 W_USER=false
 if [[ $OS_USER == *"MINGW"* ]]; then
@@ -81,10 +47,6 @@ L_USER=false
 if [[ $OS_USER == *"Linux"* ]]; then
     L_USER=true
 fi
-
-#add a while read on the hostbrowserpipeline.lnk file and depending in the OS open the file 
-
-
 
 if [ ! -f ~/.ssh/dmbon ]; then
     #ask user for gh email adress
@@ -146,11 +108,7 @@ rm ~/.ssh/dmbon.pub
 #on linux this will be xdg-open <link>
 #have a observer that is constantly watching the state of the .dmbon folder, if a file named toopen.txt is added 
 # read the file content and open the link in the default program depending on the os 
-
-#if os is linux use inotifywait to watch the .dmbon folder for changes
-
-while true; do
-    inotifywait -e create ~/.dmbon
+while :; do clear; 
     if [ -f ~/.dmbon/toopen.txt ]; then
         URL="$(cat ~/.dmbon/toopen.txt)"
         if $W_USER; then
@@ -163,8 +121,9 @@ while true; do
             xdg-open $URL;
         fi
         rm ~/.dmbon/toopen.txt
-    fi
+    fi; 
+sleep 2; 
 done
 
 #echo file:///C:/Users/cedricd/Documents/GitHub/mariokart_tournament/package.json into ~/.dmbon/hostbrowserpipeline.lnk
-#echo "file:///C:/Users/cedricd/Documents/GitHub/mariokart_tournament/package.json" > ~/.dmbon/hostbrowserpipeline.lnk
+#echo "file:///C:/Users/cedricd/Documents/GitHub/mariokart_tournament/package.json" > ~/.dmbon/toopen.txt
