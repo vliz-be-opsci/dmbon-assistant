@@ -18,15 +18,51 @@ if [ ! -d ~/.dmbon ]; then
     mkdir ~/.dmbon
 fi
 
-#check if hostbrowserpipeline.lnk exists on disk if not create it
-if [ ! -f ~/hostbrowserpipeline.lnk ]; then
-    echo "hostbrowserpipeline.lnk does not exist"
-    echo "creating hostbrowserpipeline"
-    mkfifo ~/hostbrowserpipeline
-    #checnge permissions on the file so that it can be read and written to by everyone
-    chmod 777 ~/hostbrowserpipeline
-    #echo "file:///C:/dmbon/hostbrowserpipeline.html" > ~/.dmbon/hostbrowserpipeline.lnk
+#check if make is installed
+make --version
+#if make is not installed install it
+if [ $? -eq 0 ]; then
+    echo "make is installed"
+else
+    echo "make is not installed"
+    echo "installing make"
+    #get the follwoing git repo
+    #run choco install make
+    choco install make
 fi
+
+#check inotifywait is installed
+inotifywait --version
+if [ $? -eq 0 ]; then
+    echo "inotifywait is installed"
+else
+    echo "inotifywait is not installed"
+    echo "installing inotifywait"
+    #get the follwoing git repo https://github.com/thekid/inotify-win into ./inotify-win
+    #cd into the repo and run make
+    #copy the inotifywait.exe file into the shell_scripts folder
+    #add the shell_scripts folder to the path
+    #check inotifywait is installed
+    git clone https://github.com/thekid/inotify-win inotify-win
+    cd inotify-win
+    #run Makefile
+    make
+    cp inotifywait.exe ../shell_scripts
+    cd ..
+    #rm -rf inotify-win
+    export PATH=$PATH:~/shell_scripts
+    inotifywait --version
+fi
+
+#check if hostbrowserpipeline.lnk exists on disk if not create it
+#if [ ! -f ~/.dmbon/hostbrowserpipeline ]; then
+#    echo "hostbrowserpipeline.lnk does not exist"
+#    echo "creating hostbrowserpipeline"
+#    mkfifo ~/.dmbon/hostbrowserpipeline
+#    #checnge permissions on the file so that it can be read and written to by everyone
+#    chmod 777 ~/.dmbon/hostbrowserpipeline
+#    #echo "file:///C:/dmbon/hostbrowserpipeline.html" > ~/.dmbon/hostbrowserpipeline.lnk
+#fi
 
 #detect what OS the user is running
 OS_USER="$(uname -a)"
@@ -87,8 +123,13 @@ ssh_pub_key="$(cat ~/.ssh/dmbon.pub)"
 echo $ssh_prv_key
 echo $ssh_pub_key
 
+#get the current user GID and UID
+#this is needed so that the docker container can write to the hostbrowserpipeline.lnk file
+GID_var="$(id -g)"
+UID_var="$(id -u)"
+
 #make the app image also bind ~/.dmbon/hostbrowserpipeline.lnk to /root/hostbrowserpipeline.lnk
-docker build -t dmbon-assistant-app --build-arg ssh_prv_key="$ssh_prv_key" --build-arg ssh_pub_key="$ssh_pub_key" .
+docker build -t dmbon-assistant-app --build-arg ssh_prv_key="$ssh_prv_key" --build-arg ssh_pub_key="$ssh_pub_key" --build-arg GID_var="$GID_var" --build-arg UID_var="$UID_var" .
 docker-compose up -d
 
 #delete  ~/.ssh/dmbon and ~/.ssh/dmbon.pub
@@ -103,15 +144,25 @@ rm ~/.ssh/dmbon.pub
 #on windows this will be start <link>
 #on mac this will be open <link>
 #on linux this will be xdg-open <link>
-while read -r URL < ~/.dmbon/hostbrowserpipeline; do
-    if $W_USER; then
-        start $URL;
-    fi
-    if $M_USER; then
-        open $URL;
-    fi
-    if $L_USER; then
-        xdg-open $URL;
+#have a observer that is constantly watching the state of the .dmbon folder, if a file named toopen.txt is added 
+# read the file content and open the link in the default program depending on the os 
+
+#if os is linux use inotifywait to watch the .dmbon folder for changes
+
+while true; do
+    inotifywait -e create ~/.dmbon
+    if [ -f ~/.dmbon/toopen.txt ]; then
+        URL="$(cat ~/.dmbon/toopen.txt)"
+        if $W_USER; then
+            start $URL;
+        fi
+        if $M_USER; then
+            open $URL;
+        fi
+        if $L_USER; then
+            xdg-open $URL;
+        fi
+        rm ~/.dmbon/toopen.txt
     fi
 done
 

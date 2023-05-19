@@ -2,7 +2,13 @@ FROM python:3.8
 
 ARG ssh_prv_key
 ARG ssh_pub_key
+ARG GID_var
+ARG UID_var
 
+#create addgroup that can be used to add a group to the container with the same GID as the host user
+#RUN addgroup --gid $GID_var hostgroup
+#RUN adduser --disabled-password --gecos '' --uid $UID_var --gid $GID_var hostuser
+#USER hostuser
 # Authorize SSH Host
 RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
@@ -13,6 +19,8 @@ RUN echo "$ssh_prv_key" > /root/.ssh/id_ed25519 && \
     echo "$ssh_pub_key" > /root/.ssh/id_ed25519.pub && \
     chmod 600 /root/.ssh/id_ed25519 && \
     chmod 600 /root/.ssh/id_ed25519.pub
+
+#RUN chmod 664 /code/app/workspace/hostbrowserpipeline.lnk
 
 WORKDIR /code
 
