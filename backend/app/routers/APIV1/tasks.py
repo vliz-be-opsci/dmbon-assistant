@@ -221,7 +221,7 @@ def connect_ssh_key():
         #get public key from file 
         pubic_key = open('/root/.ssh/id_ed25519.pub').read()
         return_output = f"<p>To connect your SSH key, please visit the following URL:</p>"
-        return_output += f"<p><a href='https://github.com/settings/keys'>https://github.com/settings/keys</a></p>"
+        return_output += f"<p><a href='https://github.com/settings/keys' target='_blank'>https://github.com/settings/keys</a></p>"
         return_output += f"<p>Then, click on the 'New SSH key' button.</p>"
         return_output += f"<p>Give the key a name, for example 'dmbon'.</p>"
         return_output += f"<p>Then, copy the following text and paste it into the SSH key field:</p>"

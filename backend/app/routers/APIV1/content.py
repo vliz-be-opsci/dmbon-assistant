@@ -8,6 +8,7 @@ from pathlib import Path as pads
 import subprocess
 import validators
 import requests
+import uuid as uuidmake
 import glob
 import logging
 log=logging.getLogger(__name__)
@@ -112,9 +113,15 @@ def open_file_explorer(*,space_id: str = Path(description="space_id name")):
             
             formatted_space_folder = space_folder.replace("/","\\")
             #log.debug(formatted_space_folder)
-            string_command = 'explorer "' + formatted_space_folder + '"'
+            #string_command = 'explorer "' + formatted_space_folder + '"'
             #log.debug(string_command)
-            subprocess.Popen(string_command)
+            #subprocess.Popen(string_command)
+            
+            #generate random uuid
+            uuid = uuidmake.uuid4().hex
+            #echo "os.environ.get("BASE_FILE_URL")+space_folder.split("workspace/")[-1]+os.path.sep+path_spec" > /code/app/workspace/toopen.txt
+            os.system("echo "+os.environ.get("BASE_FILE_URL")+" > /code/app/workspace/toopen_"+str(uuid)+".txt")
+            
         except Exception as e:
             raise HTTPException(status_code=404, detail="Space not found")
     return "file-explorer opened successfully"
@@ -205,6 +212,11 @@ def open_file_content_external(*,space_id: str = Path(description="space_id name
             
             #path to repo is os.environ.get("BASE_FILE_URL")+storage_path.split("workspace/")[-1]
             log.debug(os.environ.get("BASE_FILE_URL")+space_folder.split("workspace/")[-1]+os.path.sep+path_spec)
+            
+            #echo "os.environ.get("BASE_FILE_URL")+space_folder.split("workspace/")[-1]+os.path.sep+path_spec" > /code/app/workspace/toopen.txt
+            uuid = uuidmake.uuid4().hex
+            os.system("echo "+os.environ.get("BASE_FILE_URL")+space_folder.split("workspace/")[-1]+os.path.sep+path_spec+" > /code/app/workspace/toopen_"+str(uuid)+".txt")
+            
             return os.environ.get("BASE_FILE_URL")+space_folder.split("workspace/")[-1]+os.path.sep+path_spec
             
             showFileExplorer(space_folder+os.path.sep+path_spec)
