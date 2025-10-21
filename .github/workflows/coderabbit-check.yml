@@ -1,0 +1,21 @@
+name: Require CodeRabbit Review
+on: [pull_request]
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  check-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for CodeRabbit Review
+        run: |
+          # Fetch PR comments and check if @coderabbitai has posted a review summary
+          COMMENTS=$(gh pr view $PR_NUMBER --json comments --jq '.comments[] | select(.author.login == "coderabbitai") | .body')
+          if [[ ! "$COMMENTS" =~ "review summary" ]]; then  # Adjust regex for CodeRabbit's typical summary marker
+            echo "❌ CodeRabbit review required! Comment '@coderabbitai review' to trigger."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
